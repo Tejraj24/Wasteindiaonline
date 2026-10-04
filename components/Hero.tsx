@@ -6,20 +6,17 @@ import gsap from "gsap";
 const slides = [
   {
     id: 1,
-    title: "MODERN HERITAGE",
-    subtitle: "COLLECTION 01",
+    title: "Luxury essentials",
     image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80",
   },
   {
     id: 2,
-    title: "ELEVATED ESSENTIALS",
-    subtitle: "SS26 LINEUP",
+    title: "Quiet statement",
     image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
   },
   {
     id: 3,
-    title: "REFINED VISION",
-    subtitle: "EDITORIAL",
+    title: "Refined curation",
     image: "https://res.cloudinary.com/dom7a6zlx/image/upload/w_1600,h_900,c_fill,q_80/v1790917475/WhatsApp_Image_2026-10-01_at_11.16.34_PM_kp2k1z.jpg",
   },
 ];
@@ -117,7 +114,7 @@ export function Hero() {
             }}
           >
             <div className="relative w-full h-full overflow-hidden">
-              <div className="absolute inset-0 bg-black/30 z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10 z-10" />
               <img
                 ref={(el) => { imagesRef.current[i] = el; }}
                 src={slide.image}
@@ -125,20 +122,33 @@ export function Hero() {
                 className="absolute inset-0 w-full h-full object-cover object-center"
               />
 
-              {/* Text Content - Positioned Bottom Left */}
               <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-12 pb-16 md:pb-24 pointer-events-none">
-                <div className="max-w-4xl">
-                  <span className="text-xs md:text-sm tracking-widest uppercase mb-4 md:mb-6 block opacity-90 font-medium text-brand-light">
-                    {slide.subtitle}
-                  </span>
-                  <h2 className="text-4xl sm:text-5xl md:text-[90px] lg:text-[120px] leading-[0.9] font-bold tracking-tighter uppercase text-brand-light pointer-events-auto mix-blend-difference">
-                    {slide.title}
-                  </h2>
+                <div className="max-w-xl editorial-reveal">
+                  <div className="mb-5 flex items-end justify-between gap-6 text-brand-light/90">
+                    <span className="font-editorial text-[clamp(2.8rem,5vw,5rem)] leading-none tracking-[-0.08em]">
+                      {String(activeIndex + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[0.65rem] md:text-[0.75rem] uppercase tracking-[0.45em] font-medium opacity-70">
+                      01 / 03
+                    </span>
+                  </div>
 
-                  {/* CTA under heading */}
-                  <a href="/shop" className="inline-block mt-8 md:mt-12 text-sm md:text-base font-bold uppercase tracking-widest text-brand-light border-b border-brand-light/50 pb-1 hover:border-brand-light transition-colors pointer-events-auto" data-cursor="EXPLORE">
-                    EXPLORE COLLECTION
+                  <a
+                    href="/shop"
+                    className="pointer-events-auto inline-block text-[clamp(2.2rem,5vw,5.5rem)] font-semibold uppercase leading-[0.9] tracking-[-0.07em] text-brand-light transition-opacity duration-300 hover:opacity-80"
+                    data-cursor="SHOP NOW"
+                  >
+                    SHOP NOW
                   </a>
+
+                  <div className="mt-3 flex flex-col gap-1 text-brand-light">
+                    <span className="text-[0.68rem] md:text-[0.8rem] uppercase tracking-[0.4em] font-medium text-brand-light/75">
+                      EXPLORE OUR FIRST
+                    </span>
+                    <span className="font-editorial text-[clamp(3rem,6vw,7rem)] leading-[0.78] tracking-[-0.05em] text-brand-light">
+                      COLLECTION
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -146,23 +156,14 @@ export function Hero() {
         ))}
       </div>
 
-      {/* Navigation Controls - Extreme Edges Middle */}
-      <div className="absolute inset-0 z-30 pointer-events-none flex justify-between items-center px-6 md:px-12">
-        {/* Left Side: Current Index */}
-        <div className="pointer-events-auto flex items-center">
-          <span className="font-serif italic text-2xl md:text-4xl text-brand-light opacity-90 select-none mix-blend-difference">
-            0{activeIndex + 1}
-          </span>
-        </div>
-
-        {/* Right Side: Next Button */}
-        <div className="pointer-events-auto flex items-center">
+      <div className="absolute inset-0 z-30 pointer-events-none flex justify-end items-end px-6 md:px-12 pb-8 md:pb-10">
+        <div className="pointer-events-auto flex items-center gap-2 text-brand-light/80">
           <button
             onClick={nextSlide}
-            className="font-serif italic text-2xl md:text-4xl text-brand-light hover:opacity-70 transition-opacity mix-blend-difference"
+            className="text-[0.7rem] md:text-[0.75rem] uppercase tracking-[0.3em] font-medium hover:opacity-70 transition-opacity"
             data-cursor="NEXT"
           >
-            Next
+            NEXT
           </button>
         </div>
       </div>
