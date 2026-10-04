@@ -1,0 +1,422 @@
+[
+  {
+    "id": "prod-001",
+    "title": "The Course Utility Jacket — Obsidian Navy",
+    "price": 1900,
+    "compareAtPrice": 2400,
+    "images": [
+      "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-JKT-001",
+    "category": "Outerwear",
+    "description": "Engineered technical weather-resistant jacket with relaxed tailoring, dual cargo storm pockets, and custom studio snap hardware."
+  },
+  {
+    "id": "prod-002",
+    "title": "Heritage Crewneck Sweatshirt — Burgundy Oxblood",
+    "price": 1400,
+    "compareAtPrice": 1700,
+    "images": [
+      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CRW-002",
+    "category": "Sweatshirts",
+    "description": "500 GSM heavy combed loopback cotton fleece with ribbed gusset and tonal chainstitch monogram embroidery."
+  },
+  {
+    "id": "prod-003",
+    "title": "1994 Archive Pique Polo — Forest Pine",
+    "price": 950,
+    "compareAtPrice": 1200,
+    "images": [
+      "https://images.unsplash.com/photo-1586363104862-3a5e2ab60d99?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1625910513413-5b82531637d4?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-POLO-003",
+    "category": "Polos",
+    "description": "Relaxed retro fit knit polo crafted from breathable double-ply organic cotton with mother-of-pearl buttons."
+  },
+  {
+    "id": "prod-004",
+    "title": "Pleated Clubhouse Trouser — British Khaki",
+    "price": 1150,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TRS-004",
+    "category": "Trousers",
+    "description": "Double forward pleats, tapered ankle drape, and internal stretch waistband for effortless movement on and off the green."
+  },
+  {
+    "id": "prod-005",
+    "title": "Pleated Clubhouse Trouser — Pitch Black",
+    "price": 1150,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TRS-005",
+    "category": "Trousers",
+    "description": "Midnight twill with tailored trouser finish, slash side pockets, and piped coin pocket."
+  },
+  {
+    "id": "prod-006",
+    "title": "Reflections Heavyweight Graphic Tee — Black",
+    "price": 750,
+    "compareAtPrice": 900,
+    "images": [
+      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-006",
+    "category": "T-Shirts",
+    "description": "280 GSM dry jersey with discharge silkscreen front art and oversized boxy drape."
+  },
+  {
+    "id": "prod-007",
+    "title": "Minimal Wordmark T-Shirt — Stone Ash",
+    "price": 700,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-007",
+    "category": "T-Shirts",
+    "description": "Minimal studio center chest badge print on garment-dyed raw mineral washed jersey."
+  },
+  {
+    "id": "prod-008",
+    "title": "Minimal Wordmark T-Shirt — Chalk White",
+    "price": 700,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1527719327859-c6ce80353573?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-008",
+    "category": "T-Shirts",
+    "description": "Pure combed natural cotton tee featuring contrast cobalt blue woven hem label."
+  },
+  {
+    "id": "prod-009",
+    "title": "Culture Club Relaxed Tee — Cloud White",
+    "price": 750,
+    "compareAtPrice": 850,
+    "images": [
+      "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1562157873-818bc0726f68?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": true,
+    "sku": "SN-TEE-009",
+    "category": "T-Shirts",
+    "description": "Limited batch graphic tee celebrating heritage modernism. Sold out archive piece."
+  },
+  {
+    "id": "prod-010",
+    "title": "Studio Collab Graphic Tee — Deep Royal",
+    "price": 850,
+    "compareAtPrice": 1050,
+    "images": [
+      "https://images.unsplash.com/photo-1618354691229-88d47f285158?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1503342394128-c104d54dba01?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-010",
+    "category": "T-Shirts",
+    "description": "Artist series collaboration piece in cobalt navy with typographic back manifesto."
+  },
+  {
+    "id": "prod-011",
+    "title": "Studio Script Unstructured Cap — Electric Royal",
+    "price": 550,
+    "compareAtPrice": 650,
+    "images": [
+      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1534215754734-18e55d13e346?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-011",
+    "category": "Headwear",
+    "description": "6-panel washed cotton twill dad cap with custom italic calligraphy script stitch."
+  },
+  {
+    "id": "prod-012",
+    "title": "Studio Script Unstructured Cap — Olive Grove",
+    "price": 550,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-012",
+    "category": "Headwear",
+    "description": "Earth-toned brushed twill with antique brass buckle slider and embroidered eyelets."
+  },
+  {
+    "id": "prod-013",
+    "title": "Studio Script Unstructured Cap — Raw Milk",
+    "price": 550,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1542295669297-4d352b042bca?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-013",
+    "category": "Headwear",
+    "description": "Ecru undyed canvas with high-density cursive script in contrasting black thread."
+  },
+  {
+    "id": "prod-014",
+    "title": "Heritage Rope Bill Cap — Onyx Black",
+    "price": 600,
+    "compareAtPrice": 750,
+    "images": [
+      "https://images.unsplash.com/photo-1618354691438-25bc04584c23?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-014",
+    "category": "Headwear",
+    "description": "Classic 5-panel silhouette featuring retro braided rope accent across the visor."
+  },
+  {
+    "id": "prod-015",
+    "title": "Heritage Rope Bill Cap — Desert Khaki",
+    "price": 600,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1583744946564-b52ac1c389c8?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-015",
+    "category": "Headwear",
+    "description": "Vintage washed khaki canvas with braided contrast cream marine rope."
+  },
+  {
+    "id": "prod-016",
+    "title": "Washed Corduroy 6-Panel — Deep Maroon",
+    "price": 650,
+    "compareAtPrice": 800,
+    "images": [
+      "https://images.unsplash.com/photo-1607522370275-f14206abe5d3?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-016",
+    "category": "Headwear",
+    "description": "14-wale plush cotton corduroy with unstructured crown and tonal arch embroidery."
+  },
+  {
+    "id": "prod-017",
+    "title": "Washed Corduroy 6-Panel — Bone Ecru",
+    "price": 650,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-017",
+    "category": "Headwear",
+    "description": "Heavy corduroy in soft bone tone with matte leather closure strap."
+  },
+  {
+    "id": "prod-018",
+    "title": "Traditions Embroidered Cap — Crimson & Gold",
+    "price": 550,
+    "compareAtPrice": 650,
+    "images": [
+      "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1516826957135-700dedea698c?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": true,
+    "sku": "SN-CAP-018",
+    "category": "Headwear",
+    "description": "Collegiate crest stitchwork on heritage wool-blend twill crown."
+  },
+  {
+    "id": "prod-019",
+    "title": "Studio Monogram Cap — Milk Chocolate",
+    "price": 550,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1533659828870-95ec38d50f5e?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-019",
+    "category": "Headwear",
+    "description": "Two-tone paneling with oval studio crest insignia and woven interior sweatband."
+  },
+  {
+    "id": "prod-020",
+    "title": "Studio Monogram Heavy T-Shirt — Jet Black",
+    "price": 750,
+    "compareAtPrice": 900,
+    "images": [
+      "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-020",
+    "category": "T-Shirts",
+    "description": "Signature interlocking monogram printed with high-density puff ink on heavy jersey."
+  },
+  {
+    "id": "prod-021",
+    "title": "Fairway Birdie Tee — Vintage Off-White",
+    "price": 700,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1554412933-514a83d2f3c8?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-021",
+    "category": "T-Shirts",
+    "description": "Archival mascot bird motif rendered in retro flat-color vector silkscreen."
+  },
+  {
+    "id": "prod-022",
+    "title": "Traditions Badge T-Shirt — Marine Navy",
+    "price": 750,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-TEE-022",
+    "category": "T-Shirts",
+    "description": "Classic club badge printed centered with tonal collar stitching."
+  },
+  {
+    "id": "prod-023",
+    "title": "Signature Pima Cotton Polo — Solid Black",
+    "price": 950,
+    "compareAtPrice": 1100,
+    "images": [
+      "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-POLO-023",
+    "category": "Polos",
+    "description": "Silky Mercerized Peruvian Pima cotton with tailored knit collar and side vents."
+  },
+  {
+    "id": "prod-024",
+    "title": "Motus Performance Knit Polo — Pitch Black",
+    "price": 990,
+    "compareAtPrice": 1250,
+    "images": [
+      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1618354691792-d1d42acfd860?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-POLO-024",
+    "category": "Polos",
+    "description": "Technical moisture-wicking four-way stretch fabric engineered for warm sunny rounds."
+  },
+  {
+    "id": "prod-025",
+    "title": "Horizon Utility Nylon Cap — Matte Black",
+    "price": 550,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1521369909029-2afed882baee?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1575428652377-a2d80e2277fc?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-025",
+    "category": "Headwear",
+    "description": "Lightweight water-repellent micro-ripstop nylon cap with breathable side perforations."
+  },
+  {
+    "id": "prod-026",
+    "title": "Heritage Rope Bill Cap — Milk & Royal",
+    "price": 600,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1556306535-0f09a537f0a3?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-026",
+    "category": "Headwear",
+    "description": "Ecru cotton crown paired with electric blue visor rope and custom tonal snapback."
+  },
+  {
+    "id": "prod-027",
+    "title": "Versa Crushable Nylon Cap — Charcoal Slate",
+    "price": 520,
+    "compareAtPrice": 620,
+    "images": [
+      "https://images.unsplash.com/photo-1534215754734-18e55d13e346?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1618354691438-25bc04584c23?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-CAP-027",
+    "category": "Headwear",
+    "description": "Packable soft-foam brim that can be folded into any golf bag pocket without losing shape."
+  },
+  {
+    "id": "prod-028",
+    "title": "Heritage Crew Cushioned Socks — Optical White",
+    "price": 250,
+    "compareAtPrice": null,
+    "images": [
+      "https://images.unsplash.com/photo-1582966772680-860e372bb558?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-SCK-028",
+    "category": "Accessories",
+    "description": "Ribbed heavy-gauge French terry footbed with arch compression band and contrast logo."
+  },
+  {
+    "id": "prod-029",
+    "title": "Heritage Crew Cushioned Socks — 2-Pack Value",
+    "price": 450,
+    "compareAtPrice": 500,
+    "images": [
+      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1582966772680-860e372bb558?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-SCK-029",
+    "category": "Accessories",
+    "description": "Twin pack of our cushioned performance socks in Optical White and Onyx Black."
+  },
+  {
+    "id": "prod-030",
+    "title": "Course Leather Glove & Magnetic Ball Marker",
+    "price": 480,
+    "compareAtPrice": 550,
+    "images": [
+      "https://images.unsplash.com/photo-1535131749006-b7f58c99034b?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1593111774240-d529f12cf4bb?auto=format&fit=crop&w=900&q=80"
+    ],
+    "soldOut": false,
+    "sku": "SN-GLV-030",
+    "category": "Accessories",
+    "description": "Ultra-soft Cabretta leather golf glove with stamped closure and enamel magnetic coin."
+  }
+]

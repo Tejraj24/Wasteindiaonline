@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --swatch--brand: #050fff;
+  --swatch--dark: #000000;
+  --swatch--light: #ffffff;
+  --swatch--light-grey: #f4f4f4;
+  --swatch--faded-text: #686060;
+  --swatch--light-faded: #818181;
+  
+  --font-instrument-serif: 'Instrument Serif', Georgia, serif;
+  --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  
+  --site--margin: clamp(1rem, 0.92857rem + 0.35714vw, 1.25rem);
+  --site--gutter: 0.625rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  background-color: #000000;
+  color: #000000;
+  font-family: var(--font-inter);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Text Selection */
+::selection {
+  background-color: var(--swatch--brand);
+  color: #ffffff;
+}
+
+/* Editorial Serif */
+.font-editorial {
+  font-family: var(--font-instrument-serif);
+}
+
+/* Uppercase Monospace / Grotesk Body */
+.body-upper {
+  text-transform: uppercase;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* Underline Animation */
+[slide-underline] {
+  position: relative;
+}
+
+[slide-underline]::after {
+  content: "";
+  position: absolute;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  bottom: -2px;
+  left: 0;
+  transform: scaleX(0);
+  transition: transform 400ms cubic-bezier(0.32, 0.72, 0, 1);
+  transform-origin: left;
+}
+
+[slide-underline].active::after,
+[slide-underline]:hover::after {
+  transform: scaleX(1);
+}
+
+/* Continuous Marquee Animation */
+@keyframes ticker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 32s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-ticker {
+    animation: none;
+  }
+}
+
+/* Lenis Recommended CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
