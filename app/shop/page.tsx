@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useCart } from "@/hooks/useCart";
 import products from "@/data/products.json";
+import { Footer } from "@/components/Footer";
 
 type Product = (typeof products)[number];
 type Filter = "All" | "T-Shirts" | "Shirts" | "Hoodies" | "Oversized" | "Cargo" | "Pants" | "Outerwear" | "Accessories";
@@ -223,9 +224,8 @@ export default function ShopPage() {
 
       <section id="story" className="border-t border-white/15 px-6 py-28 md:px-12 md:py-48"><div className="grid gap-12 md:grid-cols-[1fr_1.3fr] md:gap-24"><p className="text-[10px] uppercase tracking-[0.3em] text-white/40">The WASTE. point of view</p><div><h2 className="max-w-4xl font-editorial text-6xl leading-[0.82] tracking-[-0.06em] md:text-9xl">A modern expression of heritage</h2><p className="mt-12 max-w-md text-sm leading-7 text-white/55">WASTE merges contemporary silhouettes with timeless inspiration. Each piece is considered, collected, and made to live beyond a season.</p></div></div></section>
 
-      <footer className="border-t border-white/15 px-6 py-10 md:px-12"><div className="flex flex-col gap-12 md:flex-row md:items-end md:justify-between"><div><p className="text-2xl font-bold tracking-[-0.08em]">WASTE<span className="text-[#1e40ff]">.</span></p><p className="mt-3 text-[10px] uppercase tracking-[0.22em] text-white/40">A modern expression of heritage</p></div><nav className="grid grid-cols-2 gap-x-14 gap-y-4 text-[10px] uppercase tracking-[0.22em] text-white/55 md:grid-cols-5"><a href="#collection" className="transition hover:text-white">Shop</a><a href="#collection" className="transition hover:text-white">Collections</a><a href="#story" className="transition hover:text-white">About</a><a href="#" className="transition hover:text-white">Instagram</a><a href="mailto:hello@waste.studio" className="transition hover:text-white">Contact</a></nav></div></footer>
-
       {selectedProduct && <QuickView product={selectedProduct} onClose={() => setSelectedProduct(null)} />}
+      <Footer />
     </div>
   );
 }
