@@ -6,6 +6,7 @@ export function useCart() {
   const items = useCartStore((state) => state.items);
   const isOpen = useCartStore((state) => state.isOpen);
   const error = useCartStore((state) => state.error);
+  const hasHydrated = useCartStore((state) => state.hasHydrated);
   const openCart = useCartStore((state) => state.openCart);
   const closeCart = useCartStore((state) => state.closeCart);
   const toggleCart = useCartStore((state) => state.toggleCart);
@@ -20,6 +21,7 @@ export function useCart() {
     items,
     isOpen,
     error,
+    hasHydrated,
     openCart,
     closeCart,
     toggleCart,

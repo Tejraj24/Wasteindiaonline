@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useEffect, useState } from "react";
 
@@ -10,7 +11,8 @@ interface HeaderProps {
 }
 
 export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
-  const { itemCount, openCart } = useCart();
+  const { itemCount } = useCart();
+  const router = useRouter();
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
 
@@ -67,10 +69,10 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
         </button>
 
         <button
-          onClick={openCart}
+          onClick={() => router.push("/cart")}
           className="body-upper flex items-center gap-1 hover:opacity-70 transition-opacity text-sm md:text-base"
           data-cursor="CART"
-          aria-label="Open cart drawer"
+          aria-label="View cart"
         >
           <span>CART</span>
           <span className="text-[10px] md:text-xs tracking-tighter align-top">[{itemCount}]</span>
