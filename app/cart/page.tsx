@@ -53,16 +53,16 @@ export default function CartPage() {
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <h2 className="text-sm uppercase leading-5 tracking-[0.08em]">{item.title}</h2>
+                        <h2 className="break-words text-sm uppercase leading-5 tracking-[0.08em]">{item.title}</h2>
                         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-white/45">Size: {item.size}</p>
                       </div>
                       <p className="whitespace-nowrap text-sm">{formatPrice(item.price * item.quantity)}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-white/20" aria-label={`Quantity for ${item.title}`}>
-                        <button type="button" onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="px-3 py-2 text-sm transition-colors hover:bg-white/10" aria-label={`Decrease quantity of ${item.title}`}>−</button>
+                        <button type="button" onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)} className="min-h-11 min-w-11 px-3 py-2 text-sm transition-colors hover:bg-white/10" aria-label={`Decrease quantity of ${item.title}`}>−</button>
                         <span className="min-w-8 text-center text-sm" aria-live="polite">{item.quantity}</span>
-                        <button type="button" onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="px-3 py-2 text-sm transition-colors hover:bg-white/10" aria-label={`Increase quantity of ${item.title}`}>+</button>
+                        <button type="button" onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)} className="min-h-11 min-w-11 px-3 py-2 text-sm transition-colors hover:bg-white/10" aria-label={`Increase quantity of ${item.title}`}>+</button>
                       </div>
                       <button type="button" onClick={() => removeItem(item.id, item.size)} className="text-xs uppercase tracking-[0.15em] text-white/55 underline transition-colors hover:text-white">Remove</button>
                     </div>

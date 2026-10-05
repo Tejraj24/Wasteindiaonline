@@ -100,7 +100,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative w-full h-screen min-h-[700px] overflow-hidden bg-brand-dark">
+    <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-dark">
       {/* Slides Container */}
       <div className="absolute inset-0">
         {slides.map((slide, i) => (

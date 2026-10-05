@@ -107,7 +107,7 @@ export function CartDrawer() {
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <h3 className="font-bold uppercase leading-tight">{item.title}</h3>
+                      <h3 className="break-words font-bold uppercase leading-tight">{item.title}</h3>
                       <p className="mt-1 text-sm text-brand-faded">{formatPrice(item.price)}</p>
                       <p className="mt-1 text-xs uppercase tracking-wide text-brand-faded">Size: {item.size}</p>
                     </div>
@@ -116,7 +116,7 @@ export function CartDrawer() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                          className="px-2 py-1 transition-colors hover:bg-black/5"
+                          className="min-h-11 min-w-11 px-2 py-1 transition-colors hover:bg-black/5"
                           aria-label={`Decrease quantity of ${item.title}`}
                         >
                           −
@@ -125,7 +125,7 @@ export function CartDrawer() {
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                          className="px-2 py-1 transition-colors hover:bg-black/5"
+                          className="min-h-11 min-w-11 px-2 py-1 transition-colors hover:bg-black/5"
                           aria-label={`Increase quantity of ${item.title}`}
                         >
                           +

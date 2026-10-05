@@ -118,7 +118,7 @@ function QuickView({ product, onClose }: { product: Product; onClose: () => void
       <div className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto bg-[#111] text-white md:grid-cols-[1.05fr_0.95fr]" data-lenis-prevent>
         <div className="grid grid-cols-2 gap-px bg-white/10">
           {product.images.map((image, index) => (
-            <img key={image} src={image} alt={`${product.title} view ${index + 1}`} className="h-full min-h-[360px] w-full object-cover" />
+            <img key={image} src={image} alt={`${product.title} view ${index + 1}`} className="h-full min-h-[220px] w-full object-cover sm:min-h-[300px] md:min-h-[360px]" />
           ))}
         </div>
         <div className="flex min-h-[420px] flex-col p-6 md:p-10 lg:p-14">
@@ -127,7 +127,7 @@ function QuickView({ product, onClose }: { product: Product; onClose: () => void
             <button type="button" onClick={onClose} className="text-[10px] uppercase tracking-[0.2em] text-white/55 transition hover:text-white">Close</button>
           </div>
           <div className="mt-auto pt-16">
-            <h2 className="max-w-md font-editorial text-4xl leading-[0.9] tracking-[-0.04em] md:text-6xl">{product.title}</h2>
+            <h2 className="max-w-md break-words font-editorial text-4xl leading-[0.9] tracking-[-0.04em] md:text-6xl">{product.title}</h2>
             <p className="mt-5 text-sm text-white/70">{formatPrice(product.price)}</p>
             <p className="mt-8 max-w-sm text-xs leading-6 text-white/50">{product.description}</p>
             <div className="mt-10 border-t border-white/15 pt-6">
@@ -137,7 +137,7 @@ function QuickView({ product, onClose }: { product: Product; onClose: () => void
               </div>
               <div className="mt-4 grid grid-cols-4 gap-2">
                 {sizes.map((option) => (
-                  <button key={option} type="button" onClick={() => setSize(option)} className={`border py-3 text-xs transition ${size === option ? "border-white bg-white text-black" : "border-white/20 text-white/65 hover:border-white/70"}`}>{option}</button>
+                  <button key={option} type="button" onClick={() => setSize(option)} className={`min-h-11 border py-3 text-xs transition ${size === option ? "border-white bg-white text-black" : "border-white/20 text-white/65 hover:border-white/70"}`}>{option}</button>
                 ))}
               </div>
               <button type="button" onClick={handleAdd} disabled={product.soldOut} className="mt-4 w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-[#1e40ff] hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40">

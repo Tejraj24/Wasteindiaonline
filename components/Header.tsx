@@ -62,15 +62,21 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
       <div className="flex items-center gap-8 md:gap-12 justify-end flex-1">
         <button
           onClick={onOpenMenu}
-          className="body-upper hover:opacity-70 transition-opacity text-sm md:text-base"
+          className="body-upper min-h-11 px-2 hover:opacity-70 transition-opacity text-sm md:text-base"
           data-cursor="MENU"
+          aria-label="Open menu"
         >
-          MENU
+          <span className="sr-only md:not-sr-only">MENU</span>
+          <span className="flex w-6 flex-col gap-1 md:hidden" aria-hidden="true">
+            <span className="h-px w-full bg-current" />
+            <span className="h-px w-full bg-current" />
+            <span className="h-px w-full bg-current" />
+          </span>
         </button>
 
         <button
           onClick={() => router.push("/cart")}
-          className="body-upper flex items-center gap-1 hover:opacity-70 transition-opacity text-sm md:text-base"
+          className="body-upper flex min-h-11 items-center gap-1 px-2 hover:opacity-70 transition-opacity text-sm md:text-base"
           data-cursor="CART"
           aria-label="View cart"
         >

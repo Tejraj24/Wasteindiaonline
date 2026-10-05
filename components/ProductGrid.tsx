@@ -77,7 +77,7 @@ export function ProductGrid() {
 
   return (
     <section className="py-24 px-4 md:px-8 bg-brand-light text-brand-dark" ref={gridRef}>
-      <div className="flex justify-between items-end mb-12">
+      <div className="flex items-end justify-between gap-6 mb-12">
         <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter">( FEATURED PRODUCTS )</h2>
         <a href="/shop" className="body-upper hover:opacity-70 transition-opacity hidden md:block">
           VIEW ALL
