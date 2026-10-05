@@ -32,9 +32,9 @@ export default function CartPage() {
   return (
     <main className="min-h-screen bg-black px-6 pb-24 pt-36 text-white md:px-12">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-12 border-b border-white/15 pb-5">
+        <div className="mb-8 border-b border-white/15 pb-5 sm:mb-12">
           <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Cart</p>
-          <h1 className="mt-4 font-editorial text-6xl tracking-[-0.06em] md:text-8xl">Your cart</h1>
+          <h1 className="mt-4 font-editorial text-[clamp(3.5rem,14vw,6rem)] leading-none tracking-[-0.06em] md:text-8xl">Your cart</h1>
         </div>
 
         {items.length === 0 ? (
@@ -45,18 +45,18 @@ export default function CartPage() {
             </a>
           </div>
         ) : (
-          <div className="grid gap-16 lg:grid-cols-[1fr_300px]">
+          <div className="grid gap-10 lg:grid-cols-[1fr_300px] lg:gap-16">
             <ul className="divide-y divide-white/15 border-y border-white/15">
               {items.map((item) => (
-                <li key={`${item.id}-${item.size}`} className="flex gap-5 py-6 sm:gap-8">
-                  <img src={item.image} alt={item.title} className="h-36 w-28 shrink-0 object-cover sm:h-48 sm:w-36" />
+                <li key={`${item.id}-${item.size}`} className="flex gap-3 py-5 sm:gap-8 sm:py-6">
+                  <img src={item.image} alt={item.title} className="aspect-[3/4] h-auto w-24 shrink-0 object-cover sm:w-36" />
                   <div className="flex min-w-0 flex-1 flex-col justify-between gap-6">
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h2 className="break-words text-sm uppercase leading-5 tracking-[0.08em]">{item.title}</h2>
                         <p className="mt-2 text-xs uppercase tracking-[0.18em] text-white/45">Size: {item.size}</p>
                       </div>
-                      <p className="whitespace-nowrap text-sm">{formatPrice(item.price * item.quantity)}</p>
+                      <p className="whitespace-nowrap text-xs sm:text-sm">{formatPrice(item.price * item.quantity)}</p>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center border border-white/20" aria-label={`Quantity for ${item.title}`}>
@@ -71,7 +71,7 @@ export default function CartPage() {
               ))}
             </ul>
 
-            <aside className="h-fit border-t border-white/15 pt-5">
+            <aside className="sticky bottom-0 z-10 -mx-6 border-t border-white/15 bg-black/95 px-6 pb-2 pt-5 backdrop-blur md:static md:mx-0 md:bg-transparent md:px-0 md:pb-0 md:backdrop-blur-none">
               <div className="flex items-center justify-between text-sm uppercase tracking-[0.15em]">
                 <span>Subtotal</span>
                 <span>{formatPrice(subtotal)}</span>

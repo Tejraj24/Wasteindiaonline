@@ -204,12 +204,12 @@ export default function ShopPage() {
           </div>
         </div>
 
-        <div className="mb-12 mt-20 flex items-end justify-between border-b border-white/15 pb-5">
-          <div><p className="text-[10px] uppercase tracking-[0.3em] text-white/40">WASTE. / Archive</p><h2 className="mt-4 font-editorial text-5xl tracking-[-0.05em] md:text-7xl">The collection</h2></div>
+        <div className="mb-10 mt-14 flex items-end justify-between gap-4 border-b border-white/15 pb-5 sm:mb-12 sm:mt-20">
+          <div><p className="text-[10px] uppercase tracking-[0.3em] text-white/40">WASTE. / Archive</p><h2 className="mt-4 font-editorial text-[clamp(2.75rem,9vw,4.5rem)] leading-none tracking-[-0.05em]">The collection</h2></div>
           <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">{visibleProducts.length} pieces</span>
         </div>
 
-        <div className="grid grid-cols-1 gap-x-5 gap-y-16 sm:grid-cols-2 lg:grid-cols-4 lg:gap-y-24">
+        <div className="grid grid-cols-2 gap-x-3 gap-y-12 sm:gap-x-5 sm:gap-y-16 lg:grid-cols-4 lg:gap-y-24">
           {visibleProducts.map((product) => <ProductCard key={product.id} product={product} onQuickView={setSelectedProduct} />)}
         </div>
       </section>

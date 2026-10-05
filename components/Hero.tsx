@@ -122,9 +122,9 @@ export function Hero() {
                 className="absolute inset-0 w-full h-full object-cover object-center"
               />
 
-              <div className="absolute inset-0 z-20 flex flex-col justify-end p-6 md:p-12 pb-16 md:pb-24 pointer-events-none">
+              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-16 sm:p-6 md:p-12 md:pb-24">
                 <div className="max-w-xl editorial-reveal">
-                  <div className="mb-5 flex items-end justify-between gap-6 text-brand-light/90">
+                  <div className="mb-4 flex items-end justify-between gap-4 text-brand-light/90 sm:mb-5 sm:gap-6">
                     <span className="font-editorial text-[clamp(2.8rem,5vw,5rem)] leading-none tracking-[-0.08em]">
                       {String(activeIndex + 1).padStart(2, "0")}
                     </span>
@@ -145,7 +145,7 @@ export function Hero() {
                     <span className="text-[0.68rem] md:text-[0.8rem] uppercase tracking-[0.4em] font-medium text-brand-light/75">
                       EXPLORE OUR FIRST
                     </span>
-                    <span className="font-editorial text-[clamp(3rem,6vw,7rem)] leading-[0.78] tracking-[-0.05em] text-brand-light">
+                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.78] tracking-[-0.05em] text-brand-light">
                       COLLECTION
                     </span>
                   </div>

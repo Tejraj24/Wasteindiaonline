@@ -76,15 +76,15 @@ export function ProductGrid() {
   }, []);
 
   return (
-    <section className="py-24 px-4 md:px-8 bg-brand-light text-brand-dark" ref={gridRef}>
-      <div className="flex items-end justify-between gap-6 mb-12">
-        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter">( FEATURED PRODUCTS )</h2>
+    <section className="bg-brand-light px-4 py-16 text-brand-dark sm:py-20 md:px-8 md:py-24" ref={gridRef}>
+      <div className="mb-8 flex items-end justify-between gap-4 sm:mb-12">
+        <h2 className="max-w-[15rem] text-[clamp(1.35rem,4vw,3rem)] font-bold uppercase leading-none tracking-tighter sm:max-w-none">( FEATURED PRODUCTS )</h2>
         <a href="/shop" className="body-upper hover:opacity-70 transition-opacity hidden md:block">
           VIEW ALL
         </a>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[10px]">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-8 sm:gap-3 lg:grid-cols-4">
         {products.map((product, i) => (
           <a
             key={product.id}
@@ -94,7 +94,7 @@ export function ProductGrid() {
             data-cursor="VIEW"
           >
             {/* Image Container */}
-            <div className="relative w-full aspect-[3/4] bg-brand-grey overflow-hidden rounded-none">
+            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none bg-brand-grey">
               {product.badge && (
                 <div className="absolute top-3 left-3 z-10 bg-brand-blue text-white px-2 py-1 text-xs font-bold uppercase tracking-widest pointer-events-none">
                   {product.badge}
@@ -115,7 +115,7 @@ export function ProductGrid() {
               {/* Dark Overlay on Hover */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
               {/* Meta - Hidden by default, shown on hover */}
-              <div className="absolute inset-0 flex flex-col justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out">
+              <div className="absolute inset-0 hidden flex-col justify-between p-3 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 sm:flex sm:p-4">
                 <div />
                 <div className="flex justify-between items-start font-bold uppercase text-sm md:text-base text-white">
                   <h3 className="tracking-tight max-w-[70%] leading-tight">{product.name}</h3>
@@ -126,6 +126,14 @@ export function ProductGrid() {
                         ${product.originalPrice}
                       </span>
                     )}
+                  </div>
+                  <div className="flex min-h-[4.5rem] flex-col justify-between gap-1 pt-3 sm:hidden">
+                    <h3 className="line-clamp-2 text-[10px] font-bold uppercase leading-[1.25] tracking-[0.06em]">{product.name}</h3>
+                    <div className="flex items-end justify-between gap-2 text-[10px] font-semibold">
+                      <span>${product.price}</span>
+                      {product.originalPrice && <span className="text-[9px] text-black/45 line-through">${product.originalPrice}</span>}
+                    </div>
+                    <span className="text-[9px] uppercase tracking-[0.14em] text-black/55">Quick view</span>
                   </div>
                 </div>
               </div>
