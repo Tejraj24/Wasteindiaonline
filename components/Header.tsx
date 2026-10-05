@@ -81,7 +81,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
           aria-label="View cart"
         >
           <span className="hidden md:inline">CART</span>
-          <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-blue px-1 text-[9px] leading-none text-white md:static md:h-auto md:min-w-0 md:rounded-none md:bg-transparent md:px-0 md:text-xs md:text-current">[{itemCount}]</span>
+          <span className="absolute right-0 top-1/2 flex h-4 min-w-4 -translate-y-1/2 items-center justify-center rounded-full bg-brand-blue px-1 text-[9px] leading-none text-white md:static md:top-auto md:h-auto md:min-w-0 md:translate-y-0 md:rounded-none md:bg-transparent md:px-0 md:text-xs md:text-current">[{itemCount}]</span>
         </button>
       </div>
     </header>
