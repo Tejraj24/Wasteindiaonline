@@ -16,6 +16,8 @@ interface CartStore {
   items: CartItem[];
   isOpen: boolean;
   error: string | null;
+  hasHydrated: boolean;
+  setHasHydrated: () => void;
   openCart: () => void;
   closeCart: () => void;
   toggleCart: () => void;
@@ -35,10 +37,19 @@ export const useCartStore = create<CartStore>()(
       items: [],
       isOpen: false,
       error: null,
+      hasHydrated: false,
+      setHasHydrated: () => set({ hasHydrated: true }),
       openCart: () => set({ isOpen: true, error: null }),
       closeCart: () => set({ isOpen: false, error: null }),
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen, error: null })),
       addItem: (newItem, quantity = 1) => {
+        if (quantity <= 0 || quantity > MAX_STOCK_PER_ITEM) {
+          set({
+            isOpen: true,
+            error: "Product is not available in this quantity",
+          });
+          return;
+        }
         set((state) => {
           const existingIndex = state.items.findIndex(
             (i) => i.id === newItem.id && i.size === newItem.size
@@ -96,6 +107,11 @@ export const useCartStore = create<CartStore>()(
     {
       name: "studio-cart-storage",
       partialize: (state) => ({ items: state.items }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state.hasHydrated = true;
+        }
+      },
     }
   )
 );
