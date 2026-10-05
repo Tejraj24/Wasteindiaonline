@@ -125,27 +125,27 @@ export function Hero() {
               <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-16 sm:p-6 md:p-12 md:pb-24">
                 <div className="max-w-xl editorial-reveal">
                   <div className="mb-4 flex items-end justify-between gap-4 text-brand-light/90 sm:mb-5 sm:gap-6">
-                    <span className="font-editorial text-[clamp(2.8rem,5vw,5rem)] leading-none tracking-[-0.08em]">
+                    <span className="font-editorial text-[clamp(2.6rem,5vw,5rem)] leading-[0.84] tracking-[-0.045em]">
                       {String(activeIndex + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-[0.65rem] md:text-[0.75rem] uppercase tracking-[0.45em] font-medium opacity-70">
+                    <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] opacity-65 md:text-[0.7rem]">
                       01 / 03
                     </span>
                   </div>
 
                   <a
                     href="/shop"
-                    className="pointer-events-auto inline-block text-[clamp(2.2rem,5vw,5.5rem)] font-semibold uppercase leading-[0.9] tracking-[-0.07em] text-brand-light transition-opacity duration-300 hover:opacity-80"
+                    className="pointer-events-auto inline-block text-[clamp(2rem,4.6vw,5rem)] font-light uppercase leading-[0.86] tracking-[0.055em] text-brand-light transition-opacity duration-300 hover:opacity-80"
                     data-cursor="SHOP NOW"
                   >
                     SHOP NOW
                   </a>
 
                   <div className="mt-3 flex flex-col gap-1 text-brand-light">
-                    <span className="text-[0.68rem] md:text-[0.8rem] uppercase tracking-[0.4em] font-medium text-brand-light/75">
+                    <span className="text-[0.62rem] font-light uppercase tracking-[0.48em] text-brand-light/70 md:text-[0.72rem]">
                       EXPLORE OUR FIRST
                     </span>
-                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.78] tracking-[-0.05em] text-brand-light">
+                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.72] tracking-[-0.065em] text-brand-light">
                       COLLECTION
                     </span>
                   </div>

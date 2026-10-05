@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import products from "@/data/products.json";
 import { Footer } from "@/components/Footer";
@@ -89,6 +90,12 @@ function ProductCard({ product, onQuickView }: { product: Product; onQuickView: 
           </div>
         </div>
       </button>
+      <Link
+        href={`/product/${product.id}`}
+        className="mt-4 inline-flex text-[10px] uppercase tracking-[0.2em] text-white/50 transition hover:text-white"
+      >
+        View full details
+      </Link>
     </article>
   );
 }
