@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/hooks/useCart";
+import { WishlistButton } from "@/components/WishlistButton";
 
 type ProductPurchasePanelProps = {
   product: {
@@ -11,6 +12,7 @@ type ProductPurchasePanelProps = {
     compareAtPrice: number | null;
     image: string;
     sku: string;
+    category: string;
     soldOut: boolean;
   };
 };
@@ -62,6 +64,19 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
       >
         {product.soldOut ? "Sold out" : "Add to cart"}
       </button>
+      <div className="mt-3">
+        <WishlistButton
+          compact
+          item={{
+            productId: product.id,
+            name: product.title,
+            slug: product.id,
+            image: product.image,
+            price: product.price,
+            category: product.category,
+          }}
+        />
+      </div>
     </div>
   );
 }

@@ -148,6 +148,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
                 compareAtPrice: product.compareAtPrice,
                 image: product.images[0],
                 sku: product.sku,
+                category: product.category,
                 soldOut: product.soldOut,
               }}
             />

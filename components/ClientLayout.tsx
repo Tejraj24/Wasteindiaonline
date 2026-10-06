@@ -8,6 +8,7 @@ import { FullscreenMenu } from "./FullscreenMenu";
 import { CartDrawer } from "./CartDrawer";
 import { useLenis } from "@/hooks/useLenis";
 import { AuthProvider } from "./auth/AuthProvider";
+import { WishlistProvider } from "./WishlistProvider";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -18,21 +19,23 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthProvider>
-      <Preloader onComplete={() => setIsPreloaderActive(false)} />
-      <CustomCursor />
-      <CartDrawer />
-      <FullscreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
-      
-      {!isPreloaderActive && (
-        <Header 
-          onOpenMenu={() => setIsMenuOpen(true)} 
-          isDarkTheme={true} 
-        />
-      )}
+      <WishlistProvider>
+        <Preloader onComplete={() => setIsPreloaderActive(false)} />
+        <CustomCursor />
+        <CartDrawer />
+        <FullscreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <main className="w-full relative min-h-screen">
-        {children}
-      </main>
+        {!isPreloaderActive && (
+          <Header
+            onOpenMenu={() => setIsMenuOpen(true)}
+            isDarkTheme={true}
+          />
+        )}
+
+        <main className="w-full relative min-h-screen">
+          {children}
+        </main>
+      </WishlistProvider>
     </AuthProvider>
   );
 }

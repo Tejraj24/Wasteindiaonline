@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useWishlist } from "@/components/WishlistProvider";
 import { useEffect, useRef, useState } from "react";
 
 interface HeaderProps {
@@ -14,6 +15,7 @@ interface HeaderProps {
 export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
   const { itemCount } = useCart();
   const { user, loading, logout } = useAuth();
+  const { items: wishlistItems } = useWishlist();
   const router = useRouter();
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
@@ -119,6 +121,17 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
         </button>
 
         <div ref={profileRef} className="relative hidden items-center md:flex">
+          {user && !loading && (
+            <Link
+              href="/account#wishlist"
+              className="hidden items-center gap-1 text-[10px] uppercase tracking-[0.14em] transition-opacity hover:opacity-60 md:flex"
+              aria-label={`${wishlistItems.length} saved wishlist items`}
+            >
+              <span className="text-brand-blue">♥</span>
+              <span>{wishlistItems.length}</span>
+            </Link>
+          )}
+
           <button
             type="button"
             onClick={() => {

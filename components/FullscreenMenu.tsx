@@ -111,6 +111,18 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 {loading || !user ? "LOGIN" : "ACCOUNT"}
               </Link>
             </li>
+            {user && !loading && (
+              <li className="overflow-hidden">
+                <Link
+                  href="/account#wishlist"
+                  onClick={onClose}
+                  className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                  data-cursor="WISHLIST"
+                >
+                  WISHLIST
+                </Link>
+              </li>
+            )}
           </ul>
           {user && !loading && (
             <button type="button" onClick={() => { onClose(); void logout(); }} className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-light/50 transition hover:text-brand-light">

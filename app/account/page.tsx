@@ -6,13 +6,25 @@ import { AuthGate } from "@/components/auth/AuthGate";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { Address, createAddress, deleteAddress, getUserProfile, listAddresses, updateAddress, updateUserProfile, UserProfile } from "@/lib/firebase/account";
 import { useEffect } from "react";
+import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/components/WishlistProvider";
 
 const accountSections = ["Profile", "Wishlist", "Orders", "Addresses", "Settings"] as const;
 type AccountSection = (typeof accountSections)[number];
 
+function formatPrice(price: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
+
 function AccountContent() {
   const router = useRouter();
   const { user, logout, resendVerification, refreshVerification } = useAuth();
+  const { items: wishlistItems, loading: wishlistLoading, error: wishlistError, remove: removeWishlistItem } = useWishlist();
+  const { addItem } = useCart();
   const [activeSection, setActiveSection] = useState<AccountSection>("Profile");
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -98,6 +110,19 @@ function AccountContent() {
     } finally {
       setIsLoggingOut(false);
     }
+  }
+
+  function moveToCart(item: (typeof wishlistItems)[number]) {
+    addItem({
+      id: item.productId,
+      title: item.name,
+      price: item.price,
+      compareAtPrice: null,
+      image: item.image,
+      size: "M",
+      sku: item.productId,
+    });
+    void removeWishlistItem(item.productId, "Moved to Cart");
   }
 
   return (
@@ -191,7 +216,41 @@ function AccountContent() {
             )}
 
             {activeSection === "Wishlist" && (
-              <Placeholder title="Wishlist" message="Wishlist is empty" detail="Pieces you save for later will appear here." />
+              <div className="max-w-4xl">
+                <p className="text-[10px] uppercase tracking-[0.25em] text-white/45">Account / Wishlist</p>
+                {wishlistLoading ? (
+                  <div className="mt-10 grid gap-4 sm:grid-cols-2">
+                    {[1, 2].map((item) => <div key={item} className="h-36 animate-pulse bg-white/10" />)}
+                  </div>
+                ) : wishlistItems.length === 0 ? (
+                  <div className="mt-10 border-y border-white/15 py-16 sm:py-24">
+                    <h2 className="font-editorial text-5xl leading-none tracking-[-0.05em] sm:text-7xl">No saved pieces yet.</h2>
+                    <p className="mt-6 max-w-sm text-sm leading-6 text-white/45">Keep the pieces that speak to you close.</p>
+                    <button type="button" onClick={() => window.location.href = "/shop"} className="mt-8 border-b border-white pb-2 text-[10px] uppercase tracking-[0.2em] transition hover:border-brand-blue hover:text-brand-blue">Explore Collection</button>
+                  </div>
+                ) : (
+                  <div className="mt-10 grid gap-x-5 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+                    {wishlistItems.map((item) => (
+                      <article key={item.productId} className="group">
+                        <div className="relative aspect-[3/4] overflow-hidden bg-[#111]">
+                          <img src={item.image} alt={item.name} className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.03]" loading="lazy" />
+                          <span className="absolute left-3 top-3 bg-black/70 px-2 py-1 text-[9px] uppercase tracking-[0.16em] text-green-300 backdrop-blur-sm">Available</span>
+                        </div>
+                        <div className="pt-4">
+                          <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">{item.category || "Collection"}</p>
+                          <h2 className="mt-2 text-sm uppercase leading-5 tracking-[0.08em]">{item.name.split(" — ")[0]}</h2>
+                          <p className="mt-2 text-sm text-white/65">{formatPrice(item.price)}</p>
+                          <div className="mt-5 flex flex-wrap gap-5 text-[10px] uppercase tracking-[0.16em]">
+                            <button type="button" onClick={() => moveToCart(item)} className="border-b border-white pb-1 transition hover:border-brand-blue hover:text-brand-blue">Move to cart</button>
+                            <button type="button" onClick={() => void removeWishlistItem(item.productId)} className="text-white/45 underline transition hover:text-white">Remove</button>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+                {wishlistError && <p className="mt-5 text-sm text-red-300" role="alert">{wishlistError}</p>}
+              </div>
             )}
             {activeSection === "Orders" && (
               <Placeholder title="Orders" message="No orders yet" detail="Your order history will appear here after your first purchase." />

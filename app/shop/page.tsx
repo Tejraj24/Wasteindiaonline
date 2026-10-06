@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/hooks/useCart";
 import products from "@/data/products.json";
 import { Footer } from "@/components/Footer";
+import { WishlistButton } from "@/components/WishlistButton";
 
 type Product = (typeof products)[number];
 type Filter = "All" | "T-Shirts" | "Shirts" | "Hoodies" | "Oversized" | "Cargo" | "Pants" | "Outerwear" | "Accessories";
@@ -53,13 +54,14 @@ function shortName(title: string) {
 function ProductCard({ product, onQuickView }: { product: Product; onQuickView: (product: Product) => void }) {
   return (
     <article className="group">
-      <button
-        type="button"
-        onClick={() => onQuickView(product)}
-        className="block w-full text-left"
-        data-cursor="VIEW"
-        aria-label={`Quick view ${product.title}`}
-      >
+      <div className="relative">
+        <button
+          type="button"
+          onClick={() => onQuickView(product)}
+          className="block w-full text-left"
+          data-cursor="VIEW"
+          aria-label={`Quick view ${product.title}`}
+        >
         <div className="relative aspect-[3/4] overflow-hidden bg-[#111]">
           <img
             src={product.images[0]}
@@ -89,7 +91,11 @@ function ProductCard({ product, onQuickView }: { product: Product; onQuickView: 
             {product.compareAtPrice && <p className="mt-1 text-white/30 line-through">{formatPrice(product.compareAtPrice)}</p>}
           </div>
         </div>
-      </button>
+        </button>
+        <div className="absolute right-3 top-3 z-10 md:right-4 md:top-4">
+          <WishlistButton item={{ productId: product.id, name: product.title, slug: product.id, image: product.images[0], price: product.price, category: product.category }} />
+        </div>
+      </div>
       <Link
         href={`/product/${product.id}`}
         className="mt-4 inline-flex text-[10px] uppercase tracking-[0.2em] text-white/50 transition hover:text-white"

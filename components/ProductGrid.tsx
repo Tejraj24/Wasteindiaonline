@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { WishlistButton } from "@/components/WishlistButton";
 
 export interface Product {
   id: string;
@@ -86,15 +87,18 @@ export function ProductGrid() {
 
       <div className="grid grid-cols-2 gap-x-2 gap-y-8 sm:gap-3 lg:grid-cols-4">
         {products.map((product, i) => (
-          <a
+          <div
             key={product.id}
-            href={`/product/${product.id}`}
-            ref={(el) => { cardsRef.current[i] = el; }}
-            className="group flex flex-col relative"
-            data-cursor="VIEW"
+            className="group relative flex flex-col"
           >
-            {/* Image Container */}
-            <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none bg-brand-grey">
+            <a
+              href={`/product/${product.id}`}
+              ref={(el) => { cardsRef.current[i] = el; }}
+              className="flex flex-col"
+              data-cursor="VIEW"
+            >
+              {/* Image Container */}
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none bg-brand-grey">
               {product.badge && (
                 <div className="absolute top-3 left-3 z-10 bg-brand-blue text-white px-2 py-1 text-xs font-bold uppercase tracking-widest pointer-events-none">
                   {product.badge}
@@ -137,8 +141,12 @@ export function ProductGrid() {
                   </div>
                 </div>
               </div>
+              </div>
+            </a>
+            <div className="absolute right-3 top-3 z-20">
+              <WishlistButton item={{ productId: product.id, name: product.name, slug: product.id, image: product.image1, price: product.price, category: "Featured" }} />
             </div>
-          </a>
+          </div>
         ))}
       </div>
       
