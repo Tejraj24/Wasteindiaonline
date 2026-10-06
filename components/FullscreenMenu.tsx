@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import Link from "next/link";
 import { useLenis } from "@/hooks/useLenis";
+import { useAuth } from "./auth/AuthProvider";
 
 interface FullscreenMenuProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
   const bgPanelsRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLUListElement>(null);
   const { stopScroll, startScroll } = useLenis();
+  const { user, loading, logout } = useAuth();
 
   useEffect(() => {
     if (!overlayRef.current || !bgPanelsRef.current || !linksRef.current) return;
@@ -99,7 +101,22 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 </Link>
               </li>
             ))}
+            <li className="overflow-hidden">
+              <Link
+                href={loading || !user ? "/login" : "/account"}
+                onClick={onClose}
+                className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                data-cursor="ACCOUNT"
+              >
+                {loading || !user ? "LOGIN" : "ACCOUNT"}
+              </Link>
+            </li>
           </ul>
+          {user && !loading && (
+            <button type="button" onClick={() => { onClose(); void logout(); }} className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-light/50 transition hover:text-brand-light">
+              Log out
+            </button>
+          )}
         </div>
       </div>
     </div>
