@@ -7,6 +7,7 @@ import { CustomCursor } from "./CustomCursor";
 import { FullscreenMenu } from "./FullscreenMenu";
 import { CartDrawer } from "./CartDrawer";
 import { useLenis } from "@/hooks/useLenis";
+import { AuthProvider } from "./auth/AuthProvider";
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,7 +17,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   const { lenis } = useLenis();
 
   return (
-    <>
+    <AuthProvider>
       <Preloader onComplete={() => setIsPreloaderActive(false)} />
       <CustomCursor />
       <CartDrawer />
@@ -29,11 +30,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
         />
       )}
 
-      {/* TODO: Add FullscreenMenu overlay and CartDrawer here */}
-      
       <main className="w-full relative min-h-screen">
         {children}
       </main>
-    </>
+    </AuthProvider>
   );
 }
