@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyFirebaseToken } from "@/lib/firebase-admin";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 /**
  * Ensures a PostgreSQL User record exists for the authenticated Firebase user.
  * Guarantees upsert semantics using Firebase UID as the stable identity.

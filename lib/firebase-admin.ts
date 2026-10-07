@@ -51,8 +51,17 @@ function getAdminApp() {
   });
 }
 
-const adminApp = getAdminApp();
-const adminAuth = getAuth(adminApp);
+let adminAuth: ReturnType<typeof getAuth> | null = null;
+
+function getAdminAuth() {
+  if (adminAuth) {
+    return adminAuth;
+  }
+
+  const app = getAdminApp();
+  adminAuth = getAuth(app);
+  return adminAuth;
+}
 
 /**
  * Verify a Firebase ID token from an incoming request.
@@ -70,5 +79,6 @@ export async function verifyFirebaseToken(
   }
 
   const idToken = authHeader.split("Bearer ")[1];
-  return adminAuth.verifyIdToken(idToken);
+  const auth = getAdminAuth();
+  return auth.verifyIdToken(idToken);
 }
