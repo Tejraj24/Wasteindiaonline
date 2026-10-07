@@ -1,8 +1,7 @@
-﻿node_modules
+node_modules
 .next
 .env.local
 .env
 
-/lib/generated/prisma
 
 firebase-service-account.json
