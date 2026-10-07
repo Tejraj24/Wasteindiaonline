@@ -1,5 +1,4 @@
-import { collection, deleteDoc, doc, getDocs, serverTimestamp, setDoc } from "firebase/firestore";
-import { firebaseDb } from "./client";
+import { firebaseAuth } from "./client";
 
 export type WishlistItem = {
   productId: string;
@@ -11,29 +10,70 @@ export type WishlistItem = {
   createdAt?: unknown;
 };
 
-function requireDb() {
-  if (!firebaseDb) {
-    throw new Error("Firestore is not configured. Add the Firebase environment variables.");
+/**
+ * Retrieves the current Firebase user ID token for secure API authorization.
+ */
+async function getAuthHeaders(): Promise<HeadersInit> {
+  const currentUser = firebaseAuth?.currentUser;
+  if (!currentUser) {
+    throw new Error("You must be signed in to access the wishlist.");
   }
-  return firebaseDb;
+
+  const token = await currentUser.getIdToken();
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
 }
 
-function wishlistCollection(uid: string) {
-  return collection(requireDb(), "users", uid, "wishlist");
-}
-
-export async function listWishlistItems(uid: string) {
-  const snapshot = await getDocs(wishlistCollection(uid));
-  return snapshot.docs.map((item) => item.data() as WishlistItem);
-}
-
-export async function saveWishlistItem(uid: string, item: WishlistItem) {
-  await setDoc(doc(wishlistCollection(uid), item.productId), {
-    ...item,
-    createdAt: serverTimestamp(),
+/**
+ * Fetches the authenticated user's wishlist from PostgreSQL via the Prisma API.
+ */
+export async function listWishlistItems(_uid?: string): Promise<WishlistItem[]> {
+  const headers = await getAuthHeaders();
+  const response = await fetch("/api/wishlist", {
+    method: "GET",
+    headers,
   });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.error || "We could not load your wishlist.");
+  }
+
+  return response.json();
 }
 
-export async function removeWishlistItem(uid: string, productId: string) {
-  await deleteDoc(doc(wishlistCollection(uid), productId));
+/**
+ * Saves a product snapshot to the user's wishlist in PostgreSQL.
+ */
+export async function saveWishlistItem(_uid: string, item: WishlistItem): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch("/api/wishlist", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ item }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.error || "We could not save this item to your wishlist.");
+  }
+}
+
+/**
+ * Removes a product from the user's wishlist in PostgreSQL.
+ */
+export async function removeWishlistItem(_uid: string, productId: string): Promise<void> {
+  const headers = await getAuthHeaders();
+  const response = await fetch("/api/wishlist", {
+    method: "DELETE",
+    headers,
+    body: JSON.stringify({ productId }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.error || "We could not remove this item from your wishlist.");
+  }
 }
