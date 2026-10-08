@@ -1,6 +1,6 @@
 "use client";
 
-import { useCartStore } from "@/lib/store";
+import { resetCartStorage, useCartStore } from "@/lib/store";
 
 export function useCart() {
   const items = useCartStore((state) => state.items);
@@ -29,7 +29,11 @@ export function useCart() {
     removeItem,
     updateQuantity,
     clearCart,
+    resetCartStorage,
     subtotal: subtotal(),
     itemCount: itemCount(),
   };
 }
+
+export { resetCartStorage };
+
