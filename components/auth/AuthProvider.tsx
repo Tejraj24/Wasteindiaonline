@@ -12,9 +12,10 @@ import {
   signOut,
   User,
 } from "firebase/auth";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { firebaseAuth, isFirebaseConfigured } from "@/lib/firebase/client";
 import { ensureUserProfile } from "@/lib/firebase/account";
+import { resetCartStorage } from "@/lib/store";
 
 type AuthContextValue = {
   user: User | null;
@@ -41,6 +42,7 @@ function requireAuth() {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const previousUserRef = useRef<User | null>(null);
 
   useEffect(() => {
     if (!firebaseAuth) {
@@ -49,7 +51,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return onAuthStateChanged(firebaseAuth, async (nextUser) => {
+      const previousUser = previousUserRef.current;
+      previousUserRef.current = nextUser;
+
       setUser(nextUser);
+
+      // Detect authenticated -> null transition and reset cart
+      if (previousUser && !nextUser) {
+        resetCartStorage();
+      }
+
       if (nextUser) {
         try {
           await ensureUserProfile(nextUser.uid, nextUser.email ?? "", nextUser.displayName ?? "");
@@ -79,7 +90,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const result = await signInWithPopup(requireAuth(), new GoogleAuthProvider());
         return result.user;
       },
-      logout: () => signOut(requireAuth()),
+      logout: async () => {
+        resetCartStorage();
+        await signOut(requireAuth());
+      },
       sendPasswordReset: (email) => sendPasswordResetEmail(requireAuth(), email),
       resendVerification: async () => {
         const currentUser = requireAuth().currentUser;

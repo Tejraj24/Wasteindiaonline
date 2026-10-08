@@ -31,6 +31,8 @@ interface CartStore {
 
 const MAX_STOCK_PER_ITEM = 5;
 
+export const CART_STORAGE_KEY = "studio-cart-storage";
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
@@ -96,7 +98,16 @@ export const useCartStore = create<CartStore>()(
           error: null,
         }));
       },
-      clearCart: () => set({ items: [], error: null }),
+      clearCart: () => {
+        set({ items: [], error: null });
+        if (typeof window !== "undefined" && window.localStorage) {
+          try {
+            window.localStorage.removeItem(CART_STORAGE_KEY);
+          } catch {
+            // safe fallback
+          }
+        }
+      },
       subtotal: () => {
         return get().items.reduce((total, item) => total + item.price * item.quantity, 0);
       },
@@ -105,7 +116,7 @@ export const useCartStore = create<CartStore>()(
       },
     }),
     {
-      name: "studio-cart-storage",
+      name: CART_STORAGE_KEY,
       partialize: (state) => ({ items: state.items }),
       onRehydrateStorage: () => (state) => {
         if (state) {
@@ -115,3 +126,22 @@ export const useCartStore = create<CartStore>()(
     }
   )
 );
+
+export function resetCartStorage() {
+  useCartStore.setState({ items: [], error: null });
+  if (typeof window !== "undefined") {
+    if (window.localStorage) {
+      try {
+        window.localStorage.removeItem(CART_STORAGE_KEY);
+      } catch {
+        // safe fallback
+      }
+    }
+    try {
+      useCartStore.persist?.clearStorage?.();
+    } catch {
+      // safe fallback
+    }
+  }
+}
+
