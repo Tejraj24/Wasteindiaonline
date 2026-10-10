@@ -6,6 +6,7 @@ import { useCart } from "@/hooks/useCart";
 import { Footer } from "@/components/Footer";
 import { WishlistButton } from "@/components/WishlistButton";
 import { StorefrontProduct } from "@/lib/services/product.service";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const editorialImages = [
   "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1800&q=85",
@@ -285,7 +286,11 @@ export function ShopCatalogClient({
           }`}
         >
           <div className="mb-8 flex items-end justify-between border-b border-white/25 pb-5 text-[10px] uppercase tracking-[0.28em] text-white/65 md:mb-10">
-            <span>WASTE.</span>
+            <div className="flex items-center gap-4">
+              <BackButton fallbackHref="/" label="Home" variant="default" className="text-white/65 hover:text-white" />
+              <span className="hidden text-white/30 sm:inline">/</span>
+              <span className="hidden sm:inline">WASTE.</span>
+            </div>
             <span>Collection 01</span>
             <span>2026 / India</span>
           </div>

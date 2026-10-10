@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "@/hooks/useCart";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -33,7 +34,10 @@ export default function CartPage() {
     <main className="min-h-screen bg-black px-6 pb-24 pt-36 text-white md:px-12">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 border-b border-white/15 pb-5 sm:mb-12">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Cart</p>
+          <div className="mb-4 flex items-center justify-between">
+            <BackButton fallbackHref="/shop" label="Continue shopping" variant="default" />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Cart</p>
+          </div>
           <h1 className="mt-4 font-editorial text-[clamp(3.5rem,14vw,6rem)] leading-none tracking-[-0.06em] md:text-8xl">Your cart</h1>
         </div>
 

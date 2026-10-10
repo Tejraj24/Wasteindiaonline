@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
 import { UserRole } from "@/lib/auth/roles";
+import { BackButton } from "@/components/navigation/BackButton";
 
 type AuthMode = "login" | "signup";
 
@@ -103,7 +104,10 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
   return (
     <div className="w-full max-w-md">
-      <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
+      <div className="mb-6 flex items-center justify-between">
+        <BackButton fallbackHref="/" label="Home" variant="default" />
+        <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
+      </div>
       <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em]">
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>

@@ -6,6 +6,7 @@ import {
   StorefrontProduct,
 } from "@/lib/services/product.service";
 import { ProductPurchasePanel } from "@/components/ProductPurchasePanel";
+import { BackButton } from "@/components/navigation/BackButton";
 
 export const revalidate = 0; // Dynamic server rendering with live product updates
 
@@ -132,20 +133,23 @@ export default async function ProductPage({
   return (
     <main className="min-h-screen bg-black pb-24 pt-32 text-white md:pt-44">
       <div className="mx-auto max-w-[1600px] px-6 md:px-12">
-        <nav
-          aria-label="Breadcrumb"
-          className="mb-8 text-[10px] uppercase tracking-[0.25em] text-white/45"
-        >
-          <Link href="/" className="transition hover:text-white">
-            WASTE.
-          </Link>
-          <span className="mx-3 text-white/20">/</span>
-          <Link href="/shop" className="transition hover:text-white">
-            Shop
-          </Link>
-          <span className="mx-3 text-white/20">/</span>
-          <span className="text-white/70">{product.title.split(" — ")[0]}</span>
-        </nav>
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+          <BackButton fallbackHref="/shop" label="Back to shop" variant="default" />
+          <nav
+            aria-label="Breadcrumb"
+            className="text-[10px] uppercase tracking-[0.25em] text-white/45"
+          >
+            <Link href="/" className="transition hover:text-white">
+              WASTE.
+            </Link>
+            <span className="mx-3 text-white/20">/</span>
+            <Link href="/shop" className="transition hover:text-white">
+              Shop
+            </Link>
+            <span className="mx-3 text-white/20">/</span>
+            <span className="text-white/70">{product.title.split(" — ")[0]}</span>
+          </nav>
+        </div>
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,0.85fr)] lg:gap-20">
           <ProductGallery product={product} />
