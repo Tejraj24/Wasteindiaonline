@@ -13,8 +13,7 @@ interface FullscreenMenuProps {
 
 const baseNavLinks = [
   { name: "SHOP", href: "/shop" },
-  { name: "EDITORIAL", href: "/editorial" },
-  { name: "ABOUT", href: "/about" },
+  { name: "OUR STORY", href: "/our-story" },
   { name: "CONTACT", href: "/contact" },
 ];
 
