@@ -8,6 +8,7 @@ import { Address, createAddress, deleteAddress, getUserProfile, listAddresses, u
 import { useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/components/WishlistProvider";
+import { BackButton } from "@/components/navigation/BackButton";
 
 const accountSections = ["Profile", "Wishlist", "Orders", "Addresses", "Settings"] as const;
 type AccountSection = (typeof accountSections)[number];
@@ -135,7 +136,10 @@ function AccountContent() {
     <main className="min-h-screen bg-black px-6 pb-24 pt-36 text-white md:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="border-b border-white/15 pb-8">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Private account</p>
+          <div className="mb-4 flex items-center justify-between">
+            <BackButton fallbackHref="/shop" label="Back to shop" variant="default" />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Private account</p>
+          </div>
           <div className="mt-5 flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
             <h1 className="font-editorial text-[clamp(4rem,12vw,8rem)] leading-[0.78] tracking-[-0.06em]">Your account</h1>
             <p className="max-w-xs text-xs leading-5 text-white/45">A considered space for your WASTE. profile and future collection activity.</p>

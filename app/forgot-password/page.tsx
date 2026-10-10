@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { BackButton } from "@/components/navigation/BackButton";
 
 export default function ForgotPasswordPage() {
   const { sendPasswordReset, isConfigured } = useAuth();
@@ -30,7 +31,10 @@ export default function ForgotPasswordPage() {
     <main className="flex min-h-screen items-center bg-black px-6 pb-24 pt-36 text-white md:px-12">
       <div className="mx-auto w-full max-w-6xl">
         <div className="w-full max-w-md">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
+          <div className="mb-6 flex items-center justify-between">
+            <BackButton fallbackHref="/login" label="Back to login" variant="default" />
+            <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
+          </div>
           <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em]">Reset password</h1>
           <p className="mt-8 text-sm leading-6 text-white/55">Enter your email and we will send instructions if an account exists.</p>
           <form onSubmit={submit} className="mt-10">
