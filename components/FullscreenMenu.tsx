@@ -11,7 +11,7 @@ interface FullscreenMenuProps {
   onClose: () => void;
 }
 
-const navLinks = [
+const baseNavLinks = [
   { name: "SHOP", href: "/shop" },
   { name: "EDITORIAL", href: "/editorial" },
   { name: "ABOUT", href: "/about" },
@@ -23,7 +23,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
   const bgPanelsRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<HTMLUListElement>(null);
   const { stopScroll, startScroll } = useLenis();
-  const { user, loading, logout } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
 
   useEffect(() => {
     if (!overlayRef.current || !bgPanelsRef.current || !linksRef.current) return;
@@ -89,7 +89,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
 
         <div className="flex-1 flex flex-col justify-center mt-12 md:mt-0">
           <ul ref={linksRef} className="flex flex-col gap-4 overflow-hidden group">
-            {navLinks.map((link, i) => (
+            {baseNavLinks.map((link, i) => (
               <li key={i} className="overflow-hidden">
                 <Link
                   href={link.href}
@@ -101,31 +101,83 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 </Link>
               </li>
             ))}
-            <li className="overflow-hidden">
-              <Link
-                href={loading || !user ? "/login" : "/account"}
-                onClick={onClose}
-                className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
-                data-cursor="ACCOUNT"
-              >
-                {loading || !user ? "LOGIN" : "ACCOUNT"}
-              </Link>
-            </li>
-            {user && !loading && (
+
+            {/* Unauthenticated User */}
+            {!user && !loading && (
               <li className="overflow-hidden">
                 <Link
-                  href="/account#wishlist"
+                  href="/login"
                   onClick={onClose}
                   className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
-                  data-cursor="WISHLIST"
+                  data-cursor="ACCOUNT"
                 >
-                  WISHLIST
+                  LOGIN
                 </Link>
               </li>
             )}
+
+            {/* ADMIN EXPERIENCE */}
+            {user && !loading && isAdmin && (
+              <>
+                <li className="overflow-hidden">
+                  <Link
+                    href="/admin"
+                    onClick={onClose}
+                    className="block text-5xl font-bold uppercase tracking-tighter text-blue-400 transition-colors duration-300 hover:text-blue-300 md:text-7xl"
+                    data-cursor="ADMIN"
+                  >
+                    ADMIN DASHBOARD
+                  </Link>
+                </li>
+                <li className="overflow-hidden">
+                  <Link
+                    href="/"
+                    onClick={onClose}
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    data-cursor="STORE"
+                  >
+                    VIEW STORE
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {/* CUSTOMER EXPERIENCE */}
+            {user && !loading && !isAdmin && (
+              <>
+                <li className="overflow-hidden">
+                  <Link
+                    href="/account"
+                    onClick={onClose}
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    data-cursor="ACCOUNT"
+                  >
+                    ACCOUNT
+                  </Link>
+                </li>
+                <li className="overflow-hidden">
+                  <Link
+                    href="/account#wishlist"
+                    onClick={onClose}
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    data-cursor="WISHLIST"
+                  >
+                    WISHLIST
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
+
           {user && !loading && (
-            <button type="button" onClick={() => { onClose(); void logout(); }} className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-light/50 transition hover:text-brand-light">
+            <button
+              type="button"
+              onClick={() => {
+                onClose();
+                void logout();
+              }}
+              className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-light/50 transition hover:text-brand-light"
+            >
               Log out
             </button>
           )}

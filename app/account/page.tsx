@@ -22,10 +22,16 @@ function formatPrice(price: number) {
 
 function AccountContent() {
   const router = useRouter();
-  const { user, logout, resendVerification, refreshVerification } = useAuth();
+  const { user, isAdmin, loading, logout, resendVerification, refreshVerification } = useAuth();
   const { items: wishlistItems, loading: wishlistLoading, error: wishlistError, remove: removeWishlistItem } = useWishlist();
   const { addItem } = useCart();
   const [activeSection, setActiveSection] = useState<AccountSection>("Profile");
+
+  useEffect(() => {
+    if (!loading && user && isAdmin) {
+      router.replace("/admin");
+    }
+  }, [loading, user, isAdmin, router]);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [addresses, setAddresses] = useState<Address[]>([]);

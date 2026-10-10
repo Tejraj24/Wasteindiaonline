@@ -14,7 +14,7 @@ interface HeaderProps {
 
 export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
   const { itemCount } = useCart();
-  const { user, loading, logout } = useAuth();
+  const { user, isAdmin, loading, logout } = useAuth();
   const { items: wishlistItems } = useWishlist();
   const router = useRouter();
   const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
@@ -121,7 +121,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
         </button>
 
         <div ref={profileRef} className="relative hidden items-center md:flex">
-          {user && !loading && (
+          {user && !loading && !isAdmin && (
             <Link
               href="/account#wishlist"
               className="hidden items-center gap-1 text-[10px] uppercase tracking-[0.14em] transition-opacity hover:opacity-60 md:flex"
@@ -143,7 +143,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
             }}
             className="body-upper flex min-h-11 min-w-11 items-center justify-center gap-2 px-1 text-[10px] transition-opacity hover:opacity-70 sm:px-2 md:min-w-0 md:text-base"
             data-cursor="ACCOUNT"
-            aria-label={user ? "Open account" : "Log in"}
+            aria-label={user ? (isAdmin ? "Open admin menu" : "Open customer account menu") : "Log in"}
             aria-expanded={user ? isProfileOpen : undefined}
             aria-haspopup={user ? "menu" : undefined}
           >
@@ -151,7 +151,9 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
               <span className="h-5 w-5 animate-pulse rounded-full border border-current/30 bg-current/10" aria-label="Checking account status" />
             ) : user ? (
               <>
-                <span className="hidden max-w-[7rem] truncate md:inline">{accountName}</span>
+                <span className="hidden max-w-[7rem] truncate md:inline">
+                  {isAdmin ? "ADMIN" : accountName}
+                </span>
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-current/35 text-[10px] leading-none transition-transform duration-300 hover:scale-105 md:h-8 md:w-8">
                   {user.photoURL && !avatarImageFailed ? (
                     <img
@@ -162,7 +164,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                       className="h-full w-full object-cover"
                     />
                   ) : (
-                    <span aria-hidden="true">{avatarLetter}</span>
+                    <span aria-hidden="true">{isAdmin ? "A" : avatarLetter}</span>
                   )}
                 </span>
                 <svg
@@ -183,27 +185,76 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
 
           {user && !loading && (
             <nav
-              className={`absolute right-0 top-[calc(100%+0.75rem)] z-20 min-w-44 origin-top-right border border-current/15 bg-black/95 p-2 text-white shadow-2xl backdrop-blur-md transition-all duration-300 ${isProfileOpen ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-2 opacity-0"}`}
-              aria-label="Profile menu"
+              className={`absolute right-0 top-[calc(100%+0.75rem)] z-20 min-w-48 origin-top-right border border-white/15 bg-black/95 p-2 text-white shadow-2xl backdrop-blur-md transition-all duration-300 ${
+                isProfileOpen ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-2 opacity-0"
+              }`}
+              aria-label={isAdmin ? "Admin Navigation Menu" : "Customer Profile Menu"}
               role="menu"
               aria-hidden={!isProfileOpen}
             >
-              {[
-                ["My Account", "/account"],
-                ["Orders", "/account#orders"],
-                ["Wishlist", "/account#wishlist"],
-                ["Addresses", "/account#addresses"],
-              ].map(([label, href]) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setIsProfileOpen(false)}
-                  className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
-                  role="menuitem"
-                >
-                  {label}
-                </Link>
-              ))}
+              {/* ADMIN EXPERIENCE */}
+              {isAdmin ? (
+                <>
+                  <div className="border-b border-white/10 px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-blue-400">
+                    Enterprise Admin
+                  </div>
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    role="menuitem"
+                  >
+                    Admin Dashboard
+                  </Link>
+                  <Link
+                    href="/"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    role="menuitem"
+                  >
+                    View Store
+                  </Link>
+                </>
+              ) : (
+                /* CUSTOMER EXPERIENCE */
+                <>
+                  <Link
+                    href="/account"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    role="menuitem"
+                  >
+                    My Account
+                  </Link>
+                  <Link
+                    href="/account#orders"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    role="menuitem"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    href="/account#wishlist"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    role="menuitem"
+                  >
+                    Wishlist
+                  </Link>
+                  <Link
+                    href="/account#addresses"
+                    onClick={() => setIsProfileOpen(false)}
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    role="menuitem"
+                  >
+                    Addresses
+                  </Link>
+                </>
+              )}
+
+              <div className="my-1 border-t border-white/10" />
+
               <button
                 type="button"
                 onClick={() => {
@@ -234,7 +285,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
           role="status"
           className="absolute right-4 top-full mt-3 border border-white/15 bg-black/90 px-4 py-3 text-[10px] uppercase tracking-[0.16em] text-white shadow-2xl backdrop-blur-md sm:right-6 md:right-12"
         >
-          Welcome back, {user.displayName?.split(" ")[0] || "member"}
+          Welcome back, {isAdmin ? "Administrator" : (user.displayName?.split(" ")[0] || "member")}
         </div>
       )}
     </header>

@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
+import { UserRole } from "@/lib/auth/roles";
 
 type AuthMode = "login" | "signup";
 
@@ -17,26 +18,68 @@ function firebaseErrorMessage(error: unknown) {
     if (code.includes("weak-password")) return "Choose a stronger password.";
     if (code.includes("popup-closed-by-user")) return "Google sign-in was cancelled.";
     if (code.includes("popup-blocked")) return "Your browser blocked the Google sign-in window.";
+    if (
+      code.includes("provider-already-linked") ||
+      code.includes("account-exists-with-different-credential") ||
+      code.includes("credential-already-in-use")
+    ) {
+      return "An account already exists with a different sign-in method or provider identity.";
+    }
   }
   return error instanceof Error ? error.message : "Something went wrong. Please try again.";
 }
 
+function resolveRedirectPath(role: UserRole, redirectParam: string | null): string {
+  if (role === "ADMIN") {
+    if (redirectParam && redirectParam.startsWith("/admin")) {
+      return redirectParam;
+    }
+    return "/admin";
+  }
+
+  // CUSTOMER
+  if (
+    redirectParam &&
+    !redirectParam.startsWith("/admin") &&
+    !redirectParam.startsWith("/login") &&
+    !redirectParam.startsWith("/signup")
+  ) {
+    return redirectParam;
+  }
+  return "/";
+}
+
 export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
-  const { login, signUp, signInWithGoogle, isConfigured } = useAuth();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect") || searchParams.get("next");
+  const { user, role, loading, login, signUp, signInWithGoogle, isConfigured } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // If user is already authenticated when visiting /login or /signup
+  useEffect(() => {
+    if (!loading && user) {
+      const destination = resolveRedirectPath(role, redirectParam);
+      router.replace(destination);
+    }
+  }, [loading, user, role, redirectParam, router]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);
     try {
-      if (mode === "login") await login(email, password);
-      else await signUp(email, password);
-      router.replace("/account");
+      let result;
+      if (mode === "login") {
+        result = await login(email, password);
+      } else {
+        result = await signUp(email, password);
+      }
+      const destination = resolveRedirectPath(result.role, redirectParam);
+      router.replace(destination);
     } catch (authError) {
       setError(firebaseErrorMessage(authError));
     } finally {
@@ -48,8 +91,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     setError("");
     setIsSubmitting(true);
     try {
-      await signInWithGoogle();
-      router.replace("/account");
+      const result = await signInWithGoogle();
+      const destination = resolveRedirectPath(result.role, redirectParam);
+      router.replace(destination);
     } catch (authError) {
       setError(firebaseErrorMessage(authError));
     } finally {
@@ -64,11 +108,16 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
       <p className="mt-8 max-w-sm text-sm leading-6 text-white/55">
-        {mode === "login" ? "Continue to your WASTE. account." : "Create an account for a more considered way to shop."}
+        {mode === "login"
+          ? "Continue to your WASTE. account."
+          : "Create an account for a more considered way to shop."}
       </p>
 
       {!isConfigured && (
-        <p className="mt-8 border border-amber-400/40 bg-amber-400/10 p-4 text-xs leading-5 text-amber-200" role="alert">
+        <p
+          className="mt-8 border border-amber-400/40 bg-amber-400/10 p-4 text-xs leading-5 text-amber-200"
+          role="alert"
+        >
           Authentication is not configured yet. Add the Firebase environment variables before using this form.
         </p>
       )}
@@ -99,8 +148,15 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             placeholder="••••••••"
           />
         </label>
-        {error && <p className="text-sm text-red-300" role="alert">{error}</p>}
-        <button disabled={isSubmitting || !isConfigured} className="w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40">
+        {error && (
+          <p className="text-sm text-red-300" role="alert">
+            {error}
+          </p>
+        )}
+        <button
+          disabled={isSubmitting || !isConfigured}
+          className="w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40"
+        >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
@@ -111,15 +167,27 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
         <span className="h-px flex-1 bg-white/15" />
       </div>
 
-      <button type="button" onClick={googleSignIn} disabled={isSubmitting || !isConfigured} className="w-full border border-white/25 py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:border-white disabled:cursor-not-allowed disabled:opacity-40">
+      <button
+        type="button"
+        onClick={googleSignIn}
+        disabled={isSubmitting || !isConfigured}
+        className="w-full border border-white/25 py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:border-white disabled:cursor-not-allowed disabled:opacity-40"
+      >
         Continue with Google
       </button>
 
       <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-white/50">
-        <Link href={mode === "login" ? "/signup" : "/login"} className="transition hover:text-white">
+        <Link
+          href={mode === "login" ? "/signup" : "/login"}
+          className="transition hover:text-white"
+        >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
-        {mode === "login" && <Link href="/forgot-password" className="transition hover:text-white">Forgot password</Link>}
+        {mode === "login" && (
+          <Link href="/forgot-password" className="transition hover:text-white">
+            Forgot password
+          </Link>
+        )}
       </div>
     </div>
   );
