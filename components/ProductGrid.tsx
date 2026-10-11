@@ -81,13 +81,13 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
   }
 
   return (
-    <section className="bg-brand-light px-4 py-16 text-brand-dark sm:py-20 md:px-8 md:py-24" ref={gridRef}>
+    <section className="bg-brand-bg px-4 py-16 text-brand-black border-t border-brand-border sm:py-20 md:px-8 md:py-24" ref={gridRef}>
       <div className="mb-8 flex items-end justify-between gap-4 sm:mb-12">
-        <h2 className="max-w-[15rem] text-[clamp(1.35rem,4vw,3rem)] font-bold uppercase leading-none tracking-tighter sm:max-w-none">
+        <h2 className="max-w-[15rem] text-[clamp(1.35rem,4vw,3rem)] font-bold uppercase leading-none tracking-tighter text-brand-black sm:max-w-none">
           ( FEATURED PRODUCTS )
         </h2>
-        <a href="/shop" className="body-upper hover:opacity-70 transition-opacity hidden md:block">
-          VIEW ALL
+        <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity hidden md:block">
+          VIEW ALL →
         </a>
       </div>
 
@@ -103,9 +103,9 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
               data-cursor="VIEW"
             >
               {/* Image Container */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none bg-brand-grey">
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none border border-brand-border bg-brand-surfaceSubtle shadow-sm transition-shadow duration-300 group-hover:shadow-md">
                 {product.badge && (
-                  <div className="absolute top-3 left-3 z-10 bg-brand-blue text-white px-2 py-1 text-xs font-bold uppercase tracking-widest pointer-events-none">
+                  <div className="absolute top-3 left-3 z-10 bg-brand-black text-white px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest pointer-events-none">
                     {product.badge}
                   </div>
                 )}
@@ -122,7 +122,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
                   className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"
                 />
                 {/* Dark Overlay on Hover */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
+                <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
                 {/* Meta - Hidden by default, shown on hover */}
                 <div className="absolute inset-0 hidden flex-col justify-between p-3 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 sm:flex sm:p-4">
                   <div />
@@ -142,18 +142,18 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
                 </div>
               </div>
               <div className="flex min-h-[4.5rem] flex-col justify-between gap-1 pt-3 sm:hidden">
-                <h3 className="line-clamp-2 text-[10px] font-bold uppercase leading-[1.25] tracking-[0.06em]">
+                <h3 className="line-clamp-2 text-[10px] font-bold uppercase leading-[1.25] tracking-[0.06em] text-brand-black">
                   {product.name}
                 </h3>
-                <div className="flex items-end justify-between gap-2 text-[10px] font-semibold">
+                <div className="flex items-end justify-between gap-2 text-[10px] font-semibold text-brand-black">
                   <span>{formatPrice(product.price)}</span>
                   {product.originalPrice && (
-                    <span className="text-[9px] text-black/45 line-through">
+                    <span className="text-[9px] text-brand-muted line-through">
                       {formatPrice(product.originalPrice)}
                     </span>
                   )}
                 </div>
-                <span className="text-[9px] uppercase tracking-[0.14em] text-black/55">
+                <span className="text-[9px] uppercase tracking-[0.14em] text-brand-muted">
                   Quick view
                 </span>
               </div>
@@ -175,8 +175,8 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
       </div>
 
       <div className="mt-12 text-center md:hidden">
-        <a href="/shop" className="body-upper hover:opacity-70 transition-opacity">
-          VIEW ALL PRODUCTS
+        <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity">
+          VIEW ALL PRODUCTS →
         </a>
       </div>
     </section>

@@ -122,15 +122,15 @@ export function ContactForm() {
       <div
         role="status"
         aria-live="polite"
-        className="border border-white/20 bg-white/[0.03] p-8 sm:p-12 md:p-16 backdrop-blur-sm"
+        className="border border-brand-border bg-brand-surface p-8 sm:p-12 md:p-16 shadow-sm"
       >
-        <span className="text-[10px] uppercase tracking-[0.3em] text-brand-blue">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-brand-gold">
           Message Delivered
         </span>
-        <h3 className="mt-4 font-editorial text-4xl leading-tight tracking-[-0.03em] text-white sm:text-5xl">
+        <h3 className="mt-4 font-editorial text-4xl leading-tight tracking-[-0.03em] text-brand-black sm:text-5xl">
           Thank you for reaching out.
         </h3>
-        <p className="mt-6 max-w-lg text-xs leading-6 text-white/70 sm:text-sm sm:leading-7">
+        <p className="mt-6 max-w-lg text-xs leading-6 text-brand-muted sm:text-sm sm:leading-7">
           {serverFeedback ||
             `Your message has been delivered to our team at ${BRAND_CONFIG.contact.officialBusinessEmail}.`}
         </p>
@@ -138,7 +138,7 @@ export function ContactForm() {
           <button
             type="button"
             onClick={resetForm}
-            className="inline-flex min-h-11 items-center justify-center border border-white/30 px-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:border-white hover:bg-white/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white"
+            className="inline-flex min-h-11 items-center justify-center border border-brand-border bg-white px-6 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-black shadow-sm transition-colors hover:border-brand-black hover:bg-brand-surfaceSubtle focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black"
           >
             Send Another Message
           </button>
@@ -166,7 +166,7 @@ export function ContactForm() {
       {serverFeedback && (
         <div
           role="alert"
-          className="border border-red-500/30 bg-red-500/10 p-4 text-xs leading-5 text-red-200"
+          className="border border-red-200 bg-red-50 p-4 text-xs leading-5 text-red-800"
         >
           {serverFeedback}
         </div>
@@ -177,9 +177,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="contact-name"
-            className="block text-[10px] uppercase tracking-[0.22em] text-white/60"
+            className="block text-[10px] uppercase tracking-[0.22em] text-brand-muted"
           >
-            Full Name <span className="text-brand-blue">*</span>
+            Full Name <span className="text-brand-gold">*</span>
           </label>
           <input
             id="contact-name"
@@ -194,10 +194,10 @@ export function ContactForm() {
             placeholder="e.g. Aryan Malhotra"
             aria-invalid={Boolean(errors.name)}
             aria-describedby={errors.name ? "name-error" : undefined}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white placeholder-white/20 transition-colors focus:border-white focus:outline-none"
+            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black placeholder:text-brand-muted/40 transition-colors focus:border-brand-black focus:outline-none"
           />
           {errors.name && (
-            <p id="name-error" className="mt-2 text-[11px] text-red-400" role="alert">
+            <p id="name-error" className="mt-2 text-[11px] text-red-600" role="alert">
               {errors.name}
             </p>
           )}
@@ -206,9 +206,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="contact-email"
-            className="block text-[10px] uppercase tracking-[0.22em] text-white/60"
+            className="block text-[10px] uppercase tracking-[0.22em] text-brand-muted"
           >
-            Email Address <span className="text-brand-blue">*</span>
+            Email Address <span className="text-brand-gold">*</span>
           </label>
           <input
             id="contact-email"
@@ -223,10 +223,10 @@ export function ContactForm() {
             placeholder="you@domain.com"
             aria-invalid={Boolean(errors.email)}
             aria-describedby={errors.email ? "email-error" : undefined}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white placeholder-white/20 transition-colors focus:border-white focus:outline-none"
+            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black placeholder:text-brand-muted/40 transition-colors focus:border-brand-black focus:outline-none"
           />
           {errors.email && (
-            <p id="email-error" className="mt-2 text-[11px] text-red-400" role="alert">
+            <p id="email-error" className="mt-2 text-[11px] text-red-600" role="alert">
               {errors.email}
             </p>
           )}
@@ -238,25 +238,25 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="contact-type"
-            className="block text-[10px] uppercase tracking-[0.22em] text-white/60"
+            className="block text-[10px] uppercase tracking-[0.22em] text-brand-muted"
           >
-            Enquiry Topic <span className="text-brand-blue">*</span>
+            Enquiry Topic <span className="text-brand-gold">*</span>
           </label>
           <div className="relative mt-2">
             <select
               id="contact-type"
               value={form.enquiryType}
               onChange={(e) => setForm({ ...form, enquiryType: e.target.value as EnquiryType })}
-              className="min-h-12 w-full appearance-none border-b border-white/25 bg-black pr-8 text-sm text-white transition-colors focus:border-white focus:outline-none cursor-pointer"
+              className="min-h-12 w-full appearance-none border-b border-brand-border bg-transparent pr-8 text-sm text-brand-black transition-colors focus:border-brand-black focus:outline-none cursor-pointer"
             >
               {ENQUIRY_TYPES.map((type) => (
-                <option key={type} value={type} className="bg-black text-white py-2">
+                <option key={type} value={type} className="bg-white text-brand-black py-2">
                   {type}
                 </option>
               ))}
             </select>
             <div
-              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-white/40"
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-xs text-brand-muted"
               aria-hidden="true"
             >
               ▼
@@ -267,9 +267,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="contact-order"
-            className="block text-[10px] uppercase tracking-[0.22em] text-white/60"
+            className="block text-[10px] uppercase tracking-[0.22em] text-brand-muted"
           >
-            Order Number <span className="text-white/30">(Optional)</span>
+            Order Number <span className="text-brand-muted/70">(Optional)</span>
           </label>
           <input
             id="contact-order"
@@ -277,7 +277,7 @@ export function ContactForm() {
             value={form.orderNumber}
             onChange={(e) => setForm({ ...form, orderNumber: e.target.value })}
             placeholder="e.g. WST-10842"
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white placeholder-white/20 transition-colors focus:border-white focus:outline-none"
+            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black placeholder:text-brand-muted/40 transition-colors focus:border-brand-black focus:outline-none"
           />
         </div>
       </div>
@@ -287,11 +287,11 @@ export function ContactForm() {
         <div className="flex items-center justify-between">
           <label
             htmlFor="contact-message"
-            className="block text-[10px] uppercase tracking-[0.22em] text-white/60"
+            className="block text-[10px] uppercase tracking-[0.22em] text-brand-muted"
           >
-            Your Message <span className="text-brand-blue">*</span>
+            Your Message <span className="text-brand-gold">*</span>
           </label>
-          <span className="text-[10px] text-white/35">
+          <span className="text-[10px] text-brand-muted">
             {form.message.length} / 3000
           </span>
         </div>
@@ -308,10 +308,10 @@ export function ContactForm() {
           placeholder="Please describe your inquiry with as much detail as possible..."
           aria-invalid={Boolean(errors.message)}
           aria-describedby={errors.message ? "message-error" : undefined}
-          className="mt-2 w-full border-b border-white/25 bg-transparent px-0 py-2 text-sm text-white placeholder-white/20 transition-colors focus:border-white focus:outline-none resize-none leading-relaxed"
+          className="mt-2 w-full border-b border-brand-border bg-transparent px-0 py-2 text-sm text-brand-black placeholder:text-brand-muted/40 transition-colors focus:border-brand-black focus:outline-none resize-none leading-relaxed"
         />
         {errors.message && (
-          <p id="message-error" className="mt-2 text-[11px] text-red-400" role="alert">
+          <p id="message-error" className="mt-2 text-[11px] text-red-600" role="alert">
             {errors.message}
           </p>
         )}
@@ -322,11 +322,11 @@ export function ContactForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex min-h-14 w-full items-center justify-center bg-white px-8 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition-colors duration-300 hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/20 disabled:text-white/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white"
+          className="inline-flex min-h-14 w-full items-center justify-center bg-brand-black px-8 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-colors duration-300 hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black"
         >
           {isSubmitting ? "Transmitting Inquiry..." : "Transmit Message"}
         </button>
-        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.16em] text-white/40">
+        <p className="mt-4 text-center text-[10px] uppercase tracking-[0.16em] text-brand-muted">
           For direct business enquiries: {BRAND_CONFIG.contact.officialBusinessEmail}
         </p>
       </div>

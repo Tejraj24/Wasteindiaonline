@@ -100,7 +100,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-dark">
+    <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-bg">
       {/* Slides Container */}
       <div className="absolute inset-0">
         {slides.map((slide, i) => (
@@ -114,7 +114,7 @@ export function Hero() {
             }}
           >
             <div className="relative w-full h-full overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10 z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/15 z-10" />
               <img
                 ref={(el) => { imagesRef.current[i] = el; }}
                 src={slide.image}
@@ -122,30 +122,30 @@ export function Hero() {
                 className="absolute inset-0 w-full h-full object-cover object-center"
               />
 
-              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-16 sm:p-6 md:p-12 md:pb-24">
+              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-20 sm:p-6 sm:pb-24 md:p-12 md:pb-28">
                 <div className="max-w-xl editorial-reveal">
-                  <div className="mb-4 flex items-end justify-between gap-4 text-brand-light/90 sm:mb-5 sm:gap-6">
-                    <span className="font-editorial text-[clamp(2.6rem,5vw,5rem)] leading-[0.84] tracking-[-0.045em]">
+                  <div className="mb-4 flex items-end justify-between gap-4 text-white/90 sm:mb-5 sm:gap-6">
+                    <span className="font-editorial text-[clamp(2.6rem,5vw,5rem)] leading-[0.84] tracking-[-0.045em] text-white">
                       {String(activeIndex + 1).padStart(2, "0")}
                     </span>
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] opacity-65 md:text-[0.7rem]">
+                    <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] text-white/70 md:text-[0.7rem]">
                       01 / 03
                     </span>
                   </div>
 
                   <a
                     href="/shop"
-                    className="pointer-events-auto inline-block text-[clamp(2rem,4.6vw,5rem)] font-light uppercase leading-[0.86] tracking-[0.055em] text-brand-light transition-opacity duration-300 hover:opacity-80"
+                    className="pointer-events-auto inline-block text-[clamp(2rem,4.6vw,5rem)] font-light uppercase leading-[0.86] tracking-[0.055em] text-white transition-opacity duration-300 hover:opacity-80"
                     data-cursor="SHOP NOW"
                   >
                     SHOP NOW
                   </a>
 
-                  <div className="mt-3 flex flex-col gap-1 text-brand-light">
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.48em] text-brand-light/70 md:text-[0.72rem]">
+                  <div className="mt-3 flex flex-col gap-1 text-white">
+                    <span className="text-[0.62rem] font-light uppercase tracking-[0.48em] text-white/75 md:text-[0.72rem]">
                       EXPLORE OUR FIRST
                     </span>
-                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.72] tracking-[-0.065em] text-brand-light">
+                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.72] tracking-[-0.065em] text-white">
                       COLLECTION
                     </span>
                   </div>
@@ -156,8 +156,11 @@ export function Hero() {
         ))}
       </div>
 
+      {/* Smooth transition into light theme stage */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-24 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent" />
+
       <div className="absolute inset-0 z-30 pointer-events-none flex justify-end items-end px-6 md:px-12 pb-8 md:pb-10">
-        <div className="pointer-events-auto flex items-center gap-2 text-brand-light/80">
+        <div className="pointer-events-auto flex items-center gap-2 text-white/90">
           <button
             onClick={nextSlide}
             className="text-[0.7rem] md:text-[0.75rem] uppercase tracking-[0.3em] font-medium hover:opacity-70 transition-opacity"

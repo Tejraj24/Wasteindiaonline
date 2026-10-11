@@ -52,12 +52,10 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
             <CartDrawer />
             <FullscreenMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-            {!isPreloaderActive && (
-              <Header
-                onOpenMenu={() => setIsMenuOpen(true)}
-                isDarkTheme={true}
-              />
-            )}
+            <Header
+              onOpenMenu={() => setIsMenuOpen(true)}
+              isDarkTheme={false}
+            />
           </>
         )}
 

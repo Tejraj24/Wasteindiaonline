@@ -81,11 +81,11 @@ export function Gallery() {
   return (
     <section 
       ref={containerRef} 
-      className="py-24 bg-brand-dark text-brand-light overflow-hidden cursor-grab active:cursor-grabbing"
+      className="py-24 bg-brand-bg text-brand-black border-t border-brand-border overflow-hidden cursor-grab active:cursor-grabbing"
       data-cursor="DRAG"
     >
       <div className="px-4 md:px-8 mb-12 flex justify-between items-end">
-        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter">
+        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter text-brand-black">
           ( ARCHIVE )
         </h2>
       </div>
@@ -99,12 +99,12 @@ export function Gallery() {
           <div
             key={`${item.id}-${idx}`}
             ref={(el) => { itemsRef.current[idx] = el; }}
-            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-neutral-800 flex-shrink-0 overflow-hidden transform-gpu"
+            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-brand-surfaceSubtle border border-brand-border shadow-sm flex-shrink-0 overflow-hidden transform-gpu"
           >
             <img
               src={item.image}
               alt={item.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-80"
+              className="absolute inset-0 w-full h-full object-cover opacity-95 transition-transform duration-500 hover:scale-105"
               draggable={false}
             />
           </div>

@@ -12,7 +12,7 @@ interface HeaderProps {
   isDarkTheme?: boolean;
 }
 
-export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
+export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
   const { itemCount } = useCart();
   const { user, isAdmin, loading, logout } = useAuth();
   const { items: wishlistItems } = useWishlist();
@@ -83,7 +83,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
 
   // Determine active text color based on section
   const isLight = !isDarkTheme || isScrolledPastHero;
-  const textColorClass = isLight ? "text-black" : "text-white";
+  const textColorClass = isLight ? "text-brand-black" : "text-white";
   const accountName = user?.displayName?.trim().split(/\s+/)[0] || user?.email?.split("@")[0] || "ACCOUNT";
   const avatarLetter = (user?.displayName || user?.email || "W").trim().charAt(0).toUpperCase();
 
@@ -100,7 +100,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
           className="inline-flex min-h-11 items-center text-xl font-black uppercase tracking-tighter select-none sm:text-2xl md:text-3xl"
           data-cursor="HOME"
         >
-          Waste<span className="text-brand-blue">.</span>
+          Waste<span className="text-brand-gold">.</span>
         </Link>
       </div>
 
@@ -127,7 +127,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
               className="hidden items-center gap-1 text-[10px] uppercase tracking-[0.14em] transition-opacity hover:opacity-60 md:flex"
               aria-label={`${wishlistItems.length} saved wishlist items`}
             >
-              <span className="text-brand-blue">♥</span>
+              <span className="text-brand-gold">♥</span>
               <span>{wishlistItems.length}</span>
             </Link>
           )}
@@ -185,7 +185,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
 
           {user && !loading && (
             <nav
-              className={`absolute right-0 top-[calc(100%+0.75rem)] z-20 min-w-48 origin-top-right border border-white/15 bg-black/95 p-2 text-white shadow-2xl backdrop-blur-md transition-all duration-300 ${
+              className={`absolute right-0 top-[calc(100%+0.75rem)] z-20 min-w-48 origin-top-right border border-brand-border bg-brand-surface/95 p-2 text-brand-black shadow-xl backdrop-blur-md transition-all duration-300 ${
                 isProfileOpen ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-2 opacity-0"
               }`}
               aria-label={isAdmin ? "Admin Navigation Menu" : "Customer Profile Menu"}
@@ -195,13 +195,13 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
               {/* ADMIN EXPERIENCE */}
               {isAdmin ? (
                 <>
-                  <div className="border-b border-white/10 px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-blue-400">
+                  <div className="border-b border-brand-border px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-brand-muted">
                     Enterprise Admin
                   </div>
                   <Link
                     href="/admin"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-white transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-brand-black transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     Admin Dashboard
@@ -209,7 +209,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   <Link
                     href="/"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     View Store
@@ -221,7 +221,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   <Link
                     href="/account"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     My Account
@@ -229,7 +229,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   <Link
                     href="/account#orders"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     Orders
@@ -237,7 +237,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   <Link
                     href="/account#wishlist"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     Wishlist
@@ -245,7 +245,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   <Link
                     href="/account#addresses"
                     onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-white/10 hover:text-brand-blue"
+                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                     role="menuitem"
                   >
                     Addresses
@@ -253,7 +253,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                 </>
               )}
 
-              <div className="my-1 border-t border-white/10" />
+              <div className="my-1 border-t border-brand-border" />
 
               <button
                 type="button"
@@ -261,7 +261,7 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
                   setIsProfileOpen(false);
                   void logout();
                 }}
-                className="block w-full px-3 py-2.5 text-left text-[10px] uppercase tracking-[0.16em] text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                className="block w-full px-3 py-2.5 text-left text-[10px] uppercase tracking-[0.16em] text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
                 role="menuitem"
               >
                 Logout
@@ -277,13 +277,13 @@ export function Header({ onOpenMenu, isDarkTheme = true }: HeaderProps) {
           aria-label="View cart"
         >
           <span className="hidden md:inline">CART</span>
-          <span className="absolute right-0 top-1/2 flex h-4 min-w-4 -translate-y-1/2 items-center justify-center rounded-full bg-brand-blue px-1 text-[9px] leading-none text-white md:static md:top-auto md:h-auto md:min-w-0 md:translate-y-0 md:rounded-none md:bg-transparent md:px-0 md:text-xs md:text-current">[{itemCount}]</span>
+          <span className="absolute right-0 top-1/2 flex h-4 min-w-4 -translate-y-1/2 items-center justify-center rounded-full bg-brand-black px-1 text-[9px] leading-none text-white md:static md:top-auto md:h-auto md:min-w-0 md:translate-y-0 md:rounded-none md:bg-transparent md:px-0 md:text-xs md:text-current">[{itemCount}]</span>
         </button>
       </div>
       {showWelcome && user && (
         <div
           role="status"
-          className="absolute right-4 top-full mt-3 border border-white/15 bg-black/90 px-4 py-3 text-[10px] uppercase tracking-[0.16em] text-white shadow-2xl backdrop-blur-md sm:right-6 md:right-12"
+          className="absolute right-4 top-full mt-3 border border-brand-border bg-brand-surface/95 px-4 py-3 text-[10px] uppercase tracking-[0.16em] text-brand-black shadow-xl backdrop-blur-md sm:right-6 md:right-12"
         >
           Welcome back, {isAdmin ? "Administrator" : (user.displayName?.split(" ")[0] || "member")}
         </div>

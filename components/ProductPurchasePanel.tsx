@@ -24,10 +24,10 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
   const [size, setSize] = useState("M");
 
   return (
-    <div className="mt-10 border-t border-white/15 pt-7">
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em]">
+    <div className="mt-10 border-t border-brand-border pt-7">
+      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-brand-black">
         <span>Size</span>
-        <span className="text-white/40">Select one</span>
+        <span className="text-brand-muted">Select one</span>
       </div>
       <div className="mt-4 grid grid-cols-4 gap-2">
         {sizes.map((option) => (
@@ -37,8 +37,8 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
             onClick={() => setSize(option)}
             className={`min-h-11 border py-3 text-xs transition ${
               size === option
-                ? "border-white bg-white text-black"
-                : "border-white/20 text-white/65 hover:border-white/70"
+                ? "border-brand-black bg-brand-black text-white"
+                : "border-brand-border bg-brand-surface text-brand-black hover:border-brand-black"
             }`}
             aria-pressed={size === option}
           >
@@ -60,7 +60,7 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
           })
         }
         disabled={product.soldOut}
-        className="mt-4 w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40"
+        className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
       >
         {product.soldOut ? "Sold out" : "Add to cart"}
       </button>
