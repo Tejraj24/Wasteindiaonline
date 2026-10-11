@@ -1,21 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  weight: ["400"],
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-instrument-serif",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: "Waste",
@@ -33,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
-      <body className="antialiased bg-brand-dark text-brand-light font-sans selection:bg-brand-blue selection:text-white">
+    <html lang="en">
+      <body className="antialiased bg-brand-bg text-brand-black font-sans selection:bg-brand-black selection:text-brand-bg">
         <ClientLayout>
           {children}
         </ClientLayout>

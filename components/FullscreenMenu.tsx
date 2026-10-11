@@ -67,19 +67,19 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
     >
       {/* Background Panels */}
       <div ref={bgPanelsRef} className="absolute inset-0 flex">
-        <div className="flex-1 bg-brand-dark h-full" />
-        <div className="flex-1 bg-brand-dark h-full hidden md:block" />
-        <div className="flex-1 bg-brand-dark h-full hidden lg:block" />
+        <div className="flex-1 bg-brand-bg border-r border-brand-border h-full" />
+        <div className="flex-1 bg-brand-surface border-r border-brand-border h-full hidden md:block" />
+        <div className="flex-1 bg-brand-bg h-full hidden lg:block" />
       </div>
 
-      <div className="relative z-10 w-full h-full flex flex-col p-6 md:p-12 text-brand-light">
+      <div className="relative z-10 w-full h-full flex flex-col p-6 md:p-12 text-brand-black">
         <div className="flex justify-between items-center">
-          <Link href="/" onClick={onClose} className="text-xl md:text-2xl font-black uppercase">
-            Waste<span className="text-brand-blue">.</span>
+          <Link href="/" onClick={onClose} className="text-xl md:text-2xl font-black uppercase tracking-tight text-brand-black">
+            Waste<span className="text-brand-gold">.</span>
           </Link>
           <button 
             onClick={onClose}
-            className="body-upper tracking-wider hover:opacity-70 transition-opacity"
+            className="body-upper tracking-wider text-brand-black hover:opacity-70 transition-opacity"
             data-cursor="CLOSE"
           >
             CLOSE
@@ -93,7 +93,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 <Link
                   href={link.href}
                   onClick={onClose}
-                  className="block text-5xl md:text-7xl font-bold uppercase tracking-tighter hover:text-brand-light text-brand-light/80 transition-colors duration-300 group-hover:text-brand-faded"
+                  className="block text-5xl md:text-7xl font-bold uppercase tracking-tighter text-brand-black/85 hover:text-brand-black transition-colors duration-300 group-hover:text-brand-muted"
                   data-cursor="EXPLORE"
                 >
                   {link.name}
@@ -107,7 +107,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 <Link
                   href="/login"
                   onClick={onClose}
-                  className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                  className="block text-5xl font-bold uppercase tracking-tighter text-brand-black/85 transition-colors duration-300 hover:text-brand-black group-hover:text-brand-muted md:text-7xl"
                   data-cursor="ACCOUNT"
                 >
                   LOGIN
@@ -122,7 +122,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                   <Link
                     href="/admin"
                     onClick={onClose}
-                    className="block text-5xl font-bold uppercase tracking-tighter text-blue-400 transition-colors duration-300 hover:text-blue-300 md:text-7xl"
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-black transition-colors duration-300 hover:text-brand-gold md:text-7xl"
                     data-cursor="ADMIN"
                   >
                     ADMIN DASHBOARD
@@ -132,7 +132,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                   <Link
                     href="/"
                     onClick={onClose}
-                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-black/85 transition-colors duration-300 hover:text-brand-black group-hover:text-brand-muted md:text-7xl"
                     data-cursor="STORE"
                   >
                     VIEW STORE
@@ -148,7 +148,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                   <Link
                     href="/account"
                     onClick={onClose}
-                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-black/85 transition-colors duration-300 hover:text-brand-black group-hover:text-brand-muted md:text-7xl"
                     data-cursor="ACCOUNT"
                   >
                     ACCOUNT
@@ -158,7 +158,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                   <Link
                     href="/account#wishlist"
                     onClick={onClose}
-                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-light/80 transition-colors duration-300 hover:text-brand-light md:text-7xl"
+                    className="block text-5xl font-bold uppercase tracking-tighter text-brand-black/85 transition-colors duration-300 hover:text-brand-black group-hover:text-brand-muted md:text-7xl"
                     data-cursor="WISHLIST"
                   >
                     WISHLIST
@@ -175,7 +175,7 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
                 onClose();
                 void logout();
               }}
-              className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-light/50 transition hover:text-brand-light"
+              className="mt-8 self-start text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black"
             >
               Log out
             </button>

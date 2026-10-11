@@ -117,11 +117,11 @@ export function canNavigateBack(): boolean {
 
 const variantStyles: Record<NonNullable<BackButtonProps["variant"]>, string> = {
   default:
-    "group inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/50 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/80 py-1.5",
+    "group inline-flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-brand-muted transition-colors duration-200 hover:text-brand-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black py-1.5",
   breadcrumb:
-    "group inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-white/45 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/80 py-1",
+    "group inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.25em] text-brand-muted transition-colors duration-200 hover:text-brand-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black py-1",
   pill:
-    "group inline-flex items-center gap-2 border border-white/20 bg-white/[0.04] px-3.5 py-2 text-[10px] uppercase tracking-[0.2em] text-white/70 backdrop-blur-sm transition-all duration-200 hover:border-white/60 hover:bg-white/[0.08] hover:text-white focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-white/80",
+    "group inline-flex items-center gap-2 border border-brand-border bg-white px-3.5 py-2 text-[10px] uppercase tracking-[0.2em] text-brand-black/75 shadow-sm backdrop-blur-sm transition-all duration-200 hover:border-brand-black hover:bg-brand-surfaceSubtle hover:text-brand-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black",
 };
 
 export function BackButton({

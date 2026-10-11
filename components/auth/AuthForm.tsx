@@ -106,12 +106,12 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     <div className="w-full max-w-md">
       <div className="mb-6 flex items-center justify-between">
         <BackButton fallbackHref="/" label="Home" variant="default" />
-        <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">WASTE. / Account</p>
       </div>
-      <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em]">
+      <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em] text-brand-black">
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
-      <p className="mt-8 max-w-sm text-sm leading-6 text-white/55">
+      <p className="mt-8 max-w-sm text-sm leading-6 text-brand-muted">
         {mode === "login"
           ? "Continue to your WASTE. account."
           : "Create an account for a more considered way to shop."}
@@ -119,7 +119,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
       {!isConfigured && (
         <p
-          className="mt-8 border border-amber-400/40 bg-amber-400/10 p-4 text-xs leading-5 text-amber-200"
+          className="mt-8 border border-amber-300 bg-amber-50 p-4 text-xs leading-5 text-amber-900"
           role="alert"
         >
           Authentication is not configured yet. Add the Firebase environment variables before using this form.
@@ -128,19 +128,19 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
       <form onSubmit={submit} className="mt-10 space-y-5">
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">Email</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Email</span>
           <input
             required
             type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white"
+            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black outline-none transition placeholder:text-brand-muted/40 focus:border-brand-black"
             placeholder="you@example.com"
           />
         </label>
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">Password</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Password</span>
           <input
             required
             minLength={6}
@@ -148,47 +148,47 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white"
+            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black outline-none transition placeholder:text-brand-muted/40 focus:border-brand-black"
             placeholder="••••••••"
           />
         </label>
         {error && (
-          <p className="text-sm text-red-300" role="alert">
+          <p className="text-sm text-red-600" role="alert">
             {error}
           </p>
         )}
         <button
           disabled={isSubmitting || !isConfigured}
-          className="w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40"
+          className="w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
         >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
 
-      <div className="my-7 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-white/30">
-        <span className="h-px flex-1 bg-white/15" />
+      <div className="my-7 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-brand-muted">
+        <span className="h-px flex-1 bg-brand-border" />
         <span>Or</span>
-        <span className="h-px flex-1 bg-white/15" />
+        <span className="h-px flex-1 bg-brand-border" />
       </div>
 
       <button
         type="button"
         onClick={googleSignIn}
         disabled={isSubmitting || !isConfigured}
-        className="w-full border border-white/25 py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:border-white disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full border border-brand-border bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-black shadow-sm transition hover:border-brand-black hover:bg-brand-surfaceSubtle disabled:cursor-not-allowed disabled:opacity-40"
       >
         Continue with Google
       </button>
 
-      <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-white/50">
+      <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-brand-muted">
         <Link
           href={mode === "login" ? "/signup" : "/login"}
-          className="transition hover:text-white"
+          className="transition hover:text-brand-black"
         >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
         {mode === "login" && (
-          <Link href="/forgot-password" className="transition hover:text-white">
+          <Link href="/forgot-password" className="transition hover:text-brand-black">
             Forgot password
           </Link>
         )}

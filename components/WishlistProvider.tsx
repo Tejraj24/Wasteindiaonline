@@ -102,7 +102,7 @@ export function WishlistProvider({ children }: { children: React.ReactNode }) {
     <WishlistContext.Provider value={value}>
       {children}
       {notice && (
-        <div role="status" className="fixed bottom-6 left-1/2 z-[180] -translate-x-1/2 border border-white/15 bg-black/95 px-5 py-3 text-[10px] uppercase tracking-[0.18em] text-white shadow-2xl">
+        <div role="status" className="fixed bottom-6 left-1/2 z-[180] -translate-x-1/2 border border-brand-border bg-brand-surface/95 px-5 py-3 text-[10px] uppercase tracking-[0.18em] text-brand-black shadow-xl backdrop-blur-sm">
           {notice}
         </div>
       )}

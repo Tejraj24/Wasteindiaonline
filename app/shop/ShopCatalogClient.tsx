@@ -46,7 +46,7 @@ function ProductCard({
           data-cursor="VIEW"
           aria-label={`Quick view ${product.title}`}
         >
-          <div className="relative aspect-[3/4] overflow-hidden bg-[#111]">
+          <div className="relative aspect-[3/4] overflow-hidden rounded-none border border-brand-border bg-brand-surfaceSubtle shadow-sm transition-shadow duration-300 group-hover:shadow-md">
             <img
               src={img1}
               alt={product.title}
@@ -57,29 +57,29 @@ function ProductCard({
               alt={`${product.title} alternate view`}
               className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] group-hover:opacity-100"
             />
-            <div className="absolute inset-x-0 bottom-0 flex translate-y-3 items-end justify-between p-4 text-[10px] uppercase tracking-[0.22em] text-white opacity-0 transition duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+            <div className="absolute inset-x-0 bottom-0 flex translate-y-3 items-end justify-between bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-[10px] uppercase tracking-[0.22em] text-white opacity-0 transition duration-500 group-hover:translate-y-0 group-hover:opacity-100">
               <span>Quick view</span>
               <span className="border-b border-white/70 pb-1">View</span>
             </div>
             {product.soldOut && (
-              <span className="absolute left-4 top-4 text-[10px] uppercase tracking-[0.2em] text-white/80">
+              <span className="absolute left-4 top-4 bg-brand-black px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-white">
                 Sold out
               </span>
             )}
           </div>
           <div className="flex items-start justify-between gap-4 pt-4">
             <div>
-              <h3 className="text-[11px] uppercase leading-[1.25] tracking-[0.1em] text-white md:text-xs">
+              <h3 className="text-[11px] uppercase leading-[1.25] tracking-[0.1em] text-brand-black md:text-xs">
                 {shortName(product.title)}
               </h3>
-              <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-white/45">
+              <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-brand-muted">
                 {product.category}
               </p>
             </div>
-            <div className="whitespace-nowrap text-right text-[11px] uppercase tracking-[0.08em] text-white/80">
+            <div className="whitespace-nowrap text-right text-[11px] uppercase tracking-[0.08em] text-brand-black font-semibold font-mono">
               <p>{formatPrice(product.price)}</p>
               {product.compareAtPrice && (
-                <p className="mt-1 text-white/30 line-through">
+                <p className="mt-1 text-brand-muted line-through text-[10px] font-normal">
                   {formatPrice(product.compareAtPrice)}
                 </p>
               )}
@@ -101,9 +101,9 @@ function ProductCard({
       </div>
       <Link
         href={`/product/${product.slug}`}
-        className="mt-4 inline-flex text-[10px] uppercase tracking-[0.2em] text-white/50 transition hover:text-white"
+        className="mt-4 inline-flex text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black"
       >
-        View full details
+        View full details →
       </Link>
     </article>
   );
@@ -136,7 +136,7 @@ function QuickView({
 
   return (
     <div
-      className="fixed inset-0 z-[120] flex items-end justify-center bg-black/75 p-0 backdrop-blur-sm md:items-center md:p-6"
+      className="fixed inset-0 z-[120] flex items-end justify-center bg-black/60 p-0 backdrop-blur-sm md:items-center md:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={`Quick view ${product.title}`}
@@ -148,46 +148,46 @@ function QuickView({
         className="absolute inset-0 cursor-default"
       />
       <div
-        className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto bg-[#111] text-white md:grid-cols-[1.05fr_0.95fr]"
+        className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto border border-brand-border bg-brand-surface text-brand-black shadow-2xl md:grid-cols-[1.05fr_0.95fr]"
         data-lenis-prevent
       >
-        <div className="grid grid-cols-2 gap-px bg-white/10">
+        <div className="grid grid-cols-2 gap-px border-r border-brand-border bg-brand-border">
           {product.images.map((image, index) => (
             <img
               key={`${image}-${index}`}
               src={image}
               alt={`${product.title} view ${index + 1}`}
-              className="h-full min-h-[220px] w-full object-cover sm:min-h-[300px] md:min-h-[360px]"
+              className="h-full min-h-[220px] w-full object-cover bg-brand-surfaceSubtle sm:min-h-[300px] md:min-h-[360px]"
             />
           ))}
         </div>
         <div className="flex min-h-[420px] flex-col p-6 md:p-10 lg:p-14">
           <div className="flex items-start justify-between gap-6">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-white/45">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-brand-muted">
               {product.category} / {product.sku}
             </p>
             <button
               type="button"
               onClick={onClose}
-              className="text-[10px] uppercase tracking-[0.2em] text-white/55 transition hover:text-white"
+              className="text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black"
             >
               Close
             </button>
           </div>
           <div className="mt-auto pt-16">
-            <h2 className="max-w-md break-words font-editorial text-4xl leading-[0.9] tracking-[-0.04em] md:text-6xl">
+            <h2 className="max-w-md break-words font-editorial text-4xl leading-[0.9] tracking-[-0.04em] text-brand-black md:text-6xl">
               {product.title}
             </h2>
-            <p className="mt-5 text-sm text-white/70">
+            <p className="mt-5 text-sm text-brand-black font-semibold font-mono">
               {formatPrice(product.price)}
             </p>
-            <p className="mt-8 max-w-sm text-xs leading-6 text-white/50">
+            <p className="mt-8 max-w-sm text-xs leading-6 text-brand-muted">
               {product.description}
             </p>
-            <div className="mt-10 border-t border-white/15 pt-6">
+            <div className="mt-10 border-t border-brand-border pt-6">
               <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em]">
-                <span>Size</span>
-                <span className="text-white/40">Select one</span>
+                <span className="text-brand-black font-semibold">Size</span>
+                <span className="text-brand-muted">Select one</span>
               </div>
               <div className="mt-4 grid grid-cols-4 gap-2">
                 {sizes.map((option) => (
@@ -197,8 +197,8 @@ function QuickView({
                     onClick={() => setSize(option)}
                     className={`min-h-11 border py-3 text-xs transition ${
                       size === option
-                        ? "border-white bg-white text-black"
-                        : "border-white/20 text-white/65 hover:border-white/70"
+                        ? "border-brand-black bg-brand-black text-white"
+                        : "border-brand-border bg-brand-surface text-brand-black hover:border-brand-black hover:bg-brand-surfaceSubtle"
                     }`}
                   >
                     {option}
@@ -209,7 +209,7 @@ function QuickView({
                 type="button"
                 onClick={handleAdd}
                 disabled={product.soldOut}
-                className="mt-4 w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-[#1e40ff] hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40"
+                className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:bg-brand-surfaceSubtle disabled:text-brand-muted disabled:border-brand-border"
               >
                 {product.soldOut ? "Sold out" : "Add to cart"}
               </button>
@@ -239,13 +239,6 @@ export function ShopCatalogClient({
     return () => window.clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    document.body.style.backgroundColor = "#000000";
-    return () => {
-      document.body.style.backgroundColor = "#000000";
-    };
-  }, []);
-
   // Filter list: All + categories from database (or unique product categories)
   const filterList = useMemo(() => {
     const unique = new Set<string>();
@@ -272,30 +265,30 @@ export function ShopCatalogClient({
   }, [initialProducts]);
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-brand-bg text-brand-black">
       <section className="relative flex min-h-screen items-end overflow-hidden px-6 pb-12 pt-36 md:px-12 md:pb-16">
         <img
           src={editorialImages[0]}
           alt="WASTE collection editorial"
-          className="absolute inset-0 h-full w-full object-cover grayscale"
+          className="absolute inset-0 h-full w-full object-cover grayscale brightness-90"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-black/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-bg via-black/45 to-black/20" />
         <div
           className={`relative z-10 w-full transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
           }`}
         >
-          <div className="mb-8 flex items-end justify-between border-b border-white/25 pb-5 text-[10px] uppercase tracking-[0.28em] text-white/65 md:mb-10">
+          <div className="mb-8 flex items-end justify-between border-b border-white/25 pb-5 text-[10px] uppercase tracking-[0.28em] text-white/80 md:mb-10">
             <div className="flex items-center gap-4">
-              <BackButton fallbackHref="/" label="Home" variant="default" className="text-white/65 hover:text-white" />
-              <span className="hidden text-white/30 sm:inline">/</span>
+              <BackButton fallbackHref="/" label="Home" variant="default" className="text-white/80 hover:text-white" />
+              <span className="hidden text-white/40 sm:inline">/</span>
               <span className="hidden sm:inline">WASTE.</span>
             </div>
             <span>Collection 01</span>
             <span>2026 / India</span>
           </div>
           <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <h1 className="max-w-5xl font-editorial text-[clamp(4.5rem,14vw,13rem)] leading-[0.72] tracking-[-0.07em]">
+            <h1 className="max-w-5xl font-editorial text-[clamp(4.5rem,14vw,13rem)] leading-[0.72] tracking-[-0.07em] text-white">
               COLLECTION
               <br />
               <em className="font-editorial">01</em>
@@ -308,7 +301,7 @@ export function ShopCatalogClient({
                 <span className="h-px w-10 bg-white transition-all duration-500 group-hover:w-16" />
                 SHOP THE COLLECTION
               </a>
-              <p className="mt-5 text-xs leading-6 text-white/60">
+              <p className="mt-5 text-xs leading-6 text-white/75">
                 A curated selection inspired by modern heritage.
               </p>
             </div>
@@ -317,17 +310,17 @@ export function ShopCatalogClient({
       </section>
 
       <section id="collection" className="px-6 py-20 md:px-12 md:py-32">
-        <div className="sticky top-0 z-30 -mx-6 overflow-hidden border-y border-white/15 bg-black/90 px-6 py-4 backdrop-blur-md md:-mx-12 md:px-12">
-          <div className="flex gap-7 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="sticky top-0 z-30 -mx-6 overflow-hidden border-y border-brand-border bg-brand-bg/95 px-6 py-4 backdrop-blur-md md:-mx-12 md:px-12">
+          <div className="flex gap-3 sm:gap-4 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {filterList.map((filter) => (
               <button
                 key={filter}
                 type="button"
                 onClick={() => setActiveFilter(filter)}
-                className={`relative shrink-0 rounded-full border px-4 py-2 text-[10px] uppercase tracking-[0.22em] transition-colors ${
+                className={`relative shrink-0 rounded-full border px-4 py-2 text-[10px] uppercase tracking-[0.22em] shadow-sm transition-colors ${
                   activeFilter === filter
-                    ? "border-white bg-white text-black"
-                    : "border-white/15 text-white/40 hover:border-white/60 hover:text-white"
+                    ? "border-brand-black bg-brand-black text-white"
+                    : "border-brand-border bg-white text-brand-muted hover:border-brand-black hover:text-brand-black"
                 }`}
               >
                 {filter}
@@ -336,22 +329,22 @@ export function ShopCatalogClient({
           </div>
         </div>
 
-        <div className="mb-10 mt-14 flex items-end justify-between gap-4 border-b border-white/15 pb-5 sm:mb-12 sm:mt-20">
+        <div className="mb-10 mt-14 flex items-end justify-between gap-4 border-b border-brand-border pb-5 sm:mb-12 sm:mt-20">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
               WASTE. / Archive
             </p>
-            <h2 className="mt-4 font-editorial text-[clamp(2.75rem,9vw,4.5rem)] leading-none tracking-[-0.05em]">
+            <h2 className="mt-4 font-editorial text-[clamp(2.75rem,9vw,4.5rem)] leading-none tracking-[-0.05em] text-brand-black">
               The collection
             </h2>
           </div>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">
             {visibleProducts.length} pieces
           </span>
         </div>
 
         {visibleProducts.length === 0 ? (
-          <div className="py-20 text-center text-white/40 uppercase tracking-[0.2em] text-xs">
+          <div className="py-20 text-center text-brand-muted uppercase tracking-[0.2em] text-xs">
             No products found in this category.
           </div>
         ) : (
@@ -371,20 +364,20 @@ export function ShopCatalogClient({
         <img
           src={editorialImages[1]}
           alt="Modern heritage editorial"
-          className="absolute inset-0 h-full w-full object-cover grayscale"
+          className="absolute inset-0 h-full w-full object-cover grayscale brightness-90"
         />
         <div className="absolute inset-0 bg-black/45" />
         <div className="relative flex min-h-[50vh] flex-col justify-between md:min-h-[55vh]">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/70">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-white/80">
             WASTE. / Editorial 001
           </p>
           <div>
-            <p className="font-editorial text-5xl leading-[0.85] tracking-[-0.06em] md:text-8xl">
+            <p className="font-editorial text-5xl leading-[0.85] tracking-[-0.06em] text-white md:text-8xl">
               MODERN
               <br />
-              <em>HERITAGE</em>
+              <em className="font-editorial">HERITAGE</em>
             </p>
-            <p className="mt-8 max-w-xs text-xs leading-6 text-white/65">
+            <p className="mt-8 max-w-xs text-xs leading-6 text-white/75">
               Crafted for the next generation. A study in proportion, material,
               and memory.
             </p>
@@ -393,12 +386,12 @@ export function ShopCatalogClient({
       </section>
 
       {featuredPair.length > 0 && (
-        <section className="px-6 py-24 md:px-12 md:py-40">
-          <div className="mb-12 flex items-end justify-between border-b border-white/15 pb-5">
-            <h2 className="font-editorial text-5xl tracking-[-0.05em] md:text-7xl">
+        <section className="px-6 py-24 md:px-12 md:py-40 border-t border-brand-border bg-brand-bg text-brand-black">
+          <div className="mb-12 flex items-end justify-between border-b border-brand-border pb-5">
+            <h2 className="font-editorial text-5xl tracking-[-0.05em] text-brand-black md:text-7xl">
               Featured collection
             </h2>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+            <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">
               02 / 02
             </span>
           </div>
@@ -416,17 +409,17 @@ export function ShopCatalogClient({
 
       <section
         id="story"
-        className="border-t border-white/15 px-6 py-28 md:px-12 md:py-48"
+        className="border-t border-brand-border bg-brand-bg px-6 py-28 text-brand-black md:px-12 md:py-48"
       >
         <div className="grid gap-12 md:grid-cols-[1fr_1.3fr] md:gap-24">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/40">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
             The WASTE. point of view
           </p>
           <div>
-            <h2 className="max-w-4xl font-editorial text-6xl leading-[0.82] tracking-[-0.06em] md:text-9xl">
+            <h2 className="max-w-4xl font-editorial text-6xl leading-[0.82] tracking-[-0.06em] text-brand-black md:text-9xl">
               A modern expression of heritage
             </h2>
-            <p className="mt-12 max-w-md text-sm leading-7 text-white/55">
+            <p className="mt-12 max-w-md text-sm leading-7 text-brand-muted">
               WASTE merges contemporary silhouettes with timeless inspiration.
               Each piece is considered, collected, and made to live beyond a
               season.

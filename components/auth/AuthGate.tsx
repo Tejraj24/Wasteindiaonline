@@ -16,8 +16,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (loading || !user) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-black px-6 text-white">
-        <p className="text-[10px] uppercase tracking-[0.3em] text-white/50" aria-live="polite">
+      <main className="flex min-h-screen items-center justify-center bg-brand-bg px-6 text-brand-black">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted" aria-live="polite">
           Verifying account
         </p>
       </main>
