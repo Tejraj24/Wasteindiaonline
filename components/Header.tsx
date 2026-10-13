@@ -12,12 +12,19 @@ interface HeaderProps {
   isDarkTheme?: boolean;
 }
 
+const navLinks = [
+  { name: "HOME", href: "/" },
+  { name: "SHOP", href: "/shop" },
+  { name: "OUR STORY", href: "/our-story" },
+  { name: "CONTACT", href: "/contact" },
+];
+
 export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
-  const { itemCount } = useCart();
+  const { itemCount, openCart, isOpen } = useCart();
   const { user, isAdmin, loading, logout } = useAuth();
   const { items: wishlistItems } = useWishlist();
   const router = useRouter();
-  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -28,8 +35,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const heroHeight = window.innerHeight * 0.9;
-      setIsScrolledPastHero(scrollY > heroHeight);
+      setIsScrolled(scrollY > 20);
 
       // Check footer proximity
       const docHeight = document.documentElement.scrollHeight;
@@ -81,209 +87,260 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
     setAvatarImageFailed(false);
   }, [user?.photoURL]);
 
-  // Determine active text color based on section
-  const isLight = !isDarkTheme || isScrolledPastHero;
-  const textColorClass = isLight ? "text-brand-black" : "text-white";
   const accountName = user?.displayName?.trim().split(/\s+/)[0] || user?.email?.split("@")[0] || "ACCOUNT";
   const avatarLetter = (user?.displayName || user?.email || "W").trim().charAt(0).toUpperCase();
 
   return (
     <header
-      className={`fixed left-0 top-0 z-50 flex w-full items-center justify-between px-4 py-3.5 transition-all duration-300 pointer-events-auto sm:px-6 sm:py-5 md:px-12 md:py-8 ${textColorClass} ${
-        isNearFooter ? "-translate-y-full" : "translate-y-0"
-      }`}
+      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 pointer-events-auto bg-white/95 backdrop-blur-md text-brand-black ${
+        isScrolled ? "border-b border-brand-border/60 shadow-[0_1px_0_rgba(0,0,0,0.03)]" : "border-b border-transparent"
+      } ${isNearFooter ? "-translate-y-full" : "translate-y-0"}`}
     >
-      {/* Left: Logo */}
-      <div className="flex-1">
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center text-xl font-black uppercase tracking-tighter select-none sm:text-2xl md:text-3xl"
-          data-cursor="HOME"
-        >
-          Waste<span className="text-brand-gold">.</span>
-        </Link>
-      </div>
+      <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-4 sm:px-6 md:h-20 md:px-12">
+        {/* Left: Brand Logo (clean WASTE without any dot) */}
+        <div className="flex items-center">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center font-tenor text-xl font-normal uppercase tracking-[0.2em] select-none text-brand-black transition-opacity hover:opacity-80 sm:text-2xl"
+            data-cursor="HOME"
+            aria-label="WASTE homepage"
+          >
+            WASTE
+          </Link>
+        </div>
 
-      {/* Right: Menu & Cart */}
-      <div className="flex flex-1 items-center justify-end gap-1 sm:gap-4 md:gap-12">
-        <button
-          onClick={onOpenMenu}
-          className="body-upper flex min-h-11 min-w-11 items-center justify-center px-2 text-sm transition-opacity hover:opacity-70 md:min-w-0 md:text-base"
-          data-cursor="MENU"
-          aria-label="Open menu"
-        >
-          <span className="sr-only md:not-sr-only">MENU</span>
-          <span className="flex w-6 flex-col gap-1 md:hidden" aria-hidden="true">
-            <span className="h-px w-full bg-current" />
-            <span className="h-px w-full bg-current" />
-            <span className="h-px w-full bg-current" />
-          </span>
-        </button>
-
-        <div ref={profileRef} className="relative hidden items-center md:flex">
-          {user && !loading && !isAdmin && (
+        {/* Center: Horizontal Navigation (VASAAE inspired) */}
+        <nav aria-label="Main Navigation" className="hidden lg:flex items-center space-x-8 xl:space-x-12">
+          {navLinks.map((link) => (
             <Link
-              href="/account#wishlist"
-              className="hidden items-center gap-1 text-[10px] uppercase tracking-[0.14em] transition-opacity hover:opacity-60 md:flex"
-              aria-label={`${wishlistItems.length} saved wishlist items`}
+              key={link.name}
+              href={link.href}
+              className="text-xs font-tenor tracking-widest text-brand-black/85 transition-colors duration-200 hover:text-brand-black relative py-2"
             >
-              <span className="text-brand-gold">♥</span>
-              <span>{wishlistItems.length}</span>
+              {link.name}
             </Link>
-          )}
+          ))}
+        </nav>
 
+        {/* Right: Utility Actions & Mobile Menu */}
+        <div className="flex items-center gap-1 sm:gap-2 md:gap-4">
+          {/* Wishlist Link (Quick Access) */}
+          <Link
+            href="/account#wishlist"
+            className="relative flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black"
+            aria-label={`${wishlistItems.length} saved wishlist items`}
+            data-cursor="WISHLIST"
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            {wishlistItems.length > 0 && (
+              <span className="absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-gold px-1 text-[9px] font-medium leading-none text-white">
+                {wishlistItems.length}
+              </span>
+            )}
+          </Link>
+
+          {/* User Account Button & Dropdown */}
+          <div ref={profileRef} className="relative flex items-center">
+            <button
+              type="button"
+              onClick={() => {
+                if (user) {
+                  setIsProfileOpen((open) => !open);
+                } else {
+                  router.push("/login");
+                }
+              }}
+              className="flex h-10 items-center justify-center gap-1.5 px-2 text-xs font-tenor tracking-wider text-brand-black/85 transition-colors hover:text-brand-black"
+              data-cursor="ACCOUNT"
+              aria-label={user ? (isAdmin ? "Open admin menu" : "Open customer account menu") : "Sign in"}
+              aria-expanded={user ? isProfileOpen : undefined}
+              aria-haspopup={user ? "menu" : undefined}
+            >
+              {loading ? (
+                <span className="h-4 w-4 animate-pulse rounded-full border border-brand-black/30 bg-brand-black/10" aria-label="Checking account status" />
+              ) : user ? (
+                <>
+                  <span className="hidden max-w-[6rem] truncate sm:inline text-xs font-tenor tracking-wider">
+                    {isAdmin ? "ADMIN" : accountName}
+                  </span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full border border-brand-border text-[9px] leading-none transition-transform duration-300 hover:scale-105">
+                    {user.photoURL && !avatarImageFailed ? (
+                      <img
+                        src={user.photoURL}
+                        alt=""
+                        loading="lazy"
+                        onError={() => setAvatarImageFailed(true)}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <span aria-hidden="true">{isAdmin ? "A" : avatarLetter}</span>
+                    )}
+                  </span>
+                </>
+              ) : (
+                <span className="text-xs font-tenor tracking-wider">SIGN IN</span>
+              )}
+            </button>
+
+            {user && !loading && (
+              <nav
+                className={`absolute right-0 top-[calc(100%+0.5rem)] z-20 min-w-48 origin-top-right border border-brand-border bg-white p-2 text-brand-black shadow-xl transition-all duration-300 ${
+                  isProfileOpen ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-2 opacity-0"
+                }`}
+                aria-label={isAdmin ? "Admin Navigation Menu" : "Customer Profile Menu"}
+                role="menu"
+                aria-hidden={!isProfileOpen}
+              >
+                {isAdmin ? (
+                  <>
+                    <div className="border-b border-brand-border px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-brand-muted">
+                      Enterprise Admin
+                    </div>
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider text-brand-black transition-colors hover:bg-brand-surfaceSubtle"
+                      role="menuitem"
+                    >
+                      Admin Dashboard
+                    </Link>
+                    <Link
+                      href="/"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                      role="menuitem"
+                    >
+                      View Store
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/account"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                      role="menuitem"
+                    >
+                      My Account
+                    </Link>
+                    <Link
+                      href="/account#orders"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                      role="menuitem"
+                    >
+                      Orders
+                    </Link>
+                    <Link
+                      href="/account#wishlist"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                      role="menuitem"
+                    >
+                      Wishlist
+                    </Link>
+                    <Link
+                      href="/account#addresses"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="block px-3 py-2 text-xs font-tenor tracking-wider transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                      role="menuitem"
+                    >
+                      Addresses
+                    </Link>
+                  </>
+                )}
+
+                <div className="my-1 border-t border-brand-border" />
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    void logout();
+                  }}
+                  className="block w-full px-3 py-2 text-left text-xs font-tenor tracking-wider text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
+                  role="menuitem"
+                >
+                  Logout
+                </button>
+              </nav>
+            )}
+          </div>
+
+          {/* Cart Icon / Drawer Button */}
           <button
             type="button"
-            onClick={() => {
-              if (user) {
-                setIsProfileOpen((open) => !open);
-              } else {
-                router.push("/login");
-              }
-            }}
-            className="body-upper flex min-h-11 min-w-11 items-center justify-center gap-2 px-1 text-[10px] transition-opacity hover:opacity-70 sm:px-2 md:min-w-0 md:text-base"
-            data-cursor="ACCOUNT"
-            aria-label={user ? (isAdmin ? "Open admin menu" : "Open customer account menu") : "Log in"}
-            aria-expanded={user ? isProfileOpen : undefined}
-            aria-haspopup={user ? "menu" : undefined}
+            onClick={openCart}
+            className="relative flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black"
+            data-cursor="CART"
+            aria-label={`Open cart (${itemCount} ${itemCount === 1 ? "item" : "items"})`}
+            aria-haspopup="dialog"
+            aria-expanded={isOpen}
           >
-            {loading ? (
-              <span className="h-5 w-5 animate-pulse rounded-full border border-current/30 bg-current/10" aria-label="Checking account status" />
-            ) : user ? (
-              <>
-                <span className="hidden max-w-[7rem] truncate md:inline">
-                  {isAdmin ? "ADMIN" : accountName}
-                </span>
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full border border-current/35 text-[10px] leading-none transition-transform duration-300 hover:scale-105 md:h-8 md:w-8">
-                  {user.photoURL && !avatarImageFailed ? (
-                    <img
-                      src={user.photoURL}
-                      alt=""
-                      loading="lazy"
-                      onError={() => setAvatarImageFailed(true)}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span aria-hidden="true">{isAdmin ? "A" : avatarLetter}</span>
-                  )}
-                </span>
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 10 6"
-                  className={`h-1.5 w-2.5 transition-transform duration-300 ${isProfileOpen ? "rotate-180" : ""}`}
-                  fill="none"
-                >
-                  <path d="m1 1 4 4 4-4" stroke="currentColor" strokeWidth="1" />
-                </svg>
-              </>
-            ) : (
-              <>
-                <span className="hidden md:inline">LOGIN</span>
-              </>
+            <svg
+              width="19"
+              height="19"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 0 1-8 0" />
+            </svg>
+            {itemCount > 0 && (
+              <span className="absolute top-1.5 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-black px-1 text-[9px] font-medium leading-none text-white">
+                {itemCount}
+              </span>
             )}
           </button>
 
-          {user && !loading && (
-            <nav
-              className={`absolute right-0 top-[calc(100%+0.75rem)] z-20 min-w-48 origin-top-right border border-brand-border bg-brand-surface/95 p-2 text-brand-black shadow-xl backdrop-blur-md transition-all duration-300 ${
-                isProfileOpen ? "visible translate-y-0 opacity-100" : "pointer-events-none invisible -translate-y-2 opacity-0"
-              }`}
-              aria-label={isAdmin ? "Admin Navigation Menu" : "Customer Profile Menu"}
-              role="menu"
-              aria-hidden={!isProfileOpen}
+          {/* Mobile Fullscreen Menu Toggle (Hamburger) */}
+          <button
+            onClick={onOpenMenu}
+            className="flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black lg:hidden"
+            data-cursor="MENU"
+            aria-label="Open menu"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
             >
-              {/* ADMIN EXPERIENCE */}
-              {isAdmin ? (
-                <>
-                  <div className="border-b border-brand-border px-3 py-2 text-[9px] uppercase tracking-[0.2em] text-brand-muted">
-                    Enterprise Admin
-                  </div>
-                  <Link
-                    href="/admin"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-brand-black transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    Admin Dashboard
-                  </Link>
-                  <Link
-                    href="/"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    View Store
-                  </Link>
-                </>
-              ) : (
-                /* CUSTOMER EXPERIENCE */
-                <>
-                  <Link
-                    href="/account"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    My Account
-                  </Link>
-                  <Link
-                    href="/account#orders"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    Orders
-                  </Link>
-                  <Link
-                    href="/account#wishlist"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    Wishlist
-                  </Link>
-                  <Link
-                    href="/account#addresses"
-                    onClick={() => setIsProfileOpen(false)}
-                    className="block px-3 py-2.5 text-[10px] uppercase tracking-[0.16em] transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                    role="menuitem"
-                  >
-                    Addresses
-                  </Link>
-                </>
-              )}
-
-              <div className="my-1 border-t border-brand-border" />
-
-              <button
-                type="button"
-                onClick={() => {
-                  setIsProfileOpen(false);
-                  void logout();
-                }}
-                className="block w-full px-3 py-2.5 text-left text-[10px] uppercase tracking-[0.16em] text-brand-muted transition-colors hover:bg-brand-surfaceSubtle hover:text-brand-black"
-                role="menuitem"
-              >
-                Logout
-              </button>
-            </nav>
-          )}
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
         </div>
-
-        <button
-          onClick={() => router.push("/cart")}
-          className="body-upper relative flex min-h-11 min-w-11 items-center justify-center gap-1 px-2 text-sm transition-opacity hover:opacity-70 md:min-w-0 md:text-base"
-          data-cursor="CART"
-          aria-label="View cart"
-        >
-          <span className="hidden md:inline">CART</span>
-          <span className="absolute right-0 top-1/2 flex h-4 min-w-4 -translate-y-1/2 items-center justify-center rounded-full bg-brand-black px-1 text-[9px] leading-none text-white md:static md:top-auto md:h-auto md:min-w-0 md:translate-y-0 md:rounded-none md:bg-transparent md:px-0 md:text-xs md:text-current">[{itemCount}]</span>
-        </button>
       </div>
+
       {showWelcome && user && (
         <div
           role="status"
-          className="absolute right-4 top-full mt-3 border border-brand-border bg-brand-surface/95 px-4 py-3 text-[10px] uppercase tracking-[0.16em] text-brand-black shadow-xl backdrop-blur-md sm:right-6 md:right-12"
+          className="absolute right-4 top-full mt-2 border border-brand-border bg-white px-4 py-2.5 text-xs font-tenor tracking-wider text-brand-black shadow-lg sm:right-6 md:right-12"
         >
           Welcome back, {isAdmin ? "Administrator" : (user.displayName?.split(" ")[0] || "member")}
         </div>

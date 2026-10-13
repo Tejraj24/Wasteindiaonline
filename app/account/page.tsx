@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { useCart } from "@/hooks/useCart";
 import { useWishlist } from "@/components/WishlistProvider";
 import { BackButton } from "@/components/navigation/BackButton";
+import { Footer } from "@/components/Footer";
 
 const accountSections = ["Profile", "Wishlist", "Orders", "Addresses", "Settings"] as const;
 type AccountSection = (typeof accountSections)[number];
@@ -133,7 +134,8 @@ function AccountContent() {
   }
 
   return (
-    <main className="min-h-screen bg-brand-bg px-6 pb-24 pt-36 text-brand-black md:px-12">
+    <div className="min-h-screen bg-brand-bg text-brand-black flex flex-col justify-between">
+      <main className="px-6 pb-24 pt-36 md:px-12">
       <div className="mx-auto max-w-7xl">
         <div className="border-b border-brand-border pb-8">
           <div className="mb-4 flex items-center justify-between">
@@ -297,7 +299,9 @@ function AccountContent() {
           </section>
         </div>
       </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   );
 }
 

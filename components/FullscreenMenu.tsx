@@ -74,8 +74,8 @@ export function FullscreenMenu({ isOpen, onClose }: FullscreenMenuProps) {
 
       <div className="relative z-10 w-full h-full flex flex-col p-6 md:p-12 text-brand-black">
         <div className="flex justify-between items-center">
-          <Link href="/" onClick={onClose} className="text-xl md:text-2xl font-black uppercase tracking-tight text-brand-black">
-            Waste<span className="text-brand-gold">.</span>
+          <Link href="/" onClick={onClose} className="font-tenor text-xl md:text-2xl font-normal uppercase tracking-[0.2em] text-brand-black">
+            WASTE
           </Link>
           <button 
             onClick={onClose}

@@ -1,23 +1,32 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import gsap from "gsap";
 
 const slides = [
   {
     id: 1,
-    title: "Luxury essentials",
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80",
+    title: "Refined curation",
+    alt: "WASTE® streetwear model seated on bench in front of architectural storefront",
+    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797220/Picsart_26-10-12_14-49-47-646_ic3wwd.png",
+    objectPositionMobile: "70% 12%",
+    objectPositionDesktop: "70% center",
   },
   {
     id: 2,
     title: "Quiet statement",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
+    alt: "WASTE® model seated in oversized graphic t-shirt and relaxed trousers",
+    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797197/file_000000005ed48208abf35f02392a64b3.jpg_ibwmtc.jpg",
+    objectPositionMobile: "center 15%",
+    objectPositionDesktop: "center center",
   },
   {
     id: 3,
-    title: "Refined curation",
-    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/w_1600,h_900,c_fill,q_80/v1790917475/WhatsApp_Image_2026-10-01_at_11.16.34_PM_kp2k1z.jpg",
+    title: "Luxury essentials",
+    alt: "WASTE® contemporary streetwear model editorial in dark coat",
+    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797163/Picsart_26-10-12_14-31-46-544_q6xzik.png",
+    objectPositionMobile: "60% 12%",
+    objectPositionDesktop: "60% center",
   },
 ];
 
@@ -36,14 +45,21 @@ export function Hero() {
     const nextSlide = slidesRef.current[newIndex];
     const nextImg = imagesRef.current[newIndex];
 
-    const isForwards = newIndex > activeIndex;
+    const isForwards =
+      activeIndex === slides.length - 1 && newIndex === 0
+        ? true
+        : activeIndex === 0 && newIndex === slides.length - 1
+        ? false
+        : newIndex > activeIndex;
+
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const parallaxPercent = isMobile ? 4 : 10;
 
     const tl = gsap.timeline({
       defaults: { duration: 1.0, ease: "power4.inOut" },
       onComplete: () => {
         setActiveIndex(newIndex);
         isAnimating.current = false;
-        // Reset z-index
         slidesRef.current.forEach((el, i) => {
           if (el) el.style.zIndex = i === newIndex ? "2" : "1";
         });
@@ -54,39 +70,33 @@ export function Hero() {
       nextSlide.style.zIndex = "3";
 
       if (isForwards) {
-        // Next item wiping down from top
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
           { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
         )
-          // Current item wiping down to bottom
           .fromTo(
             currentSlide,
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
             { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
             "<"
           )
-          // Parallax
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: 10 }, "<")
-          .fromTo(nextImg, { yPercent: -10 }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: parallaxPercent }, "<")
+          .fromTo(nextImg, { yPercent: -parallaxPercent }, { yPercent: 0 }, "<");
       } else {
-        // Backwards transition
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
           { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
         )
-          // Current item remains static as next slide uncovers it, or wipe it to top
           .fromTo(
             currentSlide,
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
             "<"
           )
-          // Parallax
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -10 }, "<")
-          .fromTo(nextImg, { yPercent: 10 }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -parallaxPercent }, "<")
+          .fromTo(nextImg, { yPercent: parallaxPercent }, { yPercent: 0 }, "<");
       }
     }
   };
@@ -99,10 +109,38 @@ export function Hero() {
     goToSlide((activeIndex - 1 + slides.length) % slides.length);
   };
 
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
-    <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-bg">
+    <section
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      aria-label="WASTE Editorial Campaign"
+      className="relative w-full h-[100svh] min-h-[560px] md:min-h-[700px] overflow-hidden select-none bg-brand-black"
+    >
       {/* Slides Container */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 w-full h-full">
         {slides.map((slide, i) => (
           <div
             key={slide.id}
@@ -113,60 +151,74 @@ export function Hero() {
               clipPath: i === activeIndex ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" : "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)"
             }}
           >
-            <div className="relative w-full h-full overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/15 z-10" />
+            <div className="relative w-full h-full overflow-hidden bg-brand-black">
+              {/* Edge-to-edge Campaign Photograph filling the continuous rectangular hero */}
               <img
                 ref={(el) => { imagesRef.current[i] = el; }}
                 src={slide.image}
-                alt={slide.title}
-                className="absolute inset-0 w-full h-full object-cover object-center"
+                alt={slide.alt || slide.title}
+                loading={i === 0 ? "eager" : "lazy"}
+                fetchPriority={i === 0 ? "high" : "low"}
+                decoding="async"
+                className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
               />
 
-              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-20 sm:p-6 sm:pb-24 md:p-12 md:pb-28">
-                <div className="max-w-xl editorial-reveal">
-                  <div className="mb-4 flex items-end justify-between gap-4 text-white/90 sm:mb-5 sm:gap-6">
-                    <span className="font-editorial text-[clamp(2.6rem,5vw,5rem)] leading-[0.84] tracking-[-0.045em] text-white">
-                      {String(activeIndex + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] text-white/70 md:text-[0.7rem]">
-                      01 / 03
-                    </span>
-                  </div>
-
-                  <a
-                    href="/shop"
-                    className="pointer-events-auto inline-block text-[clamp(2rem,4.6vw,5rem)] font-light uppercase leading-[0.86] tracking-[0.055em] text-white transition-opacity duration-300 hover:opacity-80"
-                    data-cursor="SHOP NOW"
-                  >
-                    SHOP NOW
-                  </a>
-
-                  <div className="mt-3 flex flex-col gap-1 text-white">
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.48em] text-white/75 md:text-[0.72rem]">
-                      EXPLORE OUR FIRST
-                    </span>
-                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.72] tracking-[-0.065em] text-white">
-                      COLLECTION
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Minimal atmospheric gradient at the base for contrast */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-36 md:h-44 z-10 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
             </div>
           </div>
         ))}
       </div>
 
-      {/* Smooth transition into light theme stage */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-20 h-24 bg-gradient-to-t from-brand-bg via-brand-bg/40 to-transparent" />
+      {/* Scoped CSS for responsive object-position across breakpoints */}
+      <style jsx>{`
+        .hero-slide-img-1 {
+          object-position: 70% 12%;
+        }
+        .hero-slide-img-2 {
+          object-position: center 15%;
+        }
+        .hero-slide-img-3 {
+          object-position: 60% 12%;
+        }
+        @media (min-width: 768px) {
+          .hero-slide-img-1 {
+            object-position: 70% center;
+          }
+          .hero-slide-img-2 {
+            object-position: center center;
+          }
+          .hero-slide-img-3 {
+            object-position: 60% center;
+          }
+        }
+      `}</style>
 
-      <div className="absolute inset-0 z-30 pointer-events-none flex justify-end items-end px-6 md:px-12 pb-8 md:pb-10">
-        <div className="pointer-events-auto flex items-center gap-2 text-white/90">
+      {/* Restrained Luxury Navigation Controls (VASAAE inspired: minimal, elegant, accessible) */}
+      <div className="absolute bottom-4 right-4 z-30 sm:bottom-6 sm:right-6 md:bottom-8 md:right-12">
+        <div className="pointer-events-auto inline-flex items-center gap-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-none shadow-sm">
           <button
-            onClick={nextSlide}
-            className="text-[0.7rem] md:text-[0.75rem] uppercase tracking-[0.3em] font-medium hover:opacity-70 transition-opacity"
-            data-cursor="NEXT"
+            type="button"
+            onClick={prevSlide}
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center text-white/75 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold"
+            data-cursor="PREV"
+            aria-label="Previous campaign slide"
           >
-            NEXT
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <span className="text-white/20 text-[10px] select-none" aria-hidden="true">|</span>
+          <button
+            type="button"
+            onClick={nextSlide}
+            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center text-white/75 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold"
+            data-cursor="NEXT"
+            aria-label="Next campaign slide"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
           </button>
         </div>
       </div>

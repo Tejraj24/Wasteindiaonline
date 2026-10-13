@@ -61,32 +61,36 @@ function ProductCard({
               <span>Quick view</span>
               <span className="border-b border-white/70 pb-1">View</span>
             </div>
-            {product.soldOut && (
-              <span className="absolute left-4 top-4 bg-brand-black px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-white">
+            {product.soldOut ? (
+              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
                 Sold out
               </span>
-            )}
+            ) : product.compareAtPrice ? (
+              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
+                Sale
+              </span>
+            ) : null}
           </div>
-          <div className="flex items-start justify-between gap-4 pt-4">
-            <div>
-              <h3 className="text-[11px] uppercase leading-[1.25] tracking-[0.1em] text-brand-black md:text-xs">
+          <div className="flex items-start justify-between gap-2 pt-3 sm:gap-4 sm:pt-4">
+            <div className="min-w-0 flex-1">
+              <h3 className="line-clamp-2 text-[11px] font-bold uppercase leading-[1.3] tracking-[0.08em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted sm:text-xs">
                 {shortName(product.title)}
               </h3>
-              <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-brand-muted">
+              <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:text-[10px]">
                 {product.category}
               </p>
             </div>
-            <div className="whitespace-nowrap text-right text-[11px] uppercase tracking-[0.08em] text-brand-black font-semibold font-mono">
+            <div className="shrink-0 whitespace-nowrap text-right font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-black sm:text-xs">
               <p>{formatPrice(product.price)}</p>
               {product.compareAtPrice && (
-                <p className="mt-1 text-brand-muted line-through text-[10px] font-normal">
+                <p className="mt-0.5 text-[9px] font-normal text-brand-muted line-through sm:text-[10px]">
                   {formatPrice(product.compareAtPrice)}
                 </p>
               )}
             </div>
           </div>
         </button>
-        <div className="absolute right-3 top-3 z-10 md:right-4 md:top-4">
+        <div className="absolute right-2.5 top-2.5 z-10 sm:right-4 sm:top-4">
           <WishlistButton
             item={{
               productId: product.id,
@@ -101,7 +105,7 @@ function ProductCard({
       </div>
       <Link
         href={`/product/${product.slug}`}
-        className="mt-4 inline-flex text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black"
+        className="mt-2.5 inline-flex min-h-8 items-center text-[9px] uppercase tracking-[0.18em] text-brand-muted transition-colors hover:text-brand-black sm:mt-3 sm:text-[10px] sm:tracking-[0.2em]"
       >
         View full details →
       </Link>

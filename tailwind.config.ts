@@ -26,8 +26,10 @@ const config: Config = {
         }
       },
       fontFamily: {
-        serif: ["var(--font-instrument-serif)", "Instrument Serif", "Georgia", "serif"],
+        serif: ["var(--font-cormorant)", "'Cormorant Garamond'", "var(--font-instrument-serif)", "Instrument Serif", "Georgia", "serif"],
         sans: ["var(--font-inter)", "Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        tenor: ["var(--font-tenor-sans)", "'Tenor Sans'", "Tenor Sans Fallback", "Arial", "sans-serif"],
+        cormorant: ["var(--font-cormorant)", "'Cormorant Garamond'", "Georgia", "serif"],
       },
       letterSpacing: {
         tighter: "-0.04em",

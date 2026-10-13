@@ -359,7 +359,7 @@ export function StackedProductCarousel({
 
       <div className="relative mx-auto max-w-[1600px] px-3.5 xs:px-4 sm:px-6 md:px-12">
         {/* Section Header: Luxury Brutalist Streetwear Style */}
-        <div className="mb-8 flex flex-col justify-between gap-4 border-b border-brand-border pb-6 sm:mb-12 sm:flex-row sm:items-end sm:gap-6 sm:pb-8 md:mb-16">
+        <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16">
           <div className="min-w-0">
             <div className="flex items-center gap-2.5">
               <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
@@ -370,40 +370,6 @@ export function StackedProductCarousel({
             <h2 className="mt-2 font-editorial text-[clamp(1.85rem,5.5vw,5.5rem)] uppercase leading-[0.9] tracking-[-0.04em] text-brand-black">
               {title}
             </h2>
-          </div>
-
-          {/* Top Controls: Counter & Arrow buttons */}
-          <div className="flex items-center justify-between gap-4 sm:justify-end sm:gap-6">
-            <div className="flex items-baseline gap-1.5 font-mono text-xs uppercase tracking-[0.2em] text-brand-muted">
-              <span className="font-editorial text-xl sm:text-2xl text-brand-black">
-                {String(activeIndex + 1).padStart(2, "0")}
-              </span>
-              <span className="text-brand-muted/40">/</span>
-              <span>{String(total).padStart(2, "0")}</span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={goToPrev}
-                aria-label="Previous product silhouette"
-                className="group flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center border border-brand-border bg-white text-brand-black shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle hover:text-brand-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black active:scale-95"
-              >
-                <span className="text-sm transition-transform duration-300 group-hover:-translate-x-0.5">
-                  ←
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={goToNext}
-                aria-label="Next product silhouette"
-                className="group flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center border border-brand-border bg-white text-brand-black shadow-sm backdrop-blur-sm transition-all duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle hover:text-brand-black focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-black active:scale-95"
-              >
-                <span className="text-sm transition-transform duration-300 group-hover:translate-x-0.5">
-                  →
-                </span>
-              </button>
-            </div>
           </div>
         </div>
 

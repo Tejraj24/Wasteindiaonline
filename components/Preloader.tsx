@@ -135,14 +135,14 @@ export function Preloader({ onComplete, imageUrl = DEFAULT_PRODUCT_IMAGE }: Prel
     );
 
     // STAGE 2 — Product photograph unmasks downwards to cover the wordmark completely
-    // Blue accent leading layer begins wipe down from top
+    // Champagne gold accent leading layer begins wipe down from top
     preloaderTl.fromTo(
       innerBg,
       { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
       { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)", duration: stepDuration }
     );
 
-    // Image container wipes down from top 15% later, with blue line leading
+    // Image container wipes down from top 15% later, with champagne gold leading layer
     preloaderTl.fromTo(
       imgContain,
       { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
@@ -178,7 +178,7 @@ export function Preloader({ onComplete, imageUrl = DEFAULT_PRODUCT_IMAGE }: Prel
       "<"
     );
 
-    // At 30% into the stage wipe, the entire fullscreen black curtain wipes down
+    // At 30% into the stage wipe, the entire fullscreen curtain wipes down
     preloaderTl.to(
       wrap,
       {
@@ -201,40 +201,40 @@ export function Preloader({ onComplete, imageUrl = DEFAULT_PRODUCT_IMAGE }: Prel
     <div
       ref={wrapRef}
       aria-hidden="true"
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-black overflow-hidden pointer-events-auto select-none"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-brand-black overflow-hidden pointer-events-auto select-none"
     >
       {/* Centered stage container with responsive 4:5 aspect ratio */}
       <div
         ref={innerRef}
         className="relative flex items-center justify-center w-[280px] sm:w-[320px] md:w-[360px] aspect-[4/5] overflow-hidden"
       >
-        {/* STAGE 1 — Centered lowercase brand wordmark with thin electric blue line */}
+        {/* STAGE 1 — Centered WASTE® brand logo */}
         <div
           ref={logoRef}
           style={{ opacity: 0 }}
-          className="absolute inset-0 z-0 flex flex-col items-center justify-center px-4 text-center pointer-events-none"
+          className="absolute inset-0 z-0 flex items-center justify-center p-6 pointer-events-none"
         >
-          {/* Thin horizontal electric-blue line directly above wordmark */}
-          <div className="h-[1.5px] w-9 sm:w-11 bg-[#050fff] mb-3.5 sm:mb-4 shadow-[0_0_8px_rgba(5,15,255,0.4)]" />
-
-          {/* Lowercase brand wordmark */}
-          <h1 className="font-editorial text-4xl sm:text-5xl md:text-6xl text-white lowercase tracking-[0.03em] leading-none">
-            waste<span className="text-[#050fff]">.</span>
-          </h1>
+          <img
+            src="https://res.cloudinary.com/dom7a6zlx/image/upload/v1791873242/waste_yl29iy.jpg"
+            alt="WASTE®"
+            fetchPriority="high"
+            decoding="async"
+            className="w-48 sm:w-56 md:w-64 max-w-[80%] h-auto object-contain select-none"
+          />
         </div>
 
-        {/* STAGE 2 (A) — Electric blue (#050fff) leading background layer */}
+        {/* STAGE 2 (A) — Champagne gold (#B89A62) leading background layer */}
         <div
           ref={innerBgRef}
           style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" }}
-          className="absolute inset-0 z-10 bg-[#050fff] pointer-events-none"
+          className="absolute inset-0 z-10 bg-brand-gold pointer-events-none"
         />
 
         {/* STAGE 2 (B) — Centered product photograph that completely covers the wordmark */}
         <div
           ref={imgContainRef}
           style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" }}
-          className="relative z-20 w-full h-full overflow-hidden bg-black"
+          className="relative z-20 w-full h-full overflow-hidden bg-brand-black"
         >
           <img
             ref={imgRef}

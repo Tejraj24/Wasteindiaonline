@@ -24,23 +24,26 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
   const [size, setSize] = useState("M");
 
   return (
-    <div className="mt-10 border-t border-brand-border pt-7">
+    <div className="mt-8 border-t border-brand-border pt-6 sm:mt-10 sm:pt-7">
       <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-brand-black">
-        <span>Size</span>
-        <span className="text-brand-muted">Select one</span>
+        <span>
+          Size: <strong className="font-semibold text-brand-black">{size}</strong>
+        </span>
+        <span className="text-brand-muted">Relaxed fit</span>
       </div>
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-3.5 grid grid-cols-4 gap-2">
         {sizes.map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => setSize(option)}
-            className={`min-h-11 border py-3 text-xs transition ${
+            className={`min-h-11 border py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${
               size === option
-                ? "border-brand-black bg-brand-black text-white"
-                : "border-brand-border bg-brand-surface text-brand-black hover:border-brand-black"
+                ? "border-brand-black bg-brand-black text-white shadow-sm"
+                : "border-brand-border bg-brand-surface text-brand-black hover:border-brand-black hover:bg-brand-surfaceSubtle"
             }`}
             aria-pressed={size === option}
+            aria-label={`Select size ${option}`}
           >
             {option}
           </button>
@@ -60,9 +63,9 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
           })
         }
         disabled={product.soldOut}
-        className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
+        className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
       >
-        {product.soldOut ? "Sold out" : "Add to cart"}
+        {product.soldOut ? "Sold out" : `Add to cart — ${size}`}
       </button>
       <div className="mt-3">
         <WishlistButton
