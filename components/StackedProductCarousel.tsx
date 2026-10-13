@@ -357,17 +357,17 @@ export function StackedProductCarousel({
         aria-hidden="true"
       />
 
-      <div className="relative mx-auto max-w-[1600px] px-3.5 xs:px-4 sm:px-6 md:px-12">
-        {/* Section Header: Luxury Brutalist Streetwear Style */}
+      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12">
+        {/* Section Header: Consistent with WASTE® navbar & editorial headings */}
         <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16">
-          <div className="min-w-0">
+          <div className="min-w-0 -ml-0 sm:-ml-2 md:-ml-4">
             <div className="flex items-center gap-2.5">
               <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
-              <p className="truncate text-[9px] uppercase tracking-[0.3em] text-brand-muted xs:text-[10px] xs:tracking-[0.35em]">
+              <p className="truncate font-tenor text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
                 {tagline}
               </p>
             </div>
-            <h2 className="mt-2 font-editorial text-[clamp(1.85rem,5.5vw,5.5rem)] uppercase leading-[0.9] tracking-[-0.04em] text-brand-black">
+            <h2 className="mt-2 font-tenor text-[clamp(1.25rem,3.2vw,2.25rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
               {title}
             </h2>
           </div>
@@ -390,10 +390,9 @@ export function StackedProductCarousel({
             const style = getCardTransform(diff);
             const isCenter = diff === 0;
             const primaryImage =
-              (product.images && product.images[0]) ||
-              "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80";
+              "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
             const secondaryImage =
-              (product.images && product.images[1]) || primaryImage;
+              "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
 
             return (
               <div
@@ -510,7 +509,7 @@ export function StackedProductCarousel({
         <div className="mt-8 border-t border-brand-border pt-6 sm:mt-12 sm:pt-8 md:mt-14">
           <div className="grid gap-6 sm:grid-cols-2 md:items-end lg:grid-cols-[1.25fr_0.75fr]">
             <div>
-              <div className="flex flex-wrap items-center gap-2 text-[9px] uppercase tracking-[0.25em] text-brand-gold xs:text-[10px] xs:tracking-[0.28em]">
+              <div className="flex flex-wrap items-center gap-2 font-tenor text-[10px] uppercase tracking-[0.2em] text-brand-gold xs:text-xs">
                 <span>Active Piece</span>
                 <span className="text-brand-muted/40">/</span>
                 <span className="text-brand-muted">{activeProduct.category || "Essential"}</span>
@@ -526,7 +525,7 @@ export function StackedProductCarousel({
                 )}
               </div>
 
-              <h3 className="mt-2 line-clamp-2 font-editorial text-2xl leading-[1.05] tracking-[-0.03em] xs:text-3xl sm:text-4xl md:text-5xl text-brand-black">
+              <h3 className="mt-2 line-clamp-2 font-editorial text-2xl leading-[1.05] tracking-tight xs:text-3xl sm:text-4xl md:text-5xl text-brand-black">
                 {activeProduct.name}
               </h3>
 
@@ -553,7 +552,7 @@ export function StackedProductCarousel({
               <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 w-full sm:w-auto">
                 <Link
                   href={`/product/${activeProduct.slug}`}
-                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 text-[9px] xs:text-[10px] font-semibold uppercase tracking-[0.22em] text-white transition-colors duration-300 hover:bg-brand-black/85"
+                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 font-tenor text-[10px] xs:text-xs font-normal uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:bg-brand-black/85"
                 >
                   <span>Inspect Piece</span>
                   <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
@@ -563,7 +562,7 @@ export function StackedProductCarousel({
 
                 <Link
                   href="/shop"
-                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 text-[9px] xs:text-[10px] font-semibold uppercase tracking-[0.18em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
+                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 font-tenor text-[10px] xs:text-xs font-normal uppercase tracking-[0.18em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
                 >
                   Shop All →
                 </Link>
@@ -595,7 +594,7 @@ export function StackedProductCarousel({
             ))}
           </div>
 
-          <div className="ml-4 flex shrink-0 items-center gap-3 text-[8px] uppercase tracking-[0.2em] text-brand-muted xs:text-[9px]">
+          <div className="ml-4 flex shrink-0 items-center gap-3 font-tenor text-[9px] uppercase tracking-[0.18em] text-brand-muted xs:text-[10px]">
             <span className="hidden sm:inline">Arrow Keys ← →</span>
             <span className="sm:hidden">Swipe ← →</span>
           </div>

@@ -17,8 +17,9 @@ const slides = [
     title: "Quiet statement",
     alt: "WASTE® model seated in oversized graphic t-shirt and relaxed trousers",
     image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797197/file_000000005ed48208abf35f02392a64b3.jpg_ibwmtc.jpg",
+    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791881073/file_0000000073748211bf37ba309647258e.jpg_ajebtr.jpg",
     objectPositionMobile: "center 15%",
-    objectPositionDesktop: "center center",
+    objectPositionDesktop: "center 20%",
   },
   {
     id: 3,
@@ -63,6 +64,12 @@ export function Hero() {
         slidesRef.current.forEach((el, i) => {
           if (el) el.style.zIndex = i === newIndex ? "2" : "1";
         });
+        if (nextImg) {
+          gsap.set(nextImg, { clearProps: "transform,yPercent,y" });
+        }
+        if (currentImg) {
+          gsap.set(currentImg, { clearProps: "transform,yPercent,y" });
+        }
       },
     });
 
@@ -73,30 +80,32 @@ export function Hero() {
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+          0
         )
           .fromTo(
             currentSlide,
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
             { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-            "<"
+            0
           )
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: parallaxPercent }, "<")
-          .fromTo(nextImg, { yPercent: -parallaxPercent }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: parallaxPercent }, 0)
+          .fromTo(nextImg, { yPercent: -parallaxPercent }, { yPercent: 0 }, 0);
       } else {
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+          0
         )
           .fromTo(
             currentSlide,
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-            "<"
+            0
           )
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -parallaxPercent }, "<")
-          .fromTo(nextImg, { yPercent: parallaxPercent }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -parallaxPercent }, 0)
+          .fromTo(nextImg, { yPercent: parallaxPercent }, { yPercent: 0 }, 0);
       }
     }
   };
@@ -153,15 +162,31 @@ export function Hero() {
           >
             <div className="relative w-full h-full overflow-hidden bg-brand-black">
               {/* Edge-to-edge Campaign Photograph filling the continuous rectangular hero */}
-              <img
-                ref={(el) => { imagesRef.current[i] = el; }}
-                src={slide.image}
-                alt={slide.alt || slide.title}
-                loading={i === 0 ? "eager" : "lazy"}
-                fetchPriority={i === 0 ? "high" : "low"}
-                decoding="async"
-                className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
-              />
+              {slide.mobileImage ? (
+                <picture className="absolute inset-0 h-full w-full">
+                  <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
+                  <source media="(min-width: 768px)" srcSet={slide.image} />
+                  <img
+                    ref={(el) => { imagesRef.current[i] = el; }}
+                    src={slide.image}
+                    alt={slide.alt || slide.title}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchPriority={i === 0 ? "high" : "low"}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
+                  />
+                </picture>
+              ) : (
+                <img
+                  ref={(el) => { imagesRef.current[i] = el; }}
+                  src={slide.image}
+                  alt={slide.alt || slide.title}
+                  loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  decoding="async"
+                  className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
+                />
+              )}
 
               {/* Minimal atmospheric gradient at the base for contrast */}
               <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-36 md:h-44 z-10 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
@@ -186,7 +211,7 @@ export function Hero() {
             object-position: 70% center;
           }
           .hero-slide-img-2 {
-            object-position: center center;
+            object-position: center 20%;
           }
           .hero-slide-img-3 {
             object-position: 60% center;
