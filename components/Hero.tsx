@@ -2,38 +2,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { DEFAULT_HERO_SLIDES, HeroSlideContent } from "@/lib/services/content.service";
 
-const slides = [
-  {
-    id: 1,
-    title: "Refined curation",
-    alt: "WASTE® streetwear model seated on bench in front of architectural storefront",
-    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797220/Picsart_26-10-12_14-49-47-646_ic3wwd.png",
-    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791933532/Waste_Black_Hoodie2_fvgpja.png",
-    objectPositionMobile: "center 15%",
-    objectPositionDesktop: "70% center",
-  },
-  {
-    id: 2,
-    title: "Quiet statement",
-    alt: "WASTE® model seated in oversized graphic t-shirt and relaxed trousers",
-    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797197/file_000000005ed48208abf35f02392a64b3.jpg_ibwmtc.jpg",
-    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791881073/file_0000000073748211bf37ba309647258e.jpg_ajebtr.jpg",
-    objectPositionMobile: "center 15%",
-    objectPositionDesktop: "center 20%",
-  },
-  {
-    id: 3,
-    title: "Luxury essentials",
-    alt: "WASTE® contemporary streetwear model editorial in dark coat",
-    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797163/Picsart_26-10-12_14-31-46-544_q6xzik.png",
-    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791911772/White_Art_of_Her2_jgatn3.png",
-    objectPositionMobile: "center 15%",
-    objectPositionDesktop: "60% center",
-  },
-];
+interface HeroProps {
+  slides?: HeroSlideContent[];
+}
 
-export function Hero() {
+export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
+  const activeSlides = slides && slides.length > 0 ? slides : DEFAULT_HERO_SLIDES;
+
   const [activeIndex, setActiveIndex] = useState(0);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
@@ -49,9 +26,9 @@ export function Hero() {
     const nextImg = imagesRef.current[newIndex];
 
     const isForwards =
-      activeIndex === slides.length - 1 && newIndex === 0
+      activeIndex === activeSlides.length - 1 && newIndex === 0
         ? true
-        : activeIndex === 0 && newIndex === slides.length - 1
+        : activeIndex === 0 && newIndex === activeSlides.length - 1
         ? false
         : newIndex > activeIndex;
 
@@ -87,7 +64,7 @@ export function Hero() {
         )
           .fromTo(
             currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+            { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
             { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
             0
           )
@@ -97,12 +74,12 @@ export function Hero() {
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+          { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
           0
         )
           .fromTo(
             currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 0%)" },
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
             0
           )
@@ -113,11 +90,11 @@ export function Hero() {
   };
 
   const nextSlide = () => {
-    goToSlide((activeIndex + 1) % slides.length);
+    goToSlide((activeIndex + 1) % activeSlides.length);
   };
 
   const prevSlide = () => {
-    goToSlide((activeIndex - 1 + slides.length) % slides.length);
+    goToSlide((activeIndex - 1 + activeSlides.length) % activeSlides.length);
   };
 
   // Automatically advance slides with responsive timing:
@@ -133,7 +110,7 @@ export function Hero() {
 
     let currentDuration = getSlideDuration();
     let timer = setInterval(() => {
-      goToSlide((activeIndex + 1) % slides.length);
+      goToSlide((activeIndex + 1) % activeSlides.length);
     }, currentDuration);
 
     const handleResize = () => {
@@ -142,7 +119,7 @@ export function Hero() {
         currentDuration = newDuration;
         clearInterval(timer);
         timer = setInterval(() => {
-          goToSlide((activeIndex + 1) % slides.length);
+          goToSlide((activeIndex + 1) % activeSlides.length);
         }, newDuration);
       }
     };
@@ -163,7 +140,7 @@ export function Hero() {
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, [activeIndex]);
+  }, [activeIndex, activeSlides.length]);
 
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -197,7 +174,7 @@ export function Hero() {
     >
       {/* Slides Container */}
       <div className="absolute inset-0 w-full h-full">
-        {slides.map((slide, i) => (
+        {activeSlides.map((slide, i) => (
           <div
             key={slide.id}
             ref={(el) => { slidesRef.current[i] = el; }}
@@ -209,14 +186,14 @@ export function Hero() {
           >
             <div className="relative w-full h-full overflow-hidden bg-brand-black">
               {/* Edge-to-edge Campaign Photograph filling the continuous rectangular hero */}
-              {slide.mobileImage ? (
+              {slide.mobileImage && slide.mobileImage !== slide.image ? (
                 <picture className="absolute inset-0 h-full w-full">
                   <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
                   <source media="(min-width: 768px)" srcSet={slide.image} />
                   <img
                     ref={(el) => { imagesRef.current[i] = el; }}
                     src={slide.image}
-                    alt={slide.alt || slide.title}
+                    alt={slide.title}
                     loading={i === 0 ? "eager" : "lazy"}
                     fetchPriority={i === 0 ? "high" : "low"}
                     decoding="async"
@@ -227,7 +204,7 @@ export function Hero() {
                 <img
                   ref={(el) => { imagesRef.current[i] = el; }}
                   src={slide.image}
-                  alt={slide.alt || slide.title}
+                  alt={slide.title}
                   loading={i === 0 ? "eager" : "lazy"}
                   fetchPriority={i === 0 ? "high" : "low"}
                   decoding="async"
@@ -265,7 +242,6 @@ export function Hero() {
           }
         }
       `}</style>
-
     </section>
   );
 }

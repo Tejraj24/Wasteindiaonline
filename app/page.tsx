@@ -5,22 +5,34 @@ import { ProductGrid } from "@/components/ProductGrid";
 import { Gallery } from "@/components/Gallery";
 import { Footer } from "@/components/Footer";
 import { getFeaturedProducts, getCategories } from "@/lib/services/product.service";
+import { getHomepageContent } from "@/lib/services/content.service";
 
 export const revalidate = 0; // Dynamic homepage with live database featured items
 
 export default async function Home() {
-  const [featuredProducts, categories] = await Promise.all([
+  const [featuredProducts, categories, homepageContent] = await Promise.all([
     getFeaturedProducts(8),
     getCategories(),
+    getHomepageContent(),
   ]);
+
+  // Apply visual overrides for featured products on the homepage if configured by admin
+  const resolvedFeaturedProducts = featuredProducts.map((p) => {
+    const override = homepageContent.featuredOverrides[p.id];
+    return {
+      ...p,
+      image1: override?.image1 || p.images[0] || "",
+      image2: override?.image2 || p.images[1] || p.images[0] || "",
+    };
+  });
 
   return (
     <div className="w-full flex flex-col bg-brand-bg text-brand-black">
-      <Hero />
-      <StackedProductCarousel products={featuredProducts} />
+      <Hero slides={homepageContent.heroSlides} />
+      <StackedProductCarousel products={resolvedFeaturedProducts} />
       <CategorySection categories={categories} />
-      <ProductGrid products={featuredProducts.slice(0, 4)} />
-      <Gallery />
+      <ProductGrid products={resolvedFeaturedProducts.slice(0, 4)} />
+      <Gallery items={homepageContent.carouselImages} />
       <Footer />
     </div>
   );

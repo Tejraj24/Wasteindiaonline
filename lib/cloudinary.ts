@@ -50,6 +50,43 @@ export interface CloudinaryUploadResult {
   height?: number;
 }
 
+export interface CloudinarySignaturePayload {
+  signature: string;
+  timestamp: number;
+  folder: string;
+  cloudName: string;
+  apiKey: string;
+}
+
+/**
+ * Generates signed Cloudinary upload parameters for direct client uploads.
+ * Restricts folder and signs parameters using the server-side API Secret.
+ */
+export function generateCloudinaryUploadSignature(
+  folder: string = "wasteindia/products"
+): CloudinarySignaturePayload {
+  const client = getCloudinaryClient();
+  const apiSecret = process.env.CLOUDINARY_API_SECRET!;
+  const apiKey = process.env.CLOUDINARY_API_KEY!;
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+
+  const timestamp = Math.round(Date.now() / 1000);
+  const paramsToSign = {
+    timestamp,
+    folder,
+  };
+
+  const signature = client.utils.api_sign_request(paramsToSign, apiSecret);
+
+  return {
+    signature,
+    timestamp,
+    folder,
+    cloudName,
+    apiKey,
+  };
+}
+
 /**
  * Uploads a file buffer directly to Cloudinary using upload_stream.
  * Includes stream error listening, explicit timeouts, and accurate error forwarding.

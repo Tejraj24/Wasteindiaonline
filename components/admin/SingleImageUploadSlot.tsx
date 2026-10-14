@@ -1,0 +1,278 @@
+"use client";
+
+import { useState, useRef } from "react";
+import { UploadCloud, RefreshCw, Undo2, CheckCircle2, AlertCircle, Eye } from "lucide-react";
+import { useAuth } from "@/components/auth/AuthProvider";
+
+interface SingleImageUploadSlotProps {
+  currentImageUrl: string;
+  defaultImageUrl?: string;
+  label: string;
+  sublabel?: string;
+  aspectRatio?: "16/9" | "3/4" | "4/3" | "1/1";
+  onImageChange: (newUrl: string) => void;
+  onResetToDefault?: () => void;
+  isModified?: boolean;
+  badge?: string;
+}
+
+export function SingleImageUploadSlot({
+  currentImageUrl,
+  defaultImageUrl,
+  label,
+  sublabel,
+  aspectRatio = "16/9",
+  onImageChange,
+  onResetToDefault,
+  isModified = false,
+  badge,
+}: SingleImageUploadSlotProps) {
+  const { user } = useAuth();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  const aspectClass = {
+    "16/9": "aspect-[16/9]",
+    "3/4": "aspect-[3/4]",
+    "4/3": "aspect-[4/3]",
+    "1/1": "aspect-square",
+  }[aspectRatio] || "aspect-[16/9]";
+
+  const handleFileSelect = async (files: FileList | null) => {
+    if (!files || files.length === 0 || isUploading) return;
+    const file = files[0];
+    setErrorMessage(null);
+
+    // Validate type
+    if (!file.type.startsWith("image/")) {
+      setErrorMessage("Please select a valid image file (JPG, PNG, WebP, AVIF).");
+      return;
+    }
+
+    // Cloudinary Free plan limit (10MB)
+    const MAX_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      setErrorMessage(
+        `File is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is 10MB per image on Cloudinary Free Plan.`
+      );
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadProgress(10);
+
+    try {
+      const token = await user?.getIdToken();
+      if (!token) {
+        throw new Error("You must be logged in as an administrator to upload images.");
+      }
+
+      setUploadProgress(20);
+
+      // 1. Get signed params
+      const signRes = await fetch("/api/admin/upload/sign", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!signRes.ok) {
+        const errData = await signRes.json().catch(() => null);
+        throw new Error(errData?.error || `Upload authorization failed (HTTP ${signRes.status})`);
+      }
+
+      const signData = await signRes.json();
+      setUploadProgress(35);
+
+      // 2. Direct upload to Cloudinary
+      const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/image/upload`;
+        xhr.open("POST", uploadUrl, true);
+
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const pct = Math.min(95, Math.round(35 + (e.loaded / e.total) * 60));
+            setUploadProgress(pct);
+          }
+        };
+
+        xhr.onload = () => {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
+              resolve({ secure_url: data.secure_url });
+            } else {
+              reject(new Error(data?.error?.message || `Cloudinary upload failed (${xhr.status})`));
+            }
+          } catch {
+            reject(new Error(`Failed to parse Cloudinary response (HTTP ${xhr.status})`));
+          }
+        };
+
+        xhr.onerror = () => {
+          reject(new Error("Network error during direct Cloudinary upload."));
+        };
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("api_key", signData.apiKey);
+        formData.append("timestamp", String(signData.timestamp));
+        formData.append("signature", signData.signature);
+        formData.append("folder", signData.folder);
+
+        xhr.send(formData);
+      });
+
+      setUploadProgress(100);
+      onImageChange(uploadResult.secure_url);
+    } catch (err: any) {
+      console.error("[SingleImageUploadSlot Error]", err);
+      setErrorMessage(err.message || "Failed to upload image.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  return (
+    <div className="flex flex-col rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 transition-all">
+      {/* Top Meta */}
+      <div className="flex items-center justify-between mb-3">
+        <div>
+          <div className="flex items-center gap-2">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">{label}</h4>
+            {badge && (
+              <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-mono font-medium text-blue-400 border border-blue-500/20">
+                {badge}
+              </span>
+            )}
+            {isModified && (
+              <span className="rounded bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-mono font-medium text-amber-400 border border-amber-500/20">
+                Modified
+              </span>
+            )}
+          </div>
+          {sublabel && <p className="text-[10px] text-zinc-500 mt-0.5">{sublabel}</p>}
+        </div>
+
+        {onResetToDefault && isModified && (
+          <button
+            type="button"
+            onClick={onResetToDefault}
+            className="inline-flex items-center gap-1 text-[10px] text-zinc-400 hover:text-white transition"
+            title="Reset to default image"
+          >
+            <Undo2 className="h-3 w-3" />
+            <span>Reset</span>
+          </button>
+        )}
+      </div>
+
+      {/* Preview & Drop Area */}
+      <div
+        className={`relative w-full ${aspectClass} overflow-hidden rounded-lg border bg-zinc-950 transition-colors ${
+          isDragOver ? "border-blue-500 bg-blue-950/20" : "border-zinc-800/80 hover:border-zinc-700"
+        }`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => setIsDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setIsDragOver(false);
+          handleFileSelect(e.dataTransfer.files);
+        }}
+      >
+        {currentImageUrl ? (
+          <img
+            src={currentImageUrl}
+            alt={label}
+            className="h-full w-full object-cover object-center transition duration-300"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-zinc-600 text-xs">
+            No image set
+          </div>
+        )}
+
+        {/* Hover / Active Overlay */}
+        <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center gap-2 p-3">
+          <button
+            type="button"
+            disabled={isUploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-blue-500 transition disabled:opacity-50"
+          >
+            <UploadCloud className="h-3.5 w-3.5" />
+            <span>{isUploading ? "Uploading..." : "Replace Image"}</span>
+          </button>
+
+          {currentImageUrl && (
+            <a
+              href={currentImageUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-[11px] text-zinc-300 hover:text-white underline transition"
+            >
+              <Eye className="h-3 w-3" />
+              <span>View Full Size</span>
+            </a>
+          )}
+        </div>
+
+        {/* Uploading Progress Overlay */}
+        {isUploading && (
+          <div className="absolute inset-0 bg-black/85 flex flex-col items-center justify-center p-4 z-20">
+            <RefreshCw className="h-6 w-6 text-blue-400 animate-spin mb-2" />
+            <p className="text-xs font-medium text-zinc-200">Uploading directly to Cloudinary...</p>
+            <div className="mt-2 w-full max-w-[140px] bg-zinc-800 h-1.5 rounded-full overflow-hidden">
+              <div
+                className="bg-blue-500 h-full transition-all duration-200"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <span className="text-[10px] text-zinc-400 mt-1 font-mono">{uploadProgress}%</span>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom Controls / Error */}
+      <div className="mt-2.5 flex items-center justify-between">
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/png,image/jpeg,image/webp,image/avif"
+          className="hidden"
+          onChange={(e) => handleFileSelect(e.target.files)}
+        />
+
+        <button
+          type="button"
+          disabled={isUploading}
+          onClick={() => fileInputRef.current?.click()}
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-400 hover:text-blue-300 transition"
+        >
+          <UploadCloud className="h-3.5 w-3.5" />
+          <span>Replace Image</span>
+        </button>
+
+        <span className="text-[10px] text-zinc-500 font-mono">Max 10MB</span>
+      </div>
+
+      {errorMessage && (
+        <div className="mt-2 flex items-center gap-1.5 rounded-md bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-[11px] text-red-400">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          <span>{errorMessage}</span>
+        </div>
+      )}
+    </div>
+  );
+}
