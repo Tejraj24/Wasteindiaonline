@@ -162,7 +162,7 @@ export default function AdminContentPage() {
     if (window.confirm("Are you sure you want to restore all homepage images to their initial storefront defaults?")) {
       setHeroSlides(DEFAULT_HERO_SLIDES);
       setFeaturedOverrides({});
-      setCarouselImages(DEFAULT_CAROUSEL_ITEMS);
+      setCarouselImages(DEFAULT_CAROUSEL_ITEMS.map((item) => ({ ...item, isCustom: false })));
     }
   }
 
@@ -212,7 +212,7 @@ export default function AdminContentPage() {
   function updateCarouselImage(index: number, url: string) {
     setCarouselImages((prev) => {
       const updated = [...prev];
-      updated[index] = { ...updated[index], image: url, mobileImage: url };
+      updated[index] = { ...updated[index], image: url, mobileImage: url, isCustom: true };
       return updated;
     });
   }
@@ -234,7 +234,7 @@ export default function AdminContentPage() {
     if (!defaultItem) return;
     setCarouselImages((prev) => {
       const updated = [...prev];
-      updated[index] = { ...defaultItem };
+      updated[index] = { ...defaultItem, isCustom: false };
       return updated;
     });
   }
@@ -564,7 +564,7 @@ export default function AdminContentPage() {
       </section>
 
       {/* ==========================================================
-          SECTION C: FEATURED SILHOUETTES CAROUSEL
+          SECTION C: 2024 DROP // THE 3D LOOKBOOK — FEATURED SILHOUETTES
          ========================================================== */}
       <section className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-6 shadow-sm">
         <div className="flex items-center justify-between border-b border-zinc-800/60 pb-4 mb-6">
@@ -573,11 +573,16 @@ export default function AdminContentPage() {
               <Images className="h-4 w-4" />
             </div>
             <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-blue-400 font-semibold">
+                  2024 DROP // THE 3D LOOKBOOK
+                </span>
+              </div>
               <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                Section C: Featured Silhouettes Carousel (Archive)
+                Section C: Featured Silhouettes Carousel
               </h2>
               <p className="text-[11px] text-zinc-400">
-                Manage the horizontal infinite-scrolling gallery displayed above the footer.
+                Replace and manage every image in the Featured Silhouettes carousel and archive gallery.
               </p>
             </div>
           </div>
@@ -624,8 +629,8 @@ export default function AdminContentPage() {
                 {/* Upload Slot */}
                 <div className="flex-1">
                   <SingleImageUploadSlot
-                    label={`Carousel Slot ${index + 1}: ${item.title}`}
-                    sublabel="Featured horizontal showcase item (4:3 ratio)"
+                    label={`Silhouette ${index + 1}: ${item.title}`}
+                    sublabel="Featured Silhouettes carousel image (4:3 ratio)"
                     currentImageUrl={item.image}
                     defaultImageUrl={defaultItem?.image}
                     aspectRatio="4/3"

@@ -19,6 +19,7 @@ export interface CarouselSlideContent {
   title: string;
   image: string;
   mobileImage?: string;
+  isCustom?: boolean;
 }
 
 export interface HomepageContentConfig {

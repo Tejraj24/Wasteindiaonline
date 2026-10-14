@@ -5,11 +5,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { StorefrontProduct } from "@/lib/services/product.service";
 import { WishlistButton } from "@/components/WishlistButton";
+import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/content.service";
 
 interface StackedProductCarouselProps {
-  products: StorefrontProduct[];
+  products: (StorefrontProduct & {
+    image1?: string;
+    image2?: string;
+    adminProductOverride1?: string;
+    adminProductOverride2?: string;
+  })[];
   title?: string;
   tagline?: string;
+  silhouettes?: CarouselSlideContent[];
 }
 
 function formatPrice(price: number) {
@@ -24,6 +31,7 @@ export function StackedProductCarousel({
   products = [],
   title = "FEATURED SILHOUETTES",
   tagline = "2024 DROP // THE 3D LOOKBOOK",
+  silhouettes,
 }: StackedProductCarouselProps) {
   const router = useRouter();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -389,10 +397,68 @@ export function StackedProductCarousel({
             const diff = getDiff(index);
             const style = getCardTransform(diff);
             const isCenter = diff === 0;
+            const fallbackImage =
+              "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
+
+            // Resolve matching silhouette by stable slot ID (1-based), product ID/slot, or array index
+            const targetSlotId = index + 1;
+            const matchingSilhouette =
+              silhouettes?.find(
+                (s) =>
+                  s.id === targetSlotId ||
+                  (s as any).slot === targetSlotId ||
+                  String(s.id) === String(product.id) ||
+                  (s as any).productId === product.id
+              ) || silhouettes?.[index];
+
+            const defaultSilhouette =
+              DEFAULT_CAROUSEL_ITEMS.find((d) => d.id === matchingSilhouette?.id) ||
+              DEFAULT_CAROUSEL_ITEMS[index];
+
+            // A silhouette has an explicit admin override if it is flagged as custom or differs from code default
+            const hasAdminSilhouetteOverride = Boolean(
+              matchingSilhouette?.image &&
+                (
+                  matchingSilhouette.isCustom === true ||
+                  (defaultSilhouette && matchingSilhouette.image !== defaultSilhouette.image)
+                )
+            );
+
+            // Priority order:
+            // 1. Explicitly saved Featured Silhouettes admin image (takes top priority)
+            // 2. Product-specific visual override from admin catalog section
+            // 3. Product catalog default image
+            // 4. Intended default fallback image
+            const adminSilhouetteImage = hasAdminSilhouetteOverride
+              ? matchingSilhouette?.image
+              : undefined;
+
+            const productDefaultImage =
+              product.adminProductOverride1 ||
+              product.image1 ||
+              (product.images && product.images[0]);
+
             const primaryImage =
-              "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
+              adminSilhouetteImage ||
+              productDefaultImage ||
+              fallbackImage;
+
+            const adminSilhouetteSecondary =
+              hasAdminSilhouetteOverride &&
+              matchingSilhouette?.mobileImage &&
+              matchingSilhouette.mobileImage !== matchingSilhouette.image
+                ? matchingSilhouette.mobileImage
+                : undefined;
+
+            const productSecondaryImage =
+              product.adminProductOverride2 ||
+              product.image2 ||
+              (product.images && product.images[1]);
+
             const secondaryImage =
-              "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
+              adminSilhouetteSecondary ||
+              productSecondaryImage ||
+              primaryImage;
 
             return (
               <div

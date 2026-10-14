@@ -23,13 +23,18 @@ export default async function Home() {
       ...p,
       image1: override?.image1 || p.images[0] || "",
       image2: override?.image2 || p.images[1] || p.images[0] || "",
+      adminProductOverride1: override?.image1,
+      adminProductOverride2: override?.image2,
     };
   });
 
   return (
     <div className="w-full flex flex-col bg-brand-bg text-brand-black">
       <Hero slides={homepageContent.heroSlides} />
-      <StackedProductCarousel products={resolvedFeaturedProducts} />
+      <StackedProductCarousel
+        products={resolvedFeaturedProducts}
+        silhouettes={homepageContent.carouselImages}
+      />
       <CategorySection categories={categories} />
       <ProductGrid products={resolvedFeaturedProducts.slice(0, 4)} />
       <Gallery items={homepageContent.carouselImages} />
