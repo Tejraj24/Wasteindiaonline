@@ -25,11 +25,14 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
   const [urlInput, setUrlInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Cloudinary Free tier allows images up to 10 MB (10,485,760 bytes)
+  const CLOUDINARY_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
   async function handleFiles(files: FileList | null) {
-    if (!files || files.length === 0) return;
+    if (!files || files.length === 0 || isUploading) return;
 
     setIsUploading(true);
-    setUploadProgress(15);
+    setUploadProgress(5);
     setStatusMessage(null);
 
     const validFiles: File[] = [];
@@ -62,75 +65,117 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
     const filesToUpload = validFiles.slice(0, availableSlots);
 
     try {
-      const formData = new FormData();
+      // 1. Client-side file size validation against Cloudinary account limit
       for (const file of filesToUpload) {
-        formData.append("files", file);
+        if (file.size > CLOUDINARY_MAX_IMAGE_BYTES) {
+          const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+          throw new Error(
+            `"${file.name}" is ${sizeMB} MB, exceeding Cloudinary's 10 MB limit for this account. Please compress the file before uploading.`
+          );
+        }
       }
 
-      setUploadProgress(35);
-
+      // 2. Obtain current Firebase administrator token
       if (!user) {
         console.warn("[ImageUpload Frontend 2. Auth missing] No active user logged in.");
         throw new Error("You must be signed in as an administrator to upload images.");
       }
 
       const token = await user.getIdToken(true);
-      console.log("[ImageUpload Frontend 2. ID Token acquired]", {
-        userEmail: user.email,
-        tokenLength: token?.length,
-        tokenPreview: token ? `${token.substring(0, 15)}...` : "NONE",
-      });
+      setUploadProgress(15);
 
-      console.log("[ImageUpload Frontend 3. Dispatching POST /api/admin/upload]");
-      const response = await fetch("/api/admin/upload", {
+      // 3. Request signed direct upload parameters from backend
+      console.log("[ImageUpload Frontend 3. Requesting upload signature from /api/admin/upload/sign]");
+      const signResponse = await fetch("/api/admin/upload/sign", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        body: formData,
       });
 
-      setUploadProgress(75);
-      console.log("[ImageUpload Frontend 4. Response received]", {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error("[ImageUpload Frontend Error Response]", errorData);
-        throw new Error(errorData?.error || `Upload failed with status code ${response.status}`);
+      if (!signResponse.ok) {
+        const errorData = await signResponse.json().catch(() => null);
+        throw new Error(errorData?.error || `Failed to authorize upload with server (HTTP ${signResponse.status})`);
       }
 
-      const result = await response.json();
-      console.log("[ImageUpload Frontend 5. JSON parsed]", result);
+      const signData: {
+        signature: string;
+        timestamp: number;
+        folder: string;
+        cloudName: string;
+        apiKey: string;
+      } = await signResponse.json();
 
-      const uploadedCloudImages = result.images || [];
-      if (uploadedCloudImages.length === 0) {
-        throw new Error("No image URLs were returned from upload handler.");
+      console.log("[ImageUpload Frontend 4. Signature acquired, starting direct upload to Cloudinary]");
+      setUploadProgress(25);
+
+      // 4. Upload files directly to Cloudinary via HTTPS
+      const uploadedCloudImages: UploadedImage[] = [];
+      const totalFiles = filesToUpload.length;
+
+      for (let i = 0; i < totalFiles; i++) {
+        const file = filesToUpload[i];
+        const baseName = file.name.split(".")[0];
+
+        const uploadResult = await new Promise<{ secure_url: string; public_id: string }>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/image/upload`;
+          xhr.open("POST", uploadUrl, true);
+
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const fileFraction = e.loaded / e.total;
+              const overallPercent = Math.min(98, Math.round(25 + ((i + fileFraction) / totalFiles) * 70));
+              setUploadProgress(overallPercent);
+            }
+          };
+
+          xhr.onload = () => {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
+                resolve({ secure_url: data.secure_url, public_id: data.public_id });
+              } else {
+                const errorMsg = data?.error?.message || `Cloudinary upload failed (HTTP ${xhr.status})`;
+                reject(new Error(errorMsg));
+              }
+            } catch {
+              reject(new Error(`Failed to parse Cloudinary response (HTTP ${xhr.status})`));
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(new Error("Network connection error while uploading directly to Cloudinary."));
+          };
+
+          const uploadFormData = new FormData();
+          uploadFormData.append("file", file);
+          uploadFormData.append("api_key", signData.apiKey);
+          uploadFormData.append("timestamp", String(signData.timestamp));
+          uploadFormData.append("signature", signData.signature);
+          uploadFormData.append("folder", signData.folder);
+
+          xhr.send(uploadFormData);
+        });
+
+        uploadedCloudImages.push({
+          imageUrl: uploadResult.secure_url,
+          altText: baseName || `Product Image ${images.length + i + 1}`,
+          sortOrder: images.length + i,
+        });
       }
 
-      const newImages: UploadedImage[] = [
-        ...images,
-        ...uploadedCloudImages.map((img: { imageUrl?: string; secureUrl?: string; altText?: string }, idx: number) => ({
-          imageUrl: img.imageUrl || img.secureUrl || "",
-          altText: img.altText || `Product Image ${images.length + idx + 1}`,
-          sortOrder: images.length + idx,
-        })),
-      ];
-
-      console.log("[ImageUpload Frontend 6. Updating state with new images]", {
+      const newImages: UploadedImage[] = [...images, ...uploadedCloudImages];
+      console.log("[ImageUpload Frontend 5. Direct upload complete. Updating state]", {
         previousCount: images.length,
         newCount: newImages.length,
-        newImages,
       });
 
       onChange(newImages);
       setUploadProgress(100);
       setStatusMessage({
         type: "success",
-        text: `Successfully uploaded ${uploadedCloudImages.length} image${uploadedCloudImages.length > 1 ? "s" : ""} to Cloudinary CDN.`,
+        text: `Successfully uploaded ${uploadedCloudImages.length} image${uploadedCloudImages.length > 1 ? "s" : ""} directly to Cloudinary.`,
       });
 
       setTimeout(() => {
@@ -237,14 +282,14 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
         </div>
         <p className="mt-3 text-sm font-medium text-zinc-200">
           {isUploading ? (
-            "Uploading to Cloudinary CDN..."
+            "Uploading directly to Cloudinary..."
           ) : (
             <>
               Drag & drop images here, or <span className="text-blue-400 underline">browse files</span>
             </>
           )}
         </p>
-        <p className="mt-1 text-xs text-zinc-500">PNG, JPG, WebP, AVIF up to 10MB per image</p>
+        <p className="mt-1 text-xs text-zinc-500">PNG, JPG, WebP, AVIF up to 10MB per image (Cloudinary Free Plan)</p>
 
         {isUploading && (
           <div className="mt-4 w-full max-w-xs">
@@ -254,7 +299,7 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
-            <p className="mt-1 text-[10px] text-zinc-400">Processing Cloudinary upload ({uploadProgress}%)...</p>
+            <p className="mt-1 text-[10px] text-zinc-400">Direct Cloudinary upload ({uploadProgress}%)...</p>
           </div>
         )}
       </div>

@@ -20,6 +20,7 @@ import {
   User,
   ShieldCheck,
   Store,
+  Layers,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -28,6 +29,7 @@ interface AdminLayoutProps {
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Content", href: "/admin/content", icon: Layers },
   { name: "Products", href: "/admin/products", icon: Package },
   { name: "Categories", href: "/admin/categories", icon: Tags },
   { name: "Orders", href: "/admin/orders", icon: ShoppingBag },
@@ -82,6 +84,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
     if (segments[0] === "settings") {
       if (segments[1] === "account") return "Settings / Account & Security";
       return "Settings";
+    }
+    if (segments[0] === "content") {
+      return "Storefront / Homepage Content";
     }
     return segments[0]?.replace("-", " ") || "Dashboard";
   }

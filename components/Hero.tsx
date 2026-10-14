@@ -3,25 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
-const slides = [
-  {
-    id: 1,
-    title: "Luxury essentials",
-    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80",
-  },
-  {
-    id: 2,
-    title: "Quiet statement",
-    image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1600&q=80",
-  },
-  {
-    id: 3,
-    title: "Refined curation",
-    image: "https://res.cloudinary.com/dom7a6zlx/image/upload/w_1600,h_900,c_fill,q_80/v1790917475/WhatsApp_Image_2026-10-01_at_11.16.34_PM_kp2k1z.jpg",
-  },
-];
+import { DEFAULT_HERO_SLIDES, HeroSlideContent } from "@/lib/services/content.service";
 
-export function Hero() {
+interface HeroProps {
+  slides?: HeroSlideContent[];
+}
+
+export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
+  const activeSlides = slides && slides.length > 0 ? slides : DEFAULT_HERO_SLIDES;
+
   const [activeIndex, setActiveIndex] = useState(0);
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
@@ -92,18 +82,18 @@ export function Hero() {
   };
 
   const nextSlide = () => {
-    goToSlide((activeIndex + 1) % slides.length);
+    goToSlide((activeIndex + 1) % activeSlides.length);
   };
 
   const prevSlide = () => {
-    goToSlide((activeIndex - 1 + slides.length) % slides.length);
+    goToSlide((activeIndex - 1 + activeSlides.length) % activeSlides.length);
   };
 
   return (
     <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-dark">
       {/* Slides Container */}
       <div className="absolute inset-0">
-        {slides.map((slide, i) => (
+        {activeSlides.map((slide, i) => (
           <div
             key={slide.id}
             ref={(el) => { slidesRef.current[i] = el; }}
@@ -115,12 +105,17 @@ export function Hero() {
           >
             <div className="relative w-full h-full overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10 z-10" />
-              <img
-                ref={(el) => { imagesRef.current[i] = el; }}
-                src={slide.image}
-                alt={slide.title}
-                className="absolute inset-0 w-full h-full object-cover object-center"
-              />
+              <picture className="absolute inset-0 w-full h-full">
+                {slide.mobileImage && slide.mobileImage !== slide.image && (
+                  <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
+                )}
+                <img
+                  ref={(el) => { imagesRef.current[i] = el; }}
+                  src={slide.image}
+                  alt={slide.title}
+                  className="absolute inset-0 w-full h-full object-cover object-center"
+                />
+              </picture>
 
               <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-16 sm:p-6 md:p-12 md:pb-24">
                 <div className="max-w-xl editorial-reveal">
@@ -129,7 +124,7 @@ export function Hero() {
                       {String(activeIndex + 1).padStart(2, "0")}
                     </span>
                     <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] opacity-65 md:text-[0.7rem]">
-                      01 / 03
+                      01 / {String(activeSlides.length).padStart(2, "0")}
                     </span>
                   </div>
 

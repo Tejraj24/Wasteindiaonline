@@ -4,16 +4,16 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
 
-const galleryItems = [
-  { id: 1, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924253/WhatsApp_Image_TOP_toocro.jpg", title: "Archive 01" },
-  { id: 2, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924402/WhatsApp_Image_2026-10-01_at_12.17.13_PM_ihlf30.jpg", title: "Archive 02" },
-  { id: 3, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924498/WhatsApp_Image_2026-10-01_at_11.16.47_PM_ex9pkk.jpg", title: "Archive 03" },
-  { id: 4, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924568/WhatsApp_Image_2026-10-01_at_11.16.42_PM_q23odi.jpg", title: "Archive 04" },
-  { id: 5, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924473/WhatsApp_Image_2026-10-01_at_11.18.01_PM_wlstuq.jpg", title: "Archive 05" },
-];
+import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/content.service";
 
-export function Gallery() {
+interface GalleryProps {
+  items?: CarouselSlideContent[];
+}
+
+export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
+  const activeItems = items && items.length > 0 ? items : DEFAULT_CAROUSEL_ITEMS;
   const containerRef = useRef<HTMLDivElement>(null);
+
   const trackRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -95,18 +95,23 @@ export function Gallery() {
         ref={trackRef} 
         className="flex gap-6 px-4 md:px-8 w-max"
       >
-        {[...galleryItems, ...galleryItems].map((item, idx) => (
+        {[...activeItems, ...activeItems].map((item, idx) => (
           <div
             key={`${item.id}-${idx}`}
             ref={(el) => { itemsRef.current[idx] = el; }}
             className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-neutral-800 flex-shrink-0 overflow-hidden transform-gpu"
           >
-            <img
-              src={item.image}
-              alt={item.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-80"
-              draggable={false}
-            />
+            <picture className="absolute inset-0 w-full h-full">
+              {item.mobileImage && item.mobileImage !== item.image && (
+                <source media="(max-width: 767px)" srcSet={item.mobileImage} />
+              )}
+              <img
+                src={item.image}
+                alt={item.title}
+                className="absolute inset-0 w-full h-full object-cover opacity-80"
+                draggable={false}
+              />
+            </picture>
           </div>
         ))}
       </div>

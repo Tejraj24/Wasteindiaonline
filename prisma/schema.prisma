@@ -171,3 +171,11 @@ model StoreSettings {
   announcement String?  @default("Complimentary carbon-neutral domestic delivery across India.")
   updatedAt    DateTime @default(now()) @updatedAt
 }
+
+model SiteContent {
+  id                String   @id @default("homepage")
+  heroSlides        Json?
+  featuredOverrides Json?
+  carouselImages    Json?
+  updatedAt         DateTime @default(now()) @updatedAt
+}
