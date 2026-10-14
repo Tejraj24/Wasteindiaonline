@@ -570,35 +570,6 @@ export function StackedProductCarousel({
             </div>
           </div>
         </div>
-
-        {/* BOTTOM PAGINATION STRIP: Clickable timeline bars with generous tap zones */}
-        <div className="mt-8 flex items-center justify-between border-t border-brand-border pt-5 sm:mt-10 sm:pt-6">
-          <div className="flex flex-1 items-center gap-1.5 xs:gap-2 max-w-md">
-            {products.map((product, idx) => (
-              <button
-                key={product.id}
-                type="button"
-                onClick={() => goToIndex(idx)}
-                aria-label={`Go to piece ${idx + 1}: ${product.name}`}
-                aria-current={idx === activeIndex}
-                className="group relative flex h-6 flex-1 items-center justify-center py-2 focus-visible:outline-none"
-              >
-                <span
-                  className={`h-1 w-full rounded-none transition-all duration-500 ${
-                    idx === activeIndex
-                      ? "bg-brand-black scale-y-125"
-                      : "bg-brand-border group-hover:bg-brand-muted"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-
-          <div className="ml-4 flex shrink-0 items-center gap-3 font-tenor text-[9px] uppercase tracking-[0.18em] text-brand-muted xs:text-[10px]">
-            <span className="hidden sm:inline">Arrow Keys ← →</span>
-            <span className="sm:hidden">Swipe ← →</span>
-          </div>
-        </div>
       </div>
     </section>
   );
