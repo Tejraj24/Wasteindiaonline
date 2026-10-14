@@ -120,13 +120,49 @@ export function Hero() {
     goToSlide((activeIndex - 1 + slides.length) % slides.length);
   };
 
-  // Automatically advance slides every 2 seconds (2000ms) with proper cleanup and reset on slide change
+  // Automatically advance slides with responsive timing:
+  // - Mobile screens (viewport width <= 767px): 4000ms
+  // - Laptop, desktop, and larger screens (viewport width >= 768px): 3000ms
   useEffect(() => {
-    const timer = setInterval(() => {
-      goToSlide((activeIndex + 1) % slides.length);
-    }, 2000);
+    if (typeof window === "undefined") return;
 
-    return () => clearInterval(timer);
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const getSlideDuration = () =>
+      mediaQuery.matches || window.innerWidth <= 767 ? 4000 : 3000;
+
+    let currentDuration = getSlideDuration();
+    let timer = setInterval(() => {
+      goToSlide((activeIndex + 1) % slides.length);
+    }, currentDuration);
+
+    const handleResize = () => {
+      const newDuration = getSlideDuration();
+      if (newDuration !== currentDuration) {
+        currentDuration = newDuration;
+        clearInterval(timer);
+        timer = setInterval(() => {
+          goToSlide((activeIndex + 1) % slides.length);
+        }, newDuration);
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleResize);
+    } else {
+      mediaQuery.addListener(handleResize);
+    }
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(timer);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleResize);
+      } else {
+        mediaQuery.removeListener(handleResize);
+      }
+      window.removeEventListener("resize", handleResize);
+    };
   }, [activeIndex]);
 
   const touchStartX = useRef<number | null>(null);
