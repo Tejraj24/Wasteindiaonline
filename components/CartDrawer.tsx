@@ -1,8 +1,7 @@
 "use client";
 
 import { useCart } from "@/hooks/useCart";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
+import { useEffect } from "react";
 
 const formatPrice = (price: number) =>
   new Intl.NumberFormat("en-IN", {
@@ -23,29 +22,20 @@ export function CartDrawer() {
     removeItem,
     updateQuantity,
   } = useCart();
-  const drawerRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
 
+  // Prevent body scrolling while the cart drawer is open
   useEffect(() => {
-    if (!drawerRef.current || !backdropRef.current) return;
-
+    if (typeof document === "undefined") return;
     if (isOpen) {
-      gsap.to(backdropRef.current, { autoAlpha: 1, duration: 0.3 });
-      gsap.to(drawerRef.current, {
-        xPercent: 0,
-        duration: 0.4,
-        ease: "power3.out",
-      });
-    } else {
-      gsap.to(backdropRef.current, { autoAlpha: 0, duration: 0.3 });
-      gsap.to(drawerRef.current, {
-        xPercent: 100,
-        duration: 0.4,
-        ease: "power3.in",
-      });
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
     }
   }, [isOpen]);
 
+  // Close drawer on Escape key press
   useEffect(() => {
     if (!isOpen) return;
 
@@ -59,19 +49,24 @@ export function CartDrawer() {
 
   return (
     <>
+      {/* Backdrop with fade-in and backdrop blur */}
       <div
-        ref={backdropRef}
         onClick={closeCart}
-        className="fixed inset-0 z-[100] invisible bg-black/50 backdrop-blur-sm"
+        className={`fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm transition-all duration-300 ease-in-out ${
+          isOpen ? "opacity-100 pointer-events-auto visible" : "opacity-0 pointer-events-none invisible"
+        }`}
         aria-hidden="true"
       />
 
+      {/* Cart Drawer sliding in from right */}
       <aside
-        ref={drawerRef}
         role="dialog"
         aria-modal="true"
+        aria-hidden={!isOpen}
         aria-labelledby="cart-drawer-title"
-        className="fixed bottom-0 right-0 z-[101] flex h-[min(88vh,720px)] w-full max-w-md translate-x-full flex-col rounded-t-2xl border-l border-brand-border bg-brand-surface text-brand-black shadow-2xl md:top-0 md:h-full md:rounded-none"
+        className={`fixed bottom-0 right-0 z-[101] flex h-[min(88vh,720px)] w-full max-w-md flex-col rounded-t-2xl border-l border-brand-border bg-brand-surface text-brand-black shadow-2xl transition-transform duration-300 ease-out md:top-0 md:h-full md:rounded-none ${
+          isOpen ? "translate-x-0" : "translate-x-full pointer-events-none"
+        }`}
       >
         <div className="flex items-center justify-between border-b border-brand-border px-5 py-4 sm:p-6">
           <h2 id="cart-drawer-title" className="text-xl font-bold uppercase tracking-tight text-brand-black">

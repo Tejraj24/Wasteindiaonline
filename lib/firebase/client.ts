@@ -2,9 +2,21 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+function getEffectiveAuthDomain(): string | undefined {
+  if (typeof window !== "undefined") {
+    const host = window.location.host;
+    // When running on the deployed production/Vercel domain, use the current host
+    // to route Firebase auth requests through the first-party Next.js reverse proxy (/__/auth/*)
+    if (host && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
+      return host;
+    }
+  }
+  return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "wasteindia.firebaseapp.com";
+}
+
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  authDomain: getEffectiveAuthDomain(),
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket:
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
