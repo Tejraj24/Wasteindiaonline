@@ -81,17 +81,17 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
   }
 
   return (
-    <section className="bg-brand-light px-4 py-16 text-brand-dark sm:py-20 md:px-8 md:py-24" ref={gridRef}>
+    <section className="bg-brand-bg px-4 py-16 text-brand-black border-t border-brand-border sm:py-20 md:px-8 md:py-24" ref={gridRef}>
       <div className="mb-8 flex items-end justify-between gap-4 sm:mb-12">
-        <h2 className="max-w-[15rem] text-[clamp(1.35rem,4vw,3rem)] font-bold uppercase leading-none tracking-tighter sm:max-w-none">
-          ( FEATURED PRODUCTS )
+        <h2 className="font-tenor text-[clamp(1.25rem,3.2vw,2.25rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+          FEATURED PRODUCTS
         </h2>
-        <a href="/shop" className="body-upper hover:opacity-70 transition-opacity hidden md:block">
-          VIEW ALL
+        <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity hidden md:block">
+          VIEW ALL →
         </a>
       </div>
 
-      <div className="grid grid-cols-2 gap-x-2 gap-y-8 sm:gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-x-3 gap-y-8 sm:gap-x-4 sm:gap-y-12 lg:grid-cols-4 lg:gap-x-6">
         {normalizedProducts.map((product, i) => (
           <div key={product.id} className="group relative flex flex-col">
             <a
@@ -103,9 +103,9 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
               data-cursor="VIEW"
             >
               {/* Image Container */}
-              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none bg-brand-grey">
+              <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none border border-brand-border bg-brand-surfaceSubtle shadow-sm transition-shadow duration-300 group-hover:shadow-md">
                 {product.badge && (
-                  <div className="absolute top-3 left-3 z-10 bg-brand-blue text-white px-2 py-1 text-xs font-bold uppercase tracking-widest pointer-events-none">
+                  <div className="absolute top-2.5 left-2.5 z-10 bg-brand-black text-white px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest pointer-events-none sm:top-3 sm:left-3 sm:text-[9px]">
                     {product.badge}
                   </div>
                 )}
@@ -113,52 +113,51 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
                 <img
                   src={product.image1}
                   alt={product.name}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 />
                 {/* Hover / Secondary Image */}
                 <img
                   src={product.image2}
-                  alt={`${product.name} lifestyle`}
-                  className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out"
+                  alt={`${product.name} alternate view`}
+                  className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out"
                 />
-                {/* Dark Overlay on Hover */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
-                {/* Meta - Hidden by default, shown on hover */}
-                <div className="absolute inset-0 hidden flex-col justify-between p-3 opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100 sm:flex sm:p-4">
-                  <div />
-                  <div className="flex justify-between items-start font-bold uppercase text-sm md:text-base text-white">
-                    <h3 className="tracking-tight max-w-[70%] leading-tight">
+                {/* Dark Vignette Overlay on Hover */}
+                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-out" />
+                {/* Quick View Tag on Desktop Hover */}
+                <div className="absolute inset-x-0 bottom-0 hidden p-3 transition-all duration-300 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 sm:block">
+                  <span className="inline-block border border-white/80 bg-brand-black/80 px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-white backdrop-blur-sm">
+                    View piece
+                  </span>
+                </div>
+              </div>
+
+              {/* Product Information - Always visible by default on desktop and mobile */}
+              <div className="flex flex-col pt-3 sm:pt-4">
+                <div className="flex items-start justify-between gap-2 sm:gap-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="line-clamp-2 text-[11px] font-bold uppercase leading-[1.3] tracking-[0.07em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted sm:text-xs md:text-sm">
                       {product.name}
                     </h3>
-                    <div className="text-right flex flex-col">
-                      <span>{formatPrice(product.price)}</span>
-                      {product.originalPrice && (
-                        <span className="line-through text-white/60 text-xs">
-                          {formatPrice(product.originalPrice)}
-                        </span>
-                      )}
-                    </div>
+                    <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:text-[10px]">
+                      {product.category}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right font-mono text-xs font-semibold text-brand-black sm:text-sm">
+                    <div>{formatPrice(product.price)}</div>
+                    {product.originalPrice && (
+                      <div className="mt-0.5 text-[9px] font-normal text-brand-muted line-through sm:text-[10px]">
+                        {formatPrice(product.originalPrice)}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="flex min-h-[4.5rem] flex-col justify-between gap-1 pt-3 sm:hidden">
-                <h3 className="line-clamp-2 text-[10px] font-bold uppercase leading-[1.25] tracking-[0.06em]">
-                  {product.name}
-                </h3>
-                <div className="flex items-end justify-between gap-2 text-[10px] font-semibold">
-                  <span>{formatPrice(product.price)}</span>
-                  {product.originalPrice && (
-                    <span className="text-[9px] text-black/45 line-through">
-                      {formatPrice(product.originalPrice)}
-                    </span>
-                  )}
+                <div className="mt-2 flex items-center justify-between text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:mt-2.5 sm:text-[10px]">
+                  <span>Explore</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </div>
-                <span className="text-[9px] uppercase tracking-[0.14em] text-black/55">
-                  Quick view
-                </span>
               </div>
             </a>
-            <div className="absolute right-3 top-3 z-20">
+            <div className="absolute right-2.5 top-2.5 z-20 sm:right-3 sm:top-3">
               <WishlistButton
                 item={{
                   productId: product.id,
@@ -175,8 +174,8 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
       </div>
 
       <div className="mt-12 text-center md:hidden">
-        <a href="/shop" className="body-upper hover:opacity-70 transition-opacity">
-          VIEW ALL PRODUCTS
+        <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity">
+          VIEW ALL PRODUCTS →
         </a>
       </div>
     </section>

@@ -1,6 +1,16 @@
-/** @type {import('next').NextConfig} */
+const firebaseAuthDomain =
+  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'wasteindia.firebaseapp.com';
+
 const nextConfig = {
   reactStrictMode: true,
+  async rewrites() {
+    return [
+      {
+        source: '/__/auth/:path*',
+        destination: `https://${firebaseAuthDomain}/__/auth/:path*`,
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-
 import { DEFAULT_HERO_SLIDES, HeroSlideContent } from "@/lib/services/content.service";
 
 interface HeroProps {
@@ -26,17 +25,30 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
     const nextSlide = slidesRef.current[newIndex];
     const nextImg = imagesRef.current[newIndex];
 
-    const isForwards = newIndex > activeIndex;
+    const isForwards =
+      activeIndex === activeSlides.length - 1 && newIndex === 0
+        ? true
+        : activeIndex === 0 && newIndex === activeSlides.length - 1
+        ? false
+        : newIndex > activeIndex;
+
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
+    const parallaxPercent = isMobile ? 4 : 10;
 
     const tl = gsap.timeline({
       defaults: { duration: 1.0, ease: "power4.inOut" },
       onComplete: () => {
         setActiveIndex(newIndex);
         isAnimating.current = false;
-        // Reset z-index
         slidesRef.current.forEach((el, i) => {
           if (el) el.style.zIndex = i === newIndex ? "2" : "1";
         });
+        if (nextImg) {
+          gsap.set(nextImg, { clearProps: "transform,yPercent,y" });
+        }
+        if (currentImg) {
+          gsap.set(currentImg, { clearProps: "transform,yPercent,y" });
+        }
       },
     });
 
@@ -44,39 +56,35 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
       nextSlide.style.zIndex = "3";
 
       if (isForwards) {
-        // Next item wiping down from top
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+          0
         )
-          // Current item wiping down to bottom
           .fromTo(
             currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+            { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
             { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-            "<"
+            0
           )
-          // Parallax
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: 10 }, "<")
-          .fromTo(nextImg, { yPercent: -10 }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: parallaxPercent }, 0)
+          .fromTo(nextImg, { yPercent: -parallaxPercent }, { yPercent: 0 }, 0);
       } else {
-        // Backwards transition
         tl.fromTo(
           nextSlide,
           { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }
+          { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
+          0
         )
-          // Current item remains static as next slide uncovers it, or wipe it to top
           .fromTo(
             currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
+            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 0%)" },
             { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-            "<"
+            0
           )
-          // Parallax
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -10 }, "<")
-          .fromTo(nextImg, { yPercent: 10 }, { yPercent: 0 }, "<");
+          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -parallaxPercent }, 0)
+          .fromTo(nextImg, { yPercent: parallaxPercent }, { yPercent: 0 }, 0);
       }
     }
   };
@@ -89,10 +97,83 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
     goToSlide((activeIndex - 1 + activeSlides.length) % activeSlides.length);
   };
 
+  // Automatically advance slides with responsive timing:
+  // - Mobile screens (viewport width <= 767px): 4000ms
+  // - Laptop, desktop, and larger screens (viewport width >= 768px): 3000ms
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const mediaQuery = window.matchMedia("(max-width: 767px)");
+
+    const getSlideDuration = () =>
+      mediaQuery.matches || window.innerWidth <= 767 ? 4000 : 3000;
+
+    let currentDuration = getSlideDuration();
+    let timer = setInterval(() => {
+      goToSlide((activeIndex + 1) % activeSlides.length);
+    }, currentDuration);
+
+    const handleResize = () => {
+      const newDuration = getSlideDuration();
+      if (newDuration !== currentDuration) {
+        currentDuration = newDuration;
+        clearInterval(timer);
+        timer = setInterval(() => {
+          goToSlide((activeIndex + 1) % activeSlides.length);
+        }, newDuration);
+      }
+    };
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleResize);
+    } else {
+      mediaQuery.addListener(handleResize);
+    }
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      clearInterval(timer);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleResize);
+      } else {
+        mediaQuery.removeListener(handleResize);
+      }
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [activeIndex, activeSlides.length]);
+
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return;
+    const diffX = touchStartX.current - e.changedTouches[0].clientX;
+    const diffY = touchStartY.current - e.changedTouches[0].clientY;
+    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
+      if (diffX > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
   return (
-    <section className="relative w-full h-screen min-h-[600px] md:min-h-[700px] overflow-hidden bg-brand-dark">
+    <section
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      aria-label="WASTE Editorial Campaign"
+      className="relative w-full h-[100svh] min-h-[560px] md:min-h-[700px] overflow-hidden select-none bg-brand-black"
+    >
       {/* Slides Container */}
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 w-full h-full">
         {activeSlides.map((slide, i) => (
           <div
             key={slide.id}
@@ -103,65 +184,64 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
               clipPath: i === activeIndex ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" : "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)"
             }}
           >
-            <div className="relative w-full h-full overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-black/10 z-10" />
-              <picture className="absolute inset-0 w-full h-full">
-                {slide.mobileImage && slide.mobileImage !== slide.image && (
+            <div className="relative w-full h-full overflow-hidden bg-brand-black">
+              {/* Edge-to-edge Campaign Photograph filling the continuous rectangular hero */}
+              {slide.mobileImage && slide.mobileImage !== slide.image ? (
+                <picture className="absolute inset-0 h-full w-full">
                   <source media="(max-width: 767px)" srcSet={slide.mobileImage} />
-                )}
+                  <source media="(min-width: 768px)" srcSet={slide.image} />
+                  <img
+                    ref={(el) => { imagesRef.current[i] = el; }}
+                    src={slide.image}
+                    alt={slide.title}
+                    loading={i === 0 ? "eager" : "lazy"}
+                    fetchPriority={i === 0 ? "high" : "low"}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
+                  />
+                </picture>
+              ) : (
                 <img
                   ref={(el) => { imagesRef.current[i] = el; }}
                   src={slide.image}
                   alt={slide.title}
-                  className="absolute inset-0 w-full h-full object-cover object-center"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  decoding="async"
+                  className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
                 />
-              </picture>
+              )}
 
-              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col justify-end p-4 pb-16 sm:p-6 md:p-12 md:pb-24">
-                <div className="max-w-xl editorial-reveal">
-                  <div className="mb-4 flex items-end justify-between gap-4 text-brand-light/90 sm:mb-5 sm:gap-6">
-                    <span className="font-editorial text-[clamp(2.6rem,5vw,5rem)] leading-[0.84] tracking-[-0.045em]">
-                      {String(activeIndex + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.5em] opacity-65 md:text-[0.7rem]">
-                      01 / {String(activeSlides.length).padStart(2, "0")}
-                    </span>
-                  </div>
-
-                  <a
-                    href="/shop"
-                    className="pointer-events-auto inline-block text-[clamp(2rem,4.6vw,5rem)] font-light uppercase leading-[0.86] tracking-[0.055em] text-brand-light transition-opacity duration-300 hover:opacity-80"
-                    data-cursor="SHOP NOW"
-                  >
-                    SHOP NOW
-                  </a>
-
-                  <div className="mt-3 flex flex-col gap-1 text-brand-light">
-                    <span className="text-[0.62rem] font-light uppercase tracking-[0.48em] text-brand-light/70 md:text-[0.72rem]">
-                      EXPLORE OUR FIRST
-                    </span>
-                    <span className="font-editorial text-[clamp(2.75rem,10vw,7rem)] leading-[0.72] tracking-[-0.065em] text-brand-light">
-                      COLLECTION
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Minimal atmospheric gradient at the base for contrast */}
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 sm:h-36 md:h-44 z-10 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
             </div>
           </div>
         ))}
       </div>
 
-      <div className="absolute inset-0 z-30 pointer-events-none flex justify-end items-end px-6 md:px-12 pb-8 md:pb-10">
-        <div className="pointer-events-auto flex items-center gap-2 text-brand-light/80">
-          <button
-            onClick={nextSlide}
-            className="text-[0.7rem] md:text-[0.75rem] uppercase tracking-[0.3em] font-medium hover:opacity-70 transition-opacity"
-            data-cursor="NEXT"
-          >
-            NEXT
-          </button>
-        </div>
-      </div>
+      {/* Scoped CSS for responsive object-position across breakpoints */}
+      <style jsx>{`
+        .hero-slide-img-1 {
+          object-position: center 15%;
+        }
+        .hero-slide-img-2 {
+          object-position: center 15%;
+        }
+        .hero-slide-img-3 {
+          object-position: center 15%;
+        }
+        @media (min-width: 768px) {
+          .hero-slide-img-1 {
+            object-position: 70% center;
+          }
+          .hero-slide-img-2 {
+            object-position: center 20%;
+          }
+          .hero-slide-img-3 {
+            object-position: 60% center;
+          }
+        }
+      `}</style>
     </section>
   );
 }

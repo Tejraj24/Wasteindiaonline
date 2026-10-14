@@ -9,6 +9,8 @@ import {
   reload,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   linkWithPopup,
   unlink,
   signOut,
@@ -107,7 +109,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    return onAuthStateChanged(firebaseAuth, async (nextUser) => {
+    const auth = firebaseAuth;
+    let authStateResolved = false;
+    let redirectResolved = false;
+
+    const tryFinishLoading = () => {
+      if (authStateResolved && redirectResolved) {
+        setLoading(false);
+      }
+    };
+
+    // 1. Process getRedirectResult once on mount for returning mobile redirect users
+    getRedirectResult(auth)
+      .then(async (credential) => {
+        if (credential?.user) {
+          console.log("[Auth Flow] Redirect sign-in resolved successfully for user:", {
+            uid: credential.user.uid,
+            email: credential.user.email,
+          });
+          setUser(credential.user);
+          await syncCartWithUser(credential.user.uid);
+          try {
+            await ensureUserProfile(
+              credential.user.uid,
+              credential.user.email ?? "",
+              credential.user.displayName ?? ""
+            );
+            await fetchUserRole(credential.user);
+          } catch (err) {
+            console.error("[Auth Flow] Error during redirect profile/role sync:", err);
+          }
+        } else {
+          console.log("[Auth Flow] No redirect result found (standard page load).");
+        }
+      })
+      .catch((error: any) => {
+        console.warn("[Auth Flow] getRedirectResult failed with code:", error?.code || error?.message);
+      })
+      .finally(() => {
+        redirectResolved = true;
+        tryFinishLoading();
+      });
+
+    // 2. Listen to onAuthStateChanged and synchronize loading
+    const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
+      console.log("[Auth Flow] onAuthStateChanged emitted:", nextUser ? nextUser.uid : "null");
       previousUserRef.current = nextUser;
       setUser(nextUser);
 
@@ -124,8 +170,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else {
         setRole("CUSTOMER");
       }
-      setLoading(false);
+
+      authStateResolved = true;
+      tryFinishLoading();
     });
+
+    return () => {
+      unsubscribe();
+    };
   }, []);
 
   const value = useMemo<AuthContextValue>(
@@ -153,10 +205,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({ prompt: "select_account" });
 
-        const result = await signInWithPopup(auth, provider);
-        await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
-        const resolvedRole = await fetchUserRole(result.user);
-        return { user: result.user, role: resolvedRole };
+        const isMobile =
+          typeof window !== "undefined" &&
+          (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+            window.innerWidth < 768);
+
+        if (isMobile) {
+          console.log("[Auth Flow] Initiating signInWithRedirect for mobile device");
+          await signInWithRedirect(auth, provider);
+          // Return a pending promise since mobile browser is navigating away to Google
+          return new Promise<{ user: User; role: UserRole }>(() => {});
+        }
+
+        console.log("[Auth Flow] Initiating signInWithPopup for desktop device");
+        try {
+          const result = await signInWithPopup(auth, provider);
+          await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
+          const resolvedRole = await fetchUserRole(result.user);
+          return { user: result.user, role: resolvedRole };
+        } catch (popupError: any) {
+          console.warn("[Auth Flow] Desktop popup sign-in failed with code:", popupError?.code);
+          // Fallback to redirect only if popup was blocked or unsupported
+          if (
+            popupError?.code === "auth/popup-blocked" ||
+            popupError?.code === "auth/cancelled-popup-request"
+          ) {
+            console.log("[Auth Flow] Popup blocked/unsupported. Falling back to signInWithRedirect");
+            await signInWithRedirect(auth, provider);
+            return new Promise<{ user: User; role: UserRole }>(() => {});
+          }
+          throw popupError;
+        }
       },
       linkGoogleAccount: async () => {
         const auth = requireAuth();

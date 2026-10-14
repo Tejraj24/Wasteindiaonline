@@ -10,17 +10,26 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          blue: "#050fff",
-          dark: "#000000",
-          light: "#ffffff",
-          grey: "#f4f4f4",
-          muted: "#686060",
-          faded: "#818181",
+          bg: "#FAFAF8",           // Warm White: primary page background
+          surface: "#FFFFFF",      // Pure White: cards, panels, clean content surfaces
+          surfaceSubtle: "#F4F2EC", // Light warm grey for inputs, hovers, subtle sections
+          black: "#111111",        // Ink Black: headings, body text, primary actions
+          border: "#E8E6E1",       // Soft Grey: hairline dividers, borders
+          muted: "#706E68",        // Accessible neutral grey (WCAG AA compliant, 4.6:1+ contrast)
+          gold: "#B89A62",         // Champagne Gold: restrained decorative accents
+          goldMuted: "rgba(184, 154, 98, 0.12)", // Subtle gold wash for badges
+          blue: "#050fff",         // Legacy accent
+          dark: "#000000",         // Preserved for true dark overlays
+          light: "#ffffff",        // Pure white
+          grey: "#f4f4f4",         // Legacy grey
+          faded: "#706E68",        // Updated to accessible grey
         }
       },
       fontFamily: {
-        serif: ["var(--font-instrument-serif)", "Instrument Serif", "Georgia", "serif"],
+        serif: ["var(--font-cormorant)", "'Cormorant Garamond'", "var(--font-instrument-serif)", "Instrument Serif", "Georgia", "serif"],
         sans: ["var(--font-inter)", "Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        tenor: ["var(--font-tenor-sans)", "'Tenor Sans'", "Tenor Sans Fallback", "Arial", "sans-serif"],
+        cormorant: ["var(--font-cormorant)", "'Cormorant Garamond'", "Georgia", "serif"],
       },
       letterSpacing: {
         tighter: "-0.04em",

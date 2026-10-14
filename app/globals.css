@@ -1,19 +1,21 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700;800&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --swatch--brand: #050fff;
-  --swatch--dark: #000000;
-  --swatch--light: #ffffff;
-  --swatch--light-grey: #f4f4f4;
-  --swatch--faded-text: #686060;
-  --swatch--light-faded: #818181;
+  --swatch--brand: #111111;
+  --swatch--dark: #111111;
+  --swatch--light: #FAFAF8;
+  --swatch--light-grey: #F4F2EC;
+  --swatch--faded-text: #706E68;
+  --swatch--light-faded: #8E8B82;
+  --swatch--gold: #B89A62;
+  --swatch--border: #E8E6E1;
   
+  --font-cormorant: 'Cormorant Garamond', 'Garamond', Georgia, serif;
   --font-instrument-serif: 'Instrument Serif', Georgia, serif;
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-tenor-sans: 'Tenor Sans', 'Tenor Sans Fallback', Arial, sans-serif;
   
   --site--margin: clamp(1rem, 0.92857rem + 0.35714vw, 1.25rem);
   --site--gutter: 0.625rem;
@@ -24,8 +26,8 @@
 }
 
 html, body {
-  background-color: #000000;
-  color: #000000;
+  background-color: #FAFAF8;
+  color: #111111;
   font-family: var(--font-inter);
   margin: 0;
   padding: 0;
@@ -36,21 +38,36 @@ html, body {
 
 /* Custom Text Selection */
 ::selection {
-  background-color: var(--swatch--brand);
-  color: #ffffff;
+  background-color: #111111;
+  color: #FAFAF8;
 }
 
-/* Editorial Serif */
+/* Editorial Serif (Cormorant Garamond) */
 .font-editorial {
+  font-family: var(--font-cormorant);
+}
+
+/* Cormorant Garamond Dedicated Class */
+.font-cormorant {
+  font-family: var(--font-cormorant);
+}
+
+/* Legacy Instrument Serif Class */
+.font-instrument {
   font-family: var(--font-instrument-serif);
+}
+
+/* Tenor Sans Fashion Editorial */
+.font-tenor {
+  font-family: var(--font-tenor-sans);
 }
 
 /* Uppercase Monospace / Grotesk Body */
 .body-upper {
   text-transform: uppercase;
   font-size: 0.8125rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-weight: 500;
+  letter-spacing: 0.08em;
 }
 
 /* Underline Animation */

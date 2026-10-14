@@ -23,33 +23,21 @@ export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
 
     const track = trackRef.current;
     const items = itemsRef.current.filter(Boolean);
-    const itemWidth = items[0]?.offsetWidth || 300;
-    const gap = 20; // 5rem in Tailwind usually 20px if custom, let's say 24px
-    
-    // We duplicate items for infinite wrap visual
-    // Actually GSAP utils.wrap handles the translation value.
-    // For a true infinite wrap, we need enough duplicated items or we wrap the position.
-    
-    // Simplification for draggable momentum with auto scroll
+
     let currentX = 0;
     let targetX = 0;
     let isDragging = false;
     let velocity = -1.0; // Auto scroll speed
-    
-    // The max distance we can scroll before wrapping (half the track if we duplicate)
-    // To make it simple, let's just make it a bounds-based drag or a pseudo-wrap
-    
+
     const update = () => {
       if (!isDragging) {
         targetX += velocity;
       }
-      
-      // Wrap logic (simplified bounds)
-      // Assuming track is much wider than screen
+
       const maxScroll = -(track.scrollWidth - window.innerWidth);
-      if (targetX > 0) targetX = 0; // Don't wrap positive for now
-      if (targetX < maxScroll) targetX = maxScroll; // Don't wrap beyond max
-      
+      if (targetX > 0) targetX = 0;
+      if (targetX < maxScroll) targetX = maxScroll;
+
       currentX += (targetX - currentX) * 0.1;
       gsap.set(track, { x: currentX });
     };
@@ -81,12 +69,12 @@ export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
   return (
     <section 
       ref={containerRef} 
-      className="py-24 bg-brand-dark text-brand-light overflow-hidden cursor-grab active:cursor-grabbing"
+      className="py-24 bg-brand-bg text-brand-black border-t border-brand-border overflow-hidden cursor-grab active:cursor-grabbing"
       data-cursor="DRAG"
     >
       <div className="px-4 md:px-8 mb-12 flex justify-between items-end">
-        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter">
-          ( ARCHIVE )
+        <h2 className="font-tenor text-[clamp(1.5rem,3.8vw,2.75rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+          ARCHIVE
         </h2>
       </div>
 
@@ -99,19 +87,27 @@ export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
           <div
             key={`${item.id}-${idx}`}
             ref={(el) => { itemsRef.current[idx] = el; }}
-            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-neutral-800 flex-shrink-0 overflow-hidden transform-gpu"
+            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-brand-surfaceSubtle border border-brand-border shadow-sm flex-shrink-0 overflow-hidden transform-gpu"
           >
-            <picture className="absolute inset-0 w-full h-full">
-              {item.mobileImage && item.mobileImage !== item.image && (
+            {item.mobileImage && item.mobileImage !== item.image ? (
+              <picture className="absolute inset-0 w-full h-full">
                 <source media="(max-width: 767px)" srcSet={item.mobileImage} />
-              )}
+                <source media="(min-width: 768px)" srcSet={item.image} />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-95 transition-transform duration-500 hover:scale-105"
+                  draggable={false}
+                />
+              </picture>
+            ) : (
               <img
                 src={item.image}
                 alt={item.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
+                className="absolute inset-0 w-full h-full object-cover opacity-95 transition-transform duration-500 hover:scale-105"
                 draggable={false}
               />
-            </picture>
+            )}
           </div>
         ))}
       </div>
