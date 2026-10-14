@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
 const slides = [
@@ -9,7 +9,8 @@ const slides = [
     title: "Refined curation",
     alt: "WASTE® streetwear model seated on bench in front of architectural storefront",
     image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797220/Picsart_26-10-12_14-49-47-646_ic3wwd.png",
-    objectPositionMobile: "70% 12%",
+    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791933532/Waste_Black_Hoodie2_fvgpja.png",
+    objectPositionMobile: "center 15%",
     objectPositionDesktop: "70% center",
   },
   {
@@ -26,7 +27,8 @@ const slides = [
     title: "Luxury essentials",
     alt: "WASTE® contemporary streetwear model editorial in dark coat",
     image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797163/Picsart_26-10-12_14-31-46-544_q6xzik.png",
-    objectPositionMobile: "60% 12%",
+    mobileImage: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791911772/White_Art_of_Her2_jgatn3.png",
+    objectPositionMobile: "center 15%",
     objectPositionDesktop: "60% center",
   },
 ];
@@ -118,6 +120,15 @@ export function Hero() {
     goToSlide((activeIndex - 1 + slides.length) % slides.length);
   };
 
+  // Automatically advance slides every 2 seconds (2000ms) with proper cleanup and reset on slide change
+  useEffect(() => {
+    const timer = setInterval(() => {
+      goToSlide((activeIndex + 1) % slides.length);
+    }, 2000);
+
+    return () => clearInterval(timer);
+  }, [activeIndex]);
+
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
@@ -198,13 +209,13 @@ export function Hero() {
       {/* Scoped CSS for responsive object-position across breakpoints */}
       <style jsx>{`
         .hero-slide-img-1 {
-          object-position: 70% 12%;
+          object-position: center 15%;
         }
         .hero-slide-img-2 {
           object-position: center 15%;
         }
         .hero-slide-img-3 {
-          object-position: 60% 12%;
+          object-position: center 15%;
         }
         @media (min-width: 768px) {
           .hero-slide-img-1 {
@@ -219,34 +230,6 @@ export function Hero() {
         }
       `}</style>
 
-      {/* Restrained Luxury Navigation Controls (VASAAE inspired: minimal, elegant, accessible) */}
-      <div className="absolute bottom-4 right-4 z-30 sm:bottom-6 sm:right-6 md:bottom-8 md:right-12">
-        <div className="pointer-events-auto inline-flex items-center gap-0.5 bg-black/40 backdrop-blur-md border border-white/10 rounded-none shadow-sm">
-          <button
-            type="button"
-            onClick={prevSlide}
-            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center text-white/75 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold"
-            data-cursor="PREV"
-            aria-label="Previous campaign slide"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-          <span className="text-white/20 text-[10px] select-none" aria-hidden="true">|</span>
-          <button
-            type="button"
-            onClick={nextSlide}
-            className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center text-white/75 hover:text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-gold"
-            data-cursor="NEXT"
-            aria-label="Next campaign slide"
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
-          </button>
-        </div>
-      </div>
     </section>
   );
 }

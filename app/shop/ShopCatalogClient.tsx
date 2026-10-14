@@ -2,11 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { Footer } from "@/components/Footer";
 import { WishlistButton } from "@/components/WishlistButton";
 import { StorefrontProduct } from "@/lib/services/product.service";
-import { BackButton } from "@/components/navigation/BackButton";
 
 const editorialImages = [
   "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1800&q=85",
@@ -234,81 +234,112 @@ export function ShopCatalogClient({
   initialProducts,
   categories,
 }: ShopCatalogClientProps) {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [selectedProduct, setSelectedProduct] = useState<StorefrontProduct | null>(null);
   const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    if (categoryParam) {
+      const normParam = categoryParam.toLowerCase();
+      if (normParam === "headwear" || normParam === "accessories") {
+        setActiveFilter("All");
+        return;
+      }
+      if (normParam === "unisex" || normParam === "polos") {
+        setActiveFilter("Unisex");
+        return;
+      }
+      const match = categories.find(
+        (c) =>
+          c.slug.toLowerCase() !== "headwear" &&
+          c.slug.toLowerCase() !== "accessories" &&
+          (c.slug.toLowerCase() === normParam || c.name.toLowerCase() === normParam)
+      );
+      if (match) {
+        setActiveFilter(match.name);
+      } else {
+        setActiveFilter("All");
+      }
+    }
+  }, [categoryParam, categories]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setIsVisible(true), 80);
     return () => window.clearTimeout(timer);
   }, []);
 
-  // Filter list: All + categories from database (or unique product categories)
+  // Filter list: All + categories from database (or unique product categories) excluding removed categories
   const filterList = useMemo(() => {
+    const isExcluded = (nameOrSlug?: string | null) => {
+      if (!nameOrSlug) return false;
+      const lower = nameOrSlug.toLowerCase();
+      return lower === "headwear" || lower === "accessories";
+    };
+
     const unique = new Set<string>();
-    categories.forEach((c) => unique.add(c.name));
+    categories.forEach((c) => {
+      if (isExcluded(c.slug) || isExcluded(c.name)) return;
+      const name = c.slug.toLowerCase() === "polos" || c.name.toLowerCase() === "polos" ? "Unisex" : c.name;
+      unique.add(name);
+    });
     initialProducts.forEach((p) => {
-      if (p.category) unique.add(p.category);
+      if (p.category) {
+        if (isExcluded(p.category) || isExcluded(p.categorySlug)) return;
+        const name = p.category.toLowerCase() === "polos" ? "Unisex" : p.category;
+        unique.add(name);
+      }
     });
     return ["All", ...Array.from(unique)];
   }, [categories, initialProducts]);
 
+  // Exclude headwear and accessories products from customer-facing shop catalog
+  const catalogProducts = useMemo(() => {
+    return initialProducts.filter((p) => {
+      const pCat = p.category.toLowerCase();
+      const pSlug = (p.categorySlug || "").toLowerCase();
+      return pCat !== "headwear" && pSlug !== "headwear" && pCat !== "accessories" && pSlug !== "accessories";
+    });
+  }, [initialProducts]);
+
   const visibleProducts = useMemo(() => {
-    if (activeFilter === "All") return initialProducts;
-    return initialProducts.filter(
-      (p) =>
-        p.category.toLowerCase() === activeFilter.toLowerCase() ||
-        p.categorySlug === activeFilter.toLowerCase()
-    );
-  }, [activeFilter, initialProducts]);
+    if (activeFilter === "All") return catalogProducts;
+    const norm = activeFilter.toLowerCase();
+    return catalogProducts.filter((p) => {
+      const pCat = p.category.toLowerCase();
+      const pSlug = (p.categorySlug || "").toLowerCase();
+      if (norm === "unisex") {
+        return pCat === "unisex" || pSlug === "unisex" || pCat === "polos" || pSlug === "polos";
+      }
+      return pCat === norm || pSlug === norm;
+    });
+  }, [activeFilter, catalogProducts]);
 
   const featuredPair = useMemo(() => {
-    const featured = initialProducts.filter((p) => p.featured);
+    const featured = catalogProducts.filter((p) => p.featured);
     if (featured.length >= 2) return featured.slice(0, 2);
-    return initialProducts.slice(4, 6);
-  }, [initialProducts]);
+    return catalogProducts.slice(4, 6);
+  }, [catalogProducts]);
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-black">
-      <section className="relative flex min-h-screen items-end overflow-hidden px-6 pb-12 pt-36 md:px-12 md:pb-16">
-        <img
-          src={editorialImages[0]}
-          alt="WASTE collection editorial"
-          className="absolute inset-0 h-full w-full object-cover grayscale brightness-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-bg via-black/45 to-black/20" />
-        <div
-          className={`relative z-10 w-full transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-            isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-          }`}
-        >
-          <div className="mb-8 flex items-end justify-between border-b border-white/25 pb-5 text-[10px] uppercase tracking-[0.28em] text-white/80 md:mb-10">
-            <div className="flex items-center gap-4">
-              <BackButton fallbackHref="/" label="Home" variant="default" className="text-white/80 hover:text-white" />
-              <span className="hidden text-white/40 sm:inline">/</span>
-              <span className="hidden sm:inline">WASTE.</span>
-            </div>
-            <span>Collection 01</span>
-            <span>2026 / India</span>
-          </div>
-          <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-            <h1 className="max-w-5xl font-editorial text-[clamp(4.5rem,14vw,13rem)] leading-[0.72] tracking-[-0.07em] text-white">
-              COLLECTION
-              <br />
-              <em className="font-editorial">01</em>
-            </h1>
-            <div className="max-w-xs pb-1 md:pb-2">
-              <a
-                href="#collection"
-                className="group inline-flex items-center gap-4 text-[10px] uppercase tracking-[0.25em] text-white"
-              >
-                <span className="h-px w-10 bg-white transition-all duration-500 group-hover:w-16" />
-                SHOP THE COLLECTION
-              </a>
-              <p className="mt-5 text-xs leading-6 text-white/75">
-                A curated selection inspired by modern heritage.
-              </p>
-            </div>
+      {/* Editorial Collection Hero Banner — Wide Horizontal Rectangular Presentation */}
+      <section className="w-full pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-6 md:pb-8">
+        <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 md:px-12">
+          <div
+            className={`relative w-full overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl border border-brand-border/60 bg-brand-surface shadow-sm aspect-[16/9] sm:aspect-[2/1] md:aspect-[2.35/1] max-h-[520px] transition-all duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+              isVisible ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"
+            }`}
+          >
+            <img
+              src={editorialImages[0]}
+              alt="WASTE collection editorial banner"
+              className="h-full w-full object-cover object-[center_28%] grayscale brightness-95"
+              loading="eager"
+              fetchPriority="high"
+            />
           </div>
         </div>
       </section>

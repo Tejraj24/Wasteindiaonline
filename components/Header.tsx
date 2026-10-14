@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useWishlist } from "@/components/WishlistProvider";
@@ -24,6 +24,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
   const { user, isAdmin, loading, logout } = useAuth();
   const { items: wishlistItems } = useWishlist();
   const router = useRouter();
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isNearFooter, setIsNearFooter] = useState(false);
   const [showWelcome, setShowWelcome] = useState(false);
@@ -32,24 +35,63 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
   const previousUserRef = useRef<typeof user>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
+  const isScrolledRef = useRef(false);
+  const isNearFooterRef = useRef(false);
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      setIsScrolled(scrollY > 20);
+      const nextScrolled = scrollY > 50;
+      if (nextScrolled !== isScrolledRef.current) {
+        isScrolledRef.current = nextScrolled;
+        setIsScrolled(nextScrolled);
+      }
 
       // Check footer proximity
       const docHeight = document.documentElement.scrollHeight;
       const windowHeight = window.innerHeight;
-      if (scrollY + windowHeight > docHeight - 400) {
-        setIsNearFooter(true);
-      } else {
-        setIsNearFooter(false);
+      const nextNearFooter = scrollY + windowHeight > docHeight - 400;
+      if (nextNearFooter !== isNearFooterRef.current) {
+        isNearFooterRef.current = nextNearFooter;
+        setIsNearFooter(nextNearFooter);
       }
     };
 
+    // Evaluate immediately on mount
+    handleScroll();
+
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
+
+  // Re-evaluate scroll state on route changes
+  useEffect(() => {
+    const handleCheck = () => {
+      if (typeof window === "undefined") return;
+      const scrollY = window.scrollY;
+      const nextScrolled = scrollY > 50;
+      if (nextScrolled !== isScrolledRef.current) {
+        isScrolledRef.current = nextScrolled;
+        setIsScrolled(nextScrolled);
+      }
+
+      const docHeight = document.documentElement.scrollHeight;
+      const windowHeight = window.innerHeight;
+      const nextNearFooter = scrollY + windowHeight > docHeight - 400;
+      if (nextNearFooter !== isNearFooterRef.current) {
+        isNearFooterRef.current = nextNearFooter;
+        setIsNearFooter(nextNearFooter);
+      }
+    };
+
+    handleCheck();
+    const timeout = setTimeout(handleCheck, 80);
+    return () => clearTimeout(timeout);
+  }, [pathname]);
 
   useEffect(() => {
     const previousUser = previousUserRef.current;
@@ -90,18 +132,31 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
   const accountName = user?.displayName?.trim().split(/\s+/)[0] || user?.email?.split("@")[0] || "ACCOUNT";
   const avatarLetter = (user?.displayName || user?.email || "W").trim().charAt(0).toUpperCase();
 
+  // Dark hero top appearance applies to homepage campaign Hero or explicit dark theme
+  const hasDarkHero = isHome || isDarkTheme;
+  const isWhiteText = hasDarkHero && !isScrolled;
+  const isTransparent = isWhiteText;
+
+  const headerBgClass = isWhiteText
+    ? "bg-transparent text-white border-b border-transparent shadow-none"
+    : isScrolled
+    ? "bg-white/95 backdrop-blur-md text-brand-black border-b border-brand-border/60 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+    : "bg-brand-bg/85 backdrop-blur-md text-brand-black border-b border-transparent shadow-none";
+
   return (
     <header
-      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 pointer-events-auto bg-white/95 backdrop-blur-md text-brand-black ${
-        isScrolled ? "border-b border-brand-border/60 shadow-[0_1px_0_rgba(0,0,0,0.03)]" : "border-b border-transparent"
-      } ${isNearFooter ? "-translate-y-full" : "translate-y-0"}`}
+      className={`fixed left-0 top-0 z-50 w-full pointer-events-auto transition-all duration-300 ease-in-out motion-reduce:transition-none ${headerBgClass} ${
+        isNearFooter ? "-translate-y-full" : "translate-y-0"
+      }`}
     >
       <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center justify-between px-4 sm:px-6 md:h-20 md:px-12">
         {/* Left: Brand Logo (clean WASTE without any dot) */}
         <div className="flex items-center">
           <Link
             href="/"
-            className="inline-flex min-h-11 items-center font-tenor text-xl font-normal uppercase tracking-[0.2em] select-none text-brand-black transition-opacity hover:opacity-80 sm:text-2xl"
+            className={`inline-flex min-h-11 items-center font-tenor text-xl font-normal uppercase tracking-[0.2em] select-none transition-colors duration-300 sm:text-2xl ${
+              isTransparent ? "text-white hover:text-white/80" : "text-brand-black hover:opacity-80"
+            }`}
             data-cursor="HOME"
             aria-label="WASTE homepage"
           >
@@ -115,7 +170,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
             <Link
               key={link.name}
               href={link.href}
-              className="text-xs font-tenor tracking-widest text-brand-black/85 transition-colors duration-200 hover:text-brand-black relative py-2"
+              className={`text-xs font-tenor tracking-widest relative py-2 transition-colors duration-300 ${
+                isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/85 hover:text-brand-black"
+              }`}
             >
               {link.name}
             </Link>
@@ -127,7 +184,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           {/* Wishlist Link (Quick Access) */}
           <Link
             href="/account#wishlist"
-            className="relative flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black"
+            className={`relative flex h-10 w-10 items-center justify-center transition-colors duration-300 ${
+              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
+            }`}
             aria-label={`${wishlistItems.length} saved wishlist items`}
             data-cursor="WISHLIST"
           >
@@ -162,20 +221,24 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
                   router.push("/login");
                 }
               }}
-              className="flex h-10 items-center justify-center gap-1.5 px-2 text-xs font-tenor tracking-wider text-brand-black/85 transition-colors hover:text-brand-black"
+              className={`flex h-10 items-center justify-center gap-1.5 px-2 text-xs font-tenor tracking-wider transition-colors duration-300 ${
+                isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/85 hover:text-brand-black"
+              }`}
               data-cursor="ACCOUNT"
               aria-label={user ? (isAdmin ? "Open admin menu" : "Open customer account menu") : "Sign in"}
               aria-expanded={user ? isProfileOpen : undefined}
               aria-haspopup={user ? "menu" : undefined}
             >
               {loading ? (
-                <span className="h-4 w-4 animate-pulse rounded-full border border-brand-black/30 bg-brand-black/10" aria-label="Checking account status" />
+                <span className={`h-4 w-4 animate-pulse rounded-full border ${isTransparent ? "border-white/30 bg-white/10" : "border-brand-black/30 bg-brand-black/10"}`} aria-label="Checking account status" />
               ) : user ? (
                 <>
                   <span className="hidden max-w-[6rem] truncate sm:inline text-xs font-tenor tracking-wider">
                     {isAdmin ? "ADMIN" : accountName}
                   </span>
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full border border-brand-border text-[9px] leading-none transition-transform duration-300 hover:scale-105">
+                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full border text-[9px] leading-none transition-all duration-300 hover:scale-105 ${
+                    isTransparent ? "border-white/40 text-white" : "border-brand-border text-brand-black"
+                  }`}>
                     {user.photoURL && !avatarImageFailed ? (
                       <img
                         src={user.photoURL}
@@ -283,7 +346,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           <button
             type="button"
             onClick={openCart}
-            className="relative flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black"
+            className={`relative flex h-10 w-10 items-center justify-center transition-colors duration-300 ${
+              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
+            }`}
             data-cursor="CART"
             aria-label={`Open cart (${itemCount} ${itemCount === 1 ? "item" : "items"})`}
             aria-haspopup="dialog"
@@ -305,7 +370,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {itemCount > 0 && (
-              <span className="absolute top-1.5 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-brand-black px-1 text-[9px] font-medium leading-none text-white">
+              <span className={`absolute top-1.5 right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-medium leading-none transition-colors duration-300 ${
+                isTransparent ? "bg-white text-brand-black font-semibold" : "bg-brand-black text-white"
+              }`}>
                 {itemCount}
               </span>
             )}
@@ -314,7 +381,9 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           {/* Mobile Fullscreen Menu Toggle (Hamburger) */}
           <button
             onClick={onOpenMenu}
-            className="flex h-10 w-10 items-center justify-center text-brand-black/80 transition-colors hover:text-brand-black lg:hidden"
+            className={`flex h-10 w-10 items-center justify-center transition-colors duration-300 lg:hidden ${
+              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
+            }`}
             data-cursor="MENU"
             aria-label="Open menu"
           >
