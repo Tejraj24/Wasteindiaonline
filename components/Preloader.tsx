@@ -136,7 +136,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
       aria-hidden="true"
       className="fixed inset-0 z-[200] flex items-center justify-center bg-black overflow-hidden pointer-events-auto select-none"
     >
-      {/* Centered WASTE® Brand Logo Only */}
+      {/* Centered WASTE Brand Logo Only */}
       <div
         ref={logoRef}
         style={{ opacity: 0 }}
@@ -144,7 +144,7 @@ export function Preloader({ onComplete }: PreloaderProps) {
       >
         <img
           src="https://res.cloudinary.com/dom7a6zlx/image/upload/v1791873242/waste_yl29iy.jpg"
-          alt="WASTE®"
+          alt="WASTE"
           fetchPriority="high"
           decoding="async"
           className="w-44 sm:w-56 md:w-64 max-w-[80vw] h-auto object-contain select-none"

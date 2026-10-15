@@ -147,7 +147,7 @@ export function CategorySection({ categories }: CategorySectionProps) {
   return (
     <section
       ref={sectionRef}
-      aria-label="WASTE® Category Contact Sheet"
+      aria-label="WASTE Category Contact Sheet"
       className="relative w-full border-t border-brand-border bg-brand-bg py-16 text-brand-black sm:py-20 md:py-28"
     >
       {/* Background subtle contact sheet tint */}
@@ -169,7 +169,7 @@ export function CategorySection({ categories }: CategorySectionProps) {
               <div className="flex items-center gap-2.5">
                 <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
                 <p className="truncate font-tenor text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
-                  WASTE® // CATEGORY INDEX
+                  WASTE // CATEGORY INDEX
                 </p>
               </div>
               <h2 className="mt-2 font-tenor text-[clamp(1.75rem,4.5vw,3.5rem)] font-normal uppercase leading-[1.05] tracking-[0.14em] text-brand-black">
@@ -379,7 +379,7 @@ function ContactSheetCard({
       >
         <img
           src={category.image}
-          alt={`WASTE® ${category.name} collection campaign photographic proof`}
+          alt={`WASTE ${category.name} collection campaign photographic proof`}
           loading="lazy"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
         />

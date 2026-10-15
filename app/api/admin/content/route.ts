@@ -15,19 +15,23 @@ export async function GET(req: Request) {
     await requireAdminAuth(req);
 
     const config = await getHomepageContent();
-    const featuredProducts = await getFeaturedProducts(4);
+    const featuredProducts = await getFeaturedProducts(8);
 
     return NextResponse.json({
       success: true,
       config,
-      featuredProducts: featuredProducts.map((p) => ({
+      featuredProducts: featuredProducts.map((p, idx) => ({
         id: p.id,
         name: p.name,
         slug: p.slug,
         price: p.price,
-        image1: p.images[0] || "",
-        image2: p.images[1] || p.images[0] || "",
+        compareAtPrice: p.compareAtPrice,
+        sku: p.sku,
         category: p.category,
+        slotNumber: idx + 1,
+        slotId: `slot-${idx + 1}`,
+        image1: p.images[0] || "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png",
+        image2: p.images[1] || p.images[0] || "",
       })),
     });
   } catch (error: unknown) {

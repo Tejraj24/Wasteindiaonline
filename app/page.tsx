@@ -16,13 +16,18 @@ export default async function Home() {
     getHomepageContent(),
   ]);
 
-  // Apply visual overrides for featured products on the homepage if configured by admin
-  const resolvedFeaturedProducts = featuredProducts.map((p) => {
-    const override = homepageContent.featuredOverrides[p.id];
+  // Apply visual overrides for 3D lookbook carousel and featured products
+  const resolvedFeaturedProducts = featuredProducts.map((p, idx) => {
+    const override =
+      homepageContent.featuredOverrides[p.id] ||
+      homepageContent.featuredOverrides[`slot-${idx + 1}`];
+
     return {
       ...p,
       image1: override?.image1 || p.images[0] || "",
       image2: override?.image2 || p.images[1] || p.images[0] || "",
+      carouselOverride1: override?.image1,
+      carouselOverride2: override?.image2,
       adminProductOverride1: override?.image1,
       adminProductOverride2: override?.image2,
     };
@@ -33,6 +38,7 @@ export default async function Home() {
       <Hero slides={homepageContent.heroSlides} />
       <StackedProductCarousel
         products={resolvedFeaturedProducts}
+        overrides={homepageContent.featuredOverrides}
         silhouettes={homepageContent.carouselImages}
       />
       <CategorySection categories={categories} />

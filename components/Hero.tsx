@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import gsap from "gsap";
 import { DEFAULT_HERO_SLIDES, HeroSlideContent } from "@/lib/services/content.service";
 
@@ -15,98 +15,167 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
   const slidesRef = useRef<(HTMLDivElement | null)[]>([]);
   const imagesRef = useRef<(HTMLImageElement | null)[]>([]);
   const isAnimating = useRef(false);
+  const activeTimeline = useRef<gsap.core.Timeline | null>(null);
+  const isMounted = useRef(true);
 
-  const goToSlide = (newIndex: number) => {
-    if (isAnimating.current || newIndex === activeIndex) return;
-    isAnimating.current = true;
+  // Preload all hero images on mount so slides never flash blank
+  useEffect(() => {
+    isMounted.current = true;
+    if (typeof window === "undefined") return;
 
-    const currentSlide = slidesRef.current[activeIndex];
-    const currentImg = imagesRef.current[activeIndex];
-    const nextSlide = slidesRef.current[newIndex];
-    const nextImg = imagesRef.current[newIndex];
-
-    const isForwards =
-      activeIndex === activeSlides.length - 1 && newIndex === 0
-        ? true
-        : activeIndex === 0 && newIndex === activeSlides.length - 1
-        ? false
-        : newIndex > activeIndex;
-
-    const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
-    const parallaxPercent = isMobile ? 4 : 10;
-
-    const tl = gsap.timeline({
-      defaults: { duration: 1.0, ease: "power4.inOut" },
-      onComplete: () => {
-        setActiveIndex(newIndex);
-        isAnimating.current = false;
-        slidesRef.current.forEach((el, i) => {
-          if (el) el.style.zIndex = i === newIndex ? "2" : "1";
-        });
-        if (nextImg) {
-          gsap.set(nextImg, { clearProps: "transform,yPercent,y" });
-        }
-        if (currentImg) {
-          gsap.set(currentImg, { clearProps: "transform,yPercent,y" });
-        }
-      },
+    activeSlides.forEach((slide) => {
+      const urls = [slide.image, slide.mobileImage].filter(Boolean) as string[];
+      urls.forEach((url) => {
+        const img = new Image();
+        img.src = url;
+      });
     });
 
-    if (nextSlide && currentSlide && nextImg && currentImg) {
-      nextSlide.style.zIndex = "3";
-
-      if (isForwards) {
-        tl.fromTo(
-          nextSlide,
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" },
-          0
-        )
-          .fromTo(
-            currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-            { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-            0
-          )
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: parallaxPercent }, 0)
-          .fromTo(nextImg, { yPercent: -parallaxPercent }, { yPercent: 0 }, 0);
-      } else {
-        tl.fromTo(
-          nextSlide,
-          { clipPath: "polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)" },
-          { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-          0
-        )
-          .fromTo(
-            currentSlide,
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 0%)" },
-            { clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)" },
-            0
-          )
-          .fromTo(currentImg, { yPercent: 0 }, { yPercent: -parallaxPercent }, 0)
-          .fromTo(nextImg, { yPercent: parallaxPercent }, { yPercent: 0 }, 0);
+    return () => {
+      isMounted.current = false;
+      if (activeTimeline.current) {
+        activeTimeline.current.kill();
       }
-    }
+    };
+  }, [activeSlides]);
+
+  // Helper to ensure an image is decoded and ready before fading in
+  const ensureImageReady = (imgEl: HTMLImageElement | null): Promise<void> => {
+    if (!imgEl || imgEl.complete) return Promise.resolve();
+    return new Promise((resolve) => {
+      const onDone = () => {
+        imgEl.removeEventListener("load", onDone);
+        imgEl.removeEventListener("error", onDone);
+        resolve();
+      };
+      imgEl.addEventListener("load", onDone);
+      imgEl.addEventListener("error", onDone);
+      setTimeout(onDone, 600); // Safety timeout so transitions never block indefinitely
+    });
   };
 
-  const nextSlide = () => {
+  const goToSlide = useCallback(
+    async (newIndex: number) => {
+      if (isAnimating.current || newIndex === activeIndex || !isMounted.current) return;
+      isAnimating.current = true;
+
+      const currentSlide = slidesRef.current[activeIndex];
+      const currentImg = imagesRef.current[activeIndex];
+      const nextSlide = slidesRef.current[newIndex];
+      const nextImg = imagesRef.current[newIndex];
+
+      if (!nextSlide || !currentSlide) {
+        isAnimating.current = false;
+        return;
+      }
+
+      // Pre-flight: make sure the next image is decoded
+      await ensureImageReady(nextImg);
+      if (!isMounted.current) return;
+
+      const prefersReducedMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      // Bring incoming slide above current, initially invisible
+      nextSlide.style.zIndex = "3";
+      nextSlide.style.visibility = "visible";
+      currentSlide.style.zIndex = "2";
+      currentSlide.style.visibility = "visible";
+
+      if (activeTimeline.current) {
+        activeTimeline.current.kill();
+      }
+
+      const tl = gsap.timeline({
+        onComplete: () => {
+          if (!isMounted.current) return;
+          setActiveIndex(newIndex);
+          isAnimating.current = false;
+          activeTimeline.current = null;
+
+          // Re-index layers: new slide is active at z-2, previous goes to z-1 hidden
+          slidesRef.current.forEach((el, i) => {
+            if (el) {
+              el.style.zIndex = i === newIndex ? "2" : "1";
+              el.style.opacity = i === newIndex ? "1" : "0";
+              el.style.visibility = i === newIndex ? "visible" : "hidden";
+            }
+          });
+
+          if (nextImg) {
+            gsap.set(nextImg, { scale: 1, clearProps: "transform" });
+          }
+          if (currentImg) {
+            gsap.set(currentImg, { scale: 1, clearProps: "transform" });
+          }
+        },
+      });
+
+      activeTimeline.current = tl;
+
+      if (prefersReducedMotion) {
+        // Simple fast opacity dissolve without scale
+        tl.fromTo(nextSlide, { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.inOut" }, 0)
+          .fromTo(currentSlide, { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "power1.inOut" }, 0);
+      } else {
+        // Seamless cross-dissolve: incoming image dissolves smoothly over 1.5s
+        // with ease: "power2.inOut"
+        tl.fromTo(
+          nextSlide,
+          { opacity: 0 },
+          { opacity: 1, duration: 1.5, ease: "power2.inOut" },
+          0
+        );
+
+        // Subtle cinematic zoom drift: incoming image settles from 1.025 to 1.00
+        if (nextImg) {
+          tl.fromTo(
+            nextImg,
+            { scale: 1.025 },
+            { scale: 1.00, duration: 1.6, ease: "power2.out" },
+            0
+          );
+        }
+
+        // Outgoing slide dissolves smoothly after a brief overlap anchor, ensuring zero flash/darkening
+        tl.fromTo(
+          currentSlide,
+          { opacity: 1 },
+          { opacity: 0, duration: 1.4, ease: "power2.inOut" },
+          0.15
+        );
+
+        // Outgoing image drifts from 1.00 to 1.015, giving continuous living depth
+        if (currentImg) {
+          tl.fromTo(
+            currentImg,
+            { scale: 1.00 },
+            { scale: 1.015, duration: 1.5, ease: "power2.inOut" },
+            0
+          );
+        }
+      }
+    },
+    [activeIndex, isMounted]
+  );
+
+  const nextSlide = useCallback(() => {
     goToSlide((activeIndex + 1) % activeSlides.length);
-  };
+  }, [activeIndex, activeSlides.length, goToSlide]);
 
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     goToSlide((activeIndex - 1 + activeSlides.length) % activeSlides.length);
-  };
+  }, [activeIndex, activeSlides.length, goToSlide]);
 
-  // Automatically advance slides with responsive timing:
-  // - Mobile screens (viewport width <= 767px): 4000ms
-  // - Laptop, desktop, and larger screens (viewport width >= 768px): 3000ms
+  // Autoplay intervals:
+  // - Mobile: 4500ms
+  // - Desktop: 4000ms
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const mediaQuery = window.matchMedia("(max-width: 767px)");
-
-    const getSlideDuration = () =>
-      mediaQuery.matches || window.innerWidth <= 767 ? 4000 : 3000;
+    const getSlideDuration = () => (mediaQuery.matches ? 4500 : 4000);
 
     let currentDuration = getSlideDuration();
     let timer = setInterval(() => {
@@ -140,7 +209,7 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
       }
       window.removeEventListener("resize", handleResize);
     };
-  }, [activeIndex, activeSlides.length]);
+  }, [activeIndex, activeSlides.length, goToSlide]);
 
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
@@ -178,10 +247,11 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
           <div
             key={slide.id}
             ref={(el) => { slidesRef.current[i] = el; }}
-            className="absolute inset-0 w-full h-full"
+            className="absolute inset-0 w-full h-full will-change-[opacity]"
             style={{
               zIndex: i === activeIndex ? 2 : 1,
-              clipPath: i === activeIndex ? "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" : "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)"
+              opacity: i === activeIndex ? 1 : 0,
+              visibility: i === activeIndex ? "visible" : "hidden",
             }}
           >
             <div className="relative w-full h-full overflow-hidden bg-brand-black">
@@ -194,10 +264,10 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
                     ref={(el) => { imagesRef.current[i] = el; }}
                     src={slide.image}
                     alt={slide.title}
-                    loading={i === 0 ? "eager" : "lazy"}
+                    loading="eager"
                     fetchPriority={i === 0 ? "high" : "low"}
                     decoding="async"
-                    className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
+                    className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id} will-change-transform origin-center`}
                   />
                 </picture>
               ) : (
@@ -205,10 +275,10 @@ export function Hero({ slides = DEFAULT_HERO_SLIDES }: HeroProps) {
                   ref={(el) => { imagesRef.current[i] = el; }}
                   src={slide.image}
                   alt={slide.title}
-                  loading={i === 0 ? "eager" : "lazy"}
+                  loading="eager"
                   fetchPriority={i === 0 ? "high" : "low"}
                   decoding="async"
-                  className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id}`}
+                  className={`absolute inset-0 h-full w-full object-cover hero-slide-img-${slide.id} will-change-transform origin-center`}
                 />
               )}
 
