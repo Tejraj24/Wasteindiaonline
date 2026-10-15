@@ -11,11 +11,14 @@ interface StackedProductCarouselProps {
   products: (StorefrontProduct & {
     image1?: string;
     image2?: string;
+    carouselOverride1?: string;
+    carouselOverride2?: string;
     adminProductOverride1?: string;
     adminProductOverride2?: string;
   })[];
   title?: string;
   tagline?: string;
+  overrides?: Record<string, { image1?: string; image2?: string }>;
   silhouettes?: CarouselSlideContent[];
 }
 
@@ -31,6 +34,7 @@ export function StackedProductCarousel({
   products = [],
   title = "FEATURED SILHOUETTES",
   tagline = "2024 DROP // THE 3D LOOKBOOK",
+  overrides,
   silhouettes,
 }: StackedProductCarouselProps) {
   const router = useRouter();
@@ -356,7 +360,7 @@ export function StackedProductCarousel({
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
-      aria-label="WASTE® Featured Collection 3D Carousel"
+      aria-label="WASTE Featured Collection 3D Carousel"
       className="relative w-full overflow-hidden bg-brand-bg py-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:py-20 md:py-28"
     >
       {/* Background ambient subtle warmth */}
@@ -366,7 +370,7 @@ export function StackedProductCarousel({
       />
 
       <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12">
-        {/* Section Header: Consistent with WASTE® navbar & editorial headings */}
+        {/* Section Header: Consistent with WASTE navbar & editorial headings */}
         <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16">
           <div className="min-w-0 -ml-0 sm:-ml-2 md:-ml-4">
             <div className="flex items-center gap-2.5">
@@ -415,7 +419,6 @@ export function StackedProductCarousel({
               DEFAULT_CAROUSEL_ITEMS.find((d) => d.id === matchingSilhouette?.id) ||
               DEFAULT_CAROUSEL_ITEMS[index];
 
-            // A silhouette has an explicit admin override if it is flagged as custom or differs from code default
             const hasAdminSilhouetteOverride = Boolean(
               matchingSilhouette?.image &&
                 (
@@ -424,40 +427,40 @@ export function StackedProductCarousel({
                 )
             );
 
-            // Priority order:
-            // 1. Explicitly saved Featured Silhouettes admin image (takes top priority)
-            // 2. Product-specific visual override from admin catalog section
-            // 3. Product catalog default image
-            // 4. Intended default fallback image
-            const adminSilhouetteImage = hasAdminSilhouetteOverride
-              ? matchingSilhouette?.image
-              : undefined;
+            // Strict Priority Order for 2024 DROP // THE 3D LOOKBOOK — FEATURED SILHOUETTES:
+            // 1. Explicitly saved admin override for this carousel card/slot
+            // 2. Existing default image used by this carousel item
+            // 3. Existing fallback image
+            const adminCardOverride1 =
+              product.carouselOverride1 ||
+              overrides?.[product.id]?.image1 ||
+              overrides?.[`slot-${targetSlotId}`]?.image1 ||
+              (hasAdminSilhouetteOverride ? matchingSilhouette?.image : undefined);
 
-            const productDefaultImage =
-              product.adminProductOverride1 ||
-              product.image1 ||
-              (product.images && product.images[0]);
+            const existingDefaultImage =
+              (product.images && product.images[0]) ||
+              product.image1;
 
             const primaryImage =
-              adminSilhouetteImage ||
-              productDefaultImage ||
+              adminCardOverride1 ||
+              existingDefaultImage ||
               fallbackImage;
 
-            const adminSilhouetteSecondary =
-              hasAdminSilhouetteOverride &&
-              matchingSilhouette?.mobileImage &&
-              matchingSilhouette.mobileImage !== matchingSilhouette.image
+            const adminCardOverride2 =
+              product.carouselOverride2 ||
+              overrides?.[product.id]?.image2 ||
+              overrides?.[`slot-${targetSlotId}`]?.image2 ||
+              (hasAdminSilhouetteOverride && matchingSilhouette?.mobileImage && matchingSilhouette.mobileImage !== matchingSilhouette.image
                 ? matchingSilhouette.mobileImage
-                : undefined;
+                : undefined);
 
-            const productSecondaryImage =
-              product.adminProductOverride2 ||
-              product.image2 ||
-              (product.images && product.images[1]);
+            const existingSecondaryImage =
+              (product.images && product.images[1]) ||
+              product.image2;
 
             const secondaryImage =
-              adminSilhouetteSecondary ||
-              productSecondaryImage ||
+              adminCardOverride2 ||
+              existingSecondaryImage ||
               primaryImage;
 
             return (

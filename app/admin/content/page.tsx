@@ -30,9 +30,13 @@ interface FeaturedProductMeta {
   name: string;
   slug: string;
   price: number;
+  compareAtPrice?: number | null;
+  sku?: string;
   image1: string;
   image2: string;
   category?: string;
+  slotNumber?: number;
+  slotId?: string;
 }
 
 export default function AdminContentPage() {
@@ -429,25 +433,34 @@ export default function AdminContentPage() {
       </section>
 
       {/* ==========================================================
-          SECTION B: FEATURED SECTION IMAGES
+          SECTION B: 2024 DROP // THE 3D LOOKBOOK — FEATURED SILHOUETTES
          ========================================================== */}
       <section className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b border-zinc-800/60 pb-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-zinc-800/60 pb-4 mb-6 gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600/10 text-blue-400 border border-blue-500/20">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-blue-600/10 text-blue-400 border border-blue-500/20">
               <ShoppingBag className="h-4 w-4" />
             </div>
             <div>
-              <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                Section B: Featured Products Visuals
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-blue-400 font-bold">
+                  2024 DROP // THE 3D LOOKBOOK
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-400">
+                  Live 3D Carousel
+                </span>
+              </div>
+              <h2 className="text-base font-bold uppercase tracking-wider text-white">
+                FEATURED SILHOUETTES (LIVE 3D CAROUSEL)
               </h2>
               <p className="text-[11px] text-zinc-400">
-                Override homepage product card visuals without altering catalog prices, stock, or core IDs.
+                Directly manage and replace the images displayed on each card of the live 3D lookbook carousel. Replaced images take priority on the storefront without altering database catalog records or prices.
               </p>
             </div>
           </div>
-          <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-            {featuredProducts.length} Active Cards
+          <span className="text-[10px] font-mono text-zinc-400 uppercase tracking-widest bg-zinc-900 px-2.5 py-1 rounded border border-zinc-800 shrink-0">
+            {featuredProducts.length} Carousel Cards Active
           </span>
         </div>
 
@@ -468,21 +481,40 @@ export default function AdminContentPage() {
               return (
                 <div
                   key={product.id}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-5 space-y-4"
+                  className={`rounded-xl border p-5 space-y-4 transition ${
+                    isModified
+                      ? "border-blue-500/40 bg-zinc-900/50 shadow-sm"
+                      : "border-zinc-800 bg-zinc-900/30"
+                  }`}
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex items-center gap-3">
-                      <span className="flex h-6 w-6 items-center justify-center rounded bg-blue-600/20 text-xs font-mono font-bold text-blue-400 border border-blue-500/30">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600/20 text-xs font-mono font-bold text-blue-400 border border-blue-500/30">
                         {String(idx + 1).padStart(2, "0")}
                       </span>
                       <div>
-                        <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-500">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                            {product.name}
+                          </h3>
+                          {isModified ? (
+                            <span className="rounded bg-blue-500/20 text-blue-400 border border-blue-500/30 px-1.5 py-0.5 text-[9px] font-mono font-medium">
+                              Admin Override Active
+                            </span>
+                          ) : (
+                            <span className="rounded bg-zinc-800 text-zinc-400 border border-zinc-700 px-1.5 py-0.5 text-[9px] font-mono font-medium">
+                              Catalog Default
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-zinc-400 mt-0.5">
+                          <span>Slide {String(idx + 1).padStart(2, "0")}</span>
+                          <span>•</span>
                           <span>ID: {product.id}</span>
                           <span>•</span>
-                          <span>Category: {product.category || "Collection"}</span>
+                          <span>SKU: {product.sku || `WST-PROD-00${idx + 1}`}</span>
+                          <span>•</span>
+                          <span>Category: {product.category || "Streetwear"}</span>
                         </div>
                       </div>
                     </div>
@@ -492,10 +524,10 @@ export default function AdminContentPage() {
                         <button
                           type="button"
                           onClick={() => resetFeaturedProduct(product.id)}
-                          className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-white transition"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 px-2.5 py-1 text-[11px] text-zinc-300 hover:text-white hover:bg-zinc-700 transition"
                         >
                           <RotateCcw className="h-3 w-3" />
-                          <span>Reset to Catalog Images</span>
+                          <span>Reset to Original Product Images</span>
                         </button>
                       )}
 
@@ -505,7 +537,7 @@ export default function AdminContentPage() {
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition"
                       >
-                        <span>View Product</span>
+                        <span>View on Storefront</span>
                         <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
@@ -514,12 +546,12 @@ export default function AdminContentPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Primary Image Slot */}
                     <SingleImageUploadSlot
-                      label="Primary Storefront Image"
-                      sublabel="Default image displayed on product grid (3:4 portrait)"
+                      label="Primary Carousel Silhouette Image"
+                      sublabel="Main visual displayed on the 3D carousel card (3:4 portrait)"
                       currentImageUrl={effectiveImg1}
                       defaultImageUrl={product.image1}
                       aspectRatio="3/4"
-                      badge="Primary"
+                      badge={`Card ${idx + 1} Primary`}
                       isModified={!!override?.image1}
                       onImageChange={(url) => updateFeaturedImage(product.id, "image1", url)}
                       onResetToDefault={() => {
@@ -536,12 +568,12 @@ export default function AdminContentPage() {
 
                     {/* Secondary / Hover Image Slot */}
                     <SingleImageUploadSlot
-                      label="Secondary Hover Image"
-                      sublabel="Lifestyle or angle revealed when cursor hovers over card"
+                      label="Secondary Hover View (Optional)"
+                      sublabel="Alternate angle revealed when cursor hovers over active center card"
                       currentImageUrl={effectiveImg2}
                       defaultImageUrl={product.image2}
                       aspectRatio="3/4"
-                      badge="Hover View"
+                      badge={`Card ${idx + 1} Hover`}
                       isModified={!!override?.image2}
                       onImageChange={(url) => updateFeaturedImage(product.id, "image2", url)}
                       onResetToDefault={() => {
@@ -564,7 +596,7 @@ export default function AdminContentPage() {
       </section>
 
       {/* ==========================================================
-          SECTION C: 2024 DROP // THE 3D LOOKBOOK — FEATURED SILHOUETTES
+          SECTION C: ARCHIVE GALLERY (FOOTER SCROLLING SHOWCASE)
          ========================================================== */}
       <section className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-6 shadow-sm">
         <div className="flex items-center justify-between border-b border-zinc-800/60 pb-4 mb-6">
@@ -573,21 +605,16 @@ export default function AdminContentPage() {
               <Images className="h-4 w-4" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] font-mono uppercase tracking-widest text-blue-400 font-semibold">
-                  2024 DROP // THE 3D LOOKBOOK
-                </span>
-              </div>
               <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                Section C: Featured Silhouettes Carousel
+                Section C: Archive Gallery (Footer Scrolling Showcase)
               </h2>
               <p className="text-[11px] text-zinc-400">
-                Replace and manage every image in the Featured Silhouettes carousel and archive gallery.
+                Manage the horizontal infinite-scrolling archive gallery displayed above the footer.
               </p>
             </div>
           </div>
           <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">
-            {carouselImages.length} Carousel Items
+            {carouselImages.length} Gallery Items
           </span>
         </div>
 

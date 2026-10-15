@@ -57,7 +57,7 @@ function buildEmailContent(data: {
   const safeMessage = escapeHtml(data.message);
   const timestamp = new Date().toUTCString();
 
-  const text = `NEW WASTE® CUSTOMER INQUIRY
+  const text = `NEW WASTE CUSTOMER INQUIRY
 ========================================
 
 Sender Name:    ${data.name}
@@ -71,7 +71,7 @@ Message:
 ${data.message}
 
 ========================================
-WASTE® — Made in India. Built for the world. 🇮🇳
+WASTE — Made in India. Built for the world. 🇮🇳
 Recipient: ${BRAND_CONFIG.contact.officialBusinessEmail}
 `;
 
@@ -80,7 +80,7 @@ Recipient: ${BRAND_CONFIG.contact.officialBusinessEmail}
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>New WASTE® Customer Inquiry</title>
+  <title>New WASTE Customer Inquiry</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #0c0c0c; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #ffffff;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #0c0c0c; padding: 32px 16px;">
@@ -94,7 +94,7 @@ Recipient: ${BRAND_CONFIG.contact.officialBusinessEmail}
                 <tr>
                   <td>
                     <div style="font-size: 22px; font-weight: 900; letter-spacing: -0.04em; text-transform: uppercase; color: #ffffff;">
-                      WASTE<span style="color: #0055ff;">®</span>
+                      WASTE
                     </div>
                     <div style="margin-top: 4px; font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: #888888;">
                       Official Customer Inquiry
@@ -166,7 +166,7 @@ ${safeMessage}
           <!-- Footer -->
           <tr>
             <td style="padding: 20px 32px; border-top: 1px solid #262626; text-align: center; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: #666666;">
-              WASTE® &mdash; Made in India. Built for the world. 🇮🇳
+              WASTE &mdash; Made in India. Built for the world. 🇮🇳
             </td>
           </tr>
         </table>
@@ -272,12 +272,12 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(apiKey);
     const fromAddress =
       process.env.RESEND_FROM_EMAIL?.trim() ||
-      "WASTE® Inquiries <onboarding@resend.dev>";
+      "WASTE Inquiries <onboarding@resend.dev>";
     const recipientEmail =
       process.env.CONTACT_RECIPIENT_EMAIL?.trim() ||
       BRAND_CONFIG.contact.officialBusinessEmail;
 
-    const emailSubject = `[WASTE® Inquiry] ${cleanType} - ${cleanName}${
+    const emailSubject = `[WASTE Inquiry] ${cleanType} - ${cleanName}${
       cleanOrderNumber ? ` (Order #${cleanOrderNumber})` : ""
     }`;
 
@@ -329,7 +329,7 @@ export async function POST(req: NextRequest) {
       success: true,
       delivered: true,
       id: sendResult?.id,
-      message: `Thank you for contacting WASTE®. Your message has been sent to our team at ${recipientEmail}.`,
+      message: `Thank you for contacting WASTE. Your message has been sent to our team at ${recipientEmail}.`,
     });
   } catch (error) {
     console.error(
