@@ -14,6 +14,9 @@ type ProductPurchasePanelProps = {
     sku: string;
     category: string;
     soldOut: boolean;
+    isPreorder?: boolean;
+    expectedShipmentText?: string | null;
+    releaseDate?: Date | string | null;
   };
 };
 
@@ -23,8 +26,28 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
   const { addItem } = useCart();
   const [size, setSize] = useState("M");
 
+  const formattedRelease = product.releaseDate
+    ? new Date(product.releaseDate).toLocaleDateString("en-US", { month: "long", year: "numeric" })
+    : null;
+
+  const shipmentNotice =
+    product.expectedShipmentText || (formattedRelease ? `Arrives ${formattedRelease}` : null);
+
   return (
     <div className="mt-8 border-t border-brand-border pt-6 sm:mt-10 sm:pt-7">
+      {product.isPreorder && (
+        <div className="mb-5 flex flex-wrap items-center gap-2.5">
+          <span className="inline-block border border-brand-black bg-brand-black px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-white">
+            Pre-Order
+          </span>
+          {shipmentNotice && (
+            <span className="text-[10px] uppercase tracking-[0.18em] text-amber-700 font-medium">
+              {shipmentNotice}
+            </span>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-brand-black">
         <span>
           Size: <strong className="font-semibold text-brand-black">{size}</strong>
@@ -60,12 +83,21 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
             image: product.image,
             size,
             sku: product.sku,
+            isPreorder: product.isPreorder,
+            expectedShipmentText: shipmentNotice,
+            releaseDate: product.releaseDate ? String(product.releaseDate) : null,
           })
         }
         disabled={product.soldOut}
         className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
       >
-        {product.soldOut ? "Sold out" : `Add to cart — ${size}`}
+        {product.soldOut
+          ? product.isPreorder
+            ? "Pre-order capacity reached"
+            : "Sold out"
+          : product.isPreorder
+          ? `Pre-Order Now — ${size}`
+          : `Add to cart — ${size}`}
       </button>
       <div className="mt-3">
         <WishlistButton

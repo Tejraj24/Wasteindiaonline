@@ -170,7 +170,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
             <Link
               key={link.name}
               href={link.href}
-              className={`text-xs font-tenor tracking-widest relative py-2 transition-colors duration-300 ${
+              className={`text-xs font-tenor font-medium tracking-widest relative py-2 transition-colors duration-300 ${
                 isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/85 hover:text-brand-black"
               }`}
             >

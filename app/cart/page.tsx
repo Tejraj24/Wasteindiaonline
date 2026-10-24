@@ -34,6 +34,8 @@ export default function CartPage() {
     );
   }
 
+  const hasPreorders = items.some((i) => i.isPreorder);
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-black flex flex-col justify-between">
       <main className="px-6 pb-24 pt-36 md:px-12">
@@ -62,8 +64,20 @@ export default function CartPage() {
                     <div className="flex min-w-0 flex-1 flex-col justify-between gap-6">
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h2 className="break-words text-sm uppercase leading-5 tracking-[0.08em] text-brand-black">{item.title}</h2>
-                          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-brand-muted">Size: {item.size}</p>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h2 className="break-words text-sm uppercase leading-5 tracking-[0.08em] text-brand-black">{item.title}</h2>
+                            {item.isPreorder && (
+                              <span className="inline-block border border-brand-black bg-brand-black px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white">
+                                Pre-Order
+                              </span>
+                            )}
+                          </div>
+                          <p className="mt-1 text-xs uppercase tracking-[0.18em] text-brand-muted">Size: {item.size}</p>
+                          {item.expectedShipmentText && (
+                            <p className="mt-1 text-[10px] uppercase tracking-wider text-amber-700">
+                              {item.expectedShipmentText}
+                            </p>
+                          )}
                         </div>
                         <p className="whitespace-nowrap text-xs font-medium text-brand-black sm:text-sm">{formatPrice(item.price * item.quantity)}</p>
                       </div>
@@ -85,11 +99,25 @@ export default function CartPage() {
                   <span>Subtotal</span>
                   <span className="font-medium">{formatPrice(subtotal)}</span>
                 </div>
+                <div className="mt-3 flex items-center justify-between text-xs uppercase tracking-[0.15em] text-brand-muted">
+                  <span>Shipping</span>
+                  <span>Complimentary</span>
+                </div>
+                {hasPreorders && (
+                  <p className="mt-4 border-l-2 border-brand-black pl-3 text-[11px] leading-5 text-brand-muted">
+                    Your bag contains pre-ordered merchandise. Production capacity is reserved upon payment confirmation.
+                  </p>
+                )}
                 {error && <p className="mt-5 text-sm text-red-600" role="alert">{error}</p>}
-                <button type="button" disabled className="mt-8 w-full cursor-not-allowed border border-brand-border bg-brand-surfaceSubtle py-4 text-xs font-semibold uppercase tracking-[0.2em] text-brand-muted" title="Checkout is not configured yet">
-                  Checkout unavailable
-                </button>
-                <p className="mt-4 text-xs leading-5 text-brand-muted">Checkout will be available once payment processing is connected.</p>
+                <a
+                  href="/checkout"
+                  className="mt-8 block w-full bg-brand-black py-4 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-brand-black/90 active:scale-[0.99]"
+                >
+                  Proceed to Checkout
+                </a>
+                <p className="mt-4 text-[11px] leading-5 text-brand-muted text-center">
+                  Encrypted PhonePe Standard Checkout &bull; UPI &bull; Cards
+                </p>
               </aside>
             </div>
           )}

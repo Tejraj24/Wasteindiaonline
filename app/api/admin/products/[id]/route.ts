@@ -61,6 +61,10 @@ export async function PUT(
       featured,
       tags,
       images,
+      isPreorder,
+      releaseDate,
+      expectedShipmentText,
+      preorderCapacity,
     } = body;
 
     // Delete existing images if new image array provided
@@ -85,6 +89,10 @@ export async function PUT(
         inventory: inventory !== undefined ? parseInt(inventory, 10) : undefined,
         featured: featured !== undefined ? Boolean(featured) : undefined,
         tags: Array.isArray(tags) ? tags : typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : undefined,
+        isPreorder: isPreorder !== undefined ? Boolean(isPreorder) : undefined,
+        releaseDate: releaseDate !== undefined ? (releaseDate ? new Date(releaseDate) : null) : undefined,
+        expectedShipmentText: expectedShipmentText !== undefined ? expectedShipmentText : undefined,
+        preorderCapacity: preorderCapacity !== undefined ? (preorderCapacity ? parseInt(String(preorderCapacity), 10) : null) : undefined,
         images: Array.isArray(images)
           ? {
               create: images.map((img: { imageUrl: string; altText?: string }, index: number) => ({

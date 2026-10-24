@@ -60,6 +60,7 @@ interface OrderData {
 
 const ORDER_STATUSES = [
   "PENDING",
+  "PREORDER_PLACED",
   "CONFIRMED",
   "PACKED",
   "SHIPPED",
@@ -530,7 +531,7 @@ export default function AdminOrdersPage() {
                       </div>
                       <div>
                         <p className="text-xs font-medium text-white">{it.title}</p>
-                        <p className="text-[10px] text-zinc-500">Size: {it.size || "M"} • Qty: {it.quantity}</p>
+                        <p className="text-[10px] text-zinc-500">Size: {it.size || "M"} â€¢ Qty: {it.quantity}</p>
                       </div>
                     </div>
                     <span className="text-xs font-semibold text-white">

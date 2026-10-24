@@ -38,7 +38,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
   const normalizedProducts: GridProductItem[] = products.map((p: any) => {
     const img1 = p.image1 || (p.images && p.images[0]) || "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80";
     const img2 = p.image2 || (p.images && p.images[1]) || img1;
-    const badge = p.badge || (p.compareAtPrice ? "SALE" : p.featured ? "FEATURED" : undefined);
+    const badge = p.badge || (p.isPreorder ? "PRE-ORDER" : p.compareAtPrice ? "SALE" : p.featured ? "FEATURED" : undefined);
     
     return {
       id: p.id,
@@ -87,7 +87,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
           FEATURED PRODUCTS
         </h2>
         <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity hidden md:block">
-          VIEW ALL →
+          VIEW ALL â†’
         </a>
       </div>
 
@@ -153,7 +153,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
                 </div>
                 <div className="mt-2 flex items-center justify-between text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:mt-2.5 sm:text-[10px]">
                   <span>Explore</span>
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">â†’</span>
                 </div>
               </div>
             </a>
@@ -175,7 +175,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
 
       <div className="mt-12 text-center md:hidden">
         <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity">
-          VIEW ALL PRODUCTS →
+          VIEW ALL PRODUCTS â†’
         </a>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getProductBySlug,
@@ -99,7 +99,7 @@ async function RelatedProducts({ product }: { product: StorefrontProduct }) {
           href="/shop"
           className="hidden text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black sm:block"
         >
-          View collection →
+          View collection â†’
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:gap-5">
@@ -119,7 +119,7 @@ async function RelatedProducts({ product }: { product: StorefrontProduct }) {
             </div>
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 pt-3 sm:pt-4 text-[10px] uppercase tracking-[0.1em] text-brand-black">
               <span className="truncate leading-tight group-hover:text-brand-muted transition-colors">
-                {relatedProduct.title.split(" — ")[0]}
+                {relatedProduct.title.split(" â€” ")[0]}
               </span>
               <span className="whitespace-nowrap font-mono font-semibold text-brand-black">
                 {formatPrice(relatedProduct.price)}
@@ -158,7 +158,7 @@ export default async function ProductPage({
                 Shop
               </Link>
               <span className="mx-3 text-brand-border">/</span>
-              <span className="text-brand-black">{product.title.split(" — ")[0]}</span>
+              <span className="text-brand-black">{product.title.split(" â€” ")[0]}</span>
             </nav>
           </div>
 
@@ -194,6 +194,9 @@ export default async function ProductPage({
                   sku: product.sku,
                   category: product.category,
                   soldOut: product.soldOut,
+                  isPreorder: product.isPreorder,
+                  expectedShipmentText: product.expectedShipmentText,
+                  releaseDate: product.releaseDate,
                 }}
               />
 

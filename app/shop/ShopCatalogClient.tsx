@@ -23,7 +23,7 @@ function formatPrice(price: number) {
 }
 
 function shortName(title: string) {
-  return title.split(" — ")[0];
+  return title.split(" â€” ")[0];
 }
 
 function ProductCard({
@@ -63,7 +63,11 @@ function ProductCard({
             </div>
             {product.soldOut ? (
               <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
-                Sold out
+                {product.isPreorder ? "Capacity reached" : "Sold out"}
+              </span>
+            ) : product.isPreorder ? (
+              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
+                Pre-order
               </span>
             ) : product.compareAtPrice ? (
               <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
@@ -107,7 +111,7 @@ function ProductCard({
         href={`/product/${product.slug}`}
         className="mt-2.5 inline-flex min-h-8 items-center text-[9px] uppercase tracking-[0.18em] text-brand-muted transition-colors hover:text-brand-black sm:mt-3 sm:text-[10px] sm:tracking-[0.2em]"
       >
-        View full details →
+        View full details â†’
       </Link>
     </article>
   );
@@ -325,7 +329,7 @@ export function ShopCatalogClient({
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-black">
-      {/* Editorial Collection Hero Banner — Wide Horizontal Rectangular Presentation */}
+      {/* Editorial Collection Hero Banner â€” Wide Horizontal Rectangular Presentation */}
       <section className="w-full pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-6 md:pb-8">
         <div className="mx-auto w-full max-w-[1600px] px-4 sm:px-6 md:px-12">
           <div

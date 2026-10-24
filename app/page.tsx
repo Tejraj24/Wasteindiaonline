@@ -1,6 +1,7 @@
 import { Hero } from "@/components/Hero";
 import { StackedProductCarousel } from "@/components/StackedProductCarousel";
 import { CategorySection } from "@/components/CategorySection";
+import { ObjectsOfExpressionHero } from "@/components/ObjectsOfExpressionHero";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Gallery } from "@/components/Gallery";
 import { Footer } from "@/components/Footer";
@@ -41,7 +42,11 @@ export default async function Home() {
         overrides={homepageContent.featuredOverrides}
         silhouettes={homepageContent.carouselImages}
       />
+      {/* Temporarily commented out for full-width image replacement
       <CategorySection categories={categories} />
+      */}
+      {/* Objects of Expression — Editorial Streetwear Hero Showcase */}
+      <ObjectsOfExpressionHero />
       <ProductGrid products={resolvedFeaturedProducts.slice(0, 4)} />
       <Gallery items={homepageContent.carouselImages} />
       <Footer />

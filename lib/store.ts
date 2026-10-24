@@ -10,6 +10,9 @@ export interface CartItem {
   quantity: number;
   size: string;
   sku: string;
+  isPreorder?: boolean;
+  expectedShipmentText?: string | null;
+  releaseDate?: string | null;
 }
 
 interface CartStore {

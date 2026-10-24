@@ -143,7 +143,7 @@ export function ProductCollectionStrip({ products = [] }: ProductCollectionStrip
                   className="group/card flex flex-col items-center w-36 sm:w-44 md:w-52 shrink-0 transition-transform duration-300 hover:-translate-y-1 focus:outline-hidden focus-visible:ring-1 focus-visible:ring-brand-black"
                 >
                   {/* Clean Ivory Cutout Frame */}
-                  <div className="relative aspect-[3/4] w-full overflow-hidden border border-brand-border bg-brand-surface p-4 transition-colors duration-300 group-hover/card:border-brand-black/40 group-hover/card:bg-brand-surfaceSubtle">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-white p-4">
                     <img
                       src={image}
                       alt={product.title || product.name || "WASTE product"}
@@ -191,7 +191,7 @@ export function ProductCollectionStrip({ products = [] }: ProductCollectionStrip
                   tabIndex={-1}
                   className="group/card flex flex-col items-center w-36 sm:w-44 md:w-52 shrink-0 transition-transform duration-300 hover:-translate-y-1 focus:outline-hidden"
                 >
-                  <div className="relative aspect-[3/4] w-full overflow-hidden border border-brand-border bg-brand-surface p-4 transition-colors duration-300 group-hover/card:border-brand-black/40 group-hover/card:bg-brand-surfaceSubtle">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-white p-4">
                     <img
                       src={image}
                       alt=""
