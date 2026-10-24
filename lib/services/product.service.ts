@@ -20,6 +20,11 @@ export interface StorefrontProduct {
   tags: string[];
   images: string[];
   sku: string;
+  isPreorder: boolean;
+  releaseDate?: Date | null;
+  expectedShipmentText?: string | null;
+  preorderCapacity?: number | null;
+  preorderAllocated: number;
   createdAt: Date;
 }
 
@@ -40,6 +45,11 @@ export function formatStorefrontProduct(product: {
   categoryId?: string | null;
   category?: { id: string; name: string; slug: string } | null;
   images?: { imageUrl: string; sortOrder: number }[];
+  isPreorder?: boolean | null;
+  releaseDate?: Date | null;
+  expectedShipmentText?: string | null;
+  preorderCapacity?: number | null;
+  preorderAllocated?: number | null;
 }): StorefrontProduct {
   const images = (product.images || [])
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -56,6 +66,17 @@ export function formatStorefrontProduct(product: {
   }
 
   const categoryName = product.category?.name || "General";
+  const isPreorder = Boolean(product.isPreorder);
+  const preorderAllocated = product.preorderAllocated || 0;
+  let soldOut = product.status !== "ACTIVE";
+
+  if (isPreorder) {
+    if (product.preorderCapacity !== null && product.preorderCapacity !== undefined) {
+      soldOut = soldOut || preorderAllocated >= product.preorderCapacity;
+    }
+  } else {
+    soldOut = soldOut || product.inventory <= 0;
+  }
 
   return {
     id: product.id,
@@ -72,11 +93,16 @@ export function formatStorefrontProduct(product: {
     brand: product.brand,
     status: product.status,
     inventory: product.inventory,
-    soldOut: product.status !== "ACTIVE" || product.inventory <= 0,
+    soldOut,
     featured: product.featured,
     tags: product.tags,
     images,
     sku: `WST-${product.slug.toUpperCase().slice(0, 8)}`,
+    isPreorder,
+    releaseDate: product.releaseDate || null,
+    expectedShipmentText: product.expectedShipmentText || null,
+    preorderCapacity: product.preorderCapacity || null,
+    preorderAllocated,
     createdAt: product.createdAt,
   };
 }

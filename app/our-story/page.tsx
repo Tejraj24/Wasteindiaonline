@@ -1,9 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
-import { BackButton } from "@/components/navigation/BackButton";
 import { ProductCollectionStrip } from "@/components/ProductCollectionStrip";
-import { InstagramEditorialCollage } from "@/components/InstagramEditorialCollage";
 import { BRAND_CONFIG } from "@/lib/config/brand";
 import { getProducts } from "@/lib/services/product.service";
 import { getHomepageContent } from "@/lib/services/content.service";
@@ -11,11 +9,11 @@ import { getHomepageContent } from "@/lib/services/content.service";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "Our Story | WASTE — Contemporary Streetwear",
+  title: "Our Story | WASTE — Contemporary Indian Streetwear",
   description:
     "Founded in 2024 by Suryansh Meena in New Jaipur, WASTE is an independent Indian streetwear brand built around individuality, distinctive silhouettes, and raw graphic culture. Made in India. Built for the world.",
   openGraph: {
-    title: "Our Story | WASTE — Contemporary Streetwear",
+    title: "Our Story | WASTE — Contemporary Indian Streetwear",
     description:
       "Founded in 2024 by Suryansh Meena in New Jaipur, WASTE is an independent Indian streetwear brand built around individuality, distinctive silhouettes, and raw graphic culture.",
     type: "website",
@@ -25,7 +23,7 @@ export const metadata: Metadata = {
         url: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797220/Picsart_26-10-12_14-49-47-646_ic3wwd.png",
         width: 1200,
         height: 800,
-        alt: "WASTE 90s Editorial Archive",
+        alt: "WASTE Cinematic Streetwear Archive",
       },
     ],
   },
@@ -69,502 +67,653 @@ export default async function OurStoryPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#F5F0E6] text-[#111111] selection:bg-[#111111] selection:text-[#FFFFFF] overflow-x-hidden">
-      {/* =========================================================================
-          MAGAZINE MASTHEAD & REGISTRATION HEADER
-          ========================================================================= */}
-      <div className="w-full pt-20 sm:pt-24 border-b-2 border-[#111111] bg-[#FFFFFF]">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12 py-3 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.24em] text-[#111111]">
-          <div className="flex items-center gap-3">
-            <BackButton fallbackHref="/" label="Home" variant="breadcrumb" />
-            <span>/</span>
-            <span className="font-bold">EDITORIAL // ISSUE 01</span>
-          </div>
+    <main className="min-h-screen bg-[#FAF8F5] text-[#111111] selection:bg-[#111111] selection:text-[#FAF8F5] overflow-x-hidden">
 
-          <div className="flex items-center gap-4 sm:gap-6">
-            <span>VOL. 2024</span>
-            <span className="hidden sm:inline">|</span>
-            <span className="hidden sm:inline">NEW Jaipur, IN</span>
-            <span>|</span>
-            <span>PRICE: UNAPOLOGETIC</span>
+      {/* =========================================================================
+          SECTION 1 — CINEMATIC HERO
+          Immersive full-screen campaign photo, bold typography, authentic lead,
+          and restrained editorial metadata.
+          ========================================================================= */}
+      <section className="relative w-full min-h-[92vh] lg:min-h-screen flex items-end justify-center overflow-hidden bg-[#111111]">
+        {/* Cinematic Campaign Photograph */}
+        <div className="absolute inset-0 w-full h-full">
+          <img
+            src={ASSETS.heroCampaign}
+            alt="WASTE Streetwear Campaign in Jaipur"
+            className="w-full h-full object-cover object-[center_35%] grayscale contrast-[1.18] brightness-[0.78]"
+            loading="eager"
+            decoding="async"
+          />
+          {/* Subtle multi-stop gradient for readable text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#111111] via-[#111111]/50 to-black/35" />
+        </div>
+
+        {/* Floating Top Editorial Metadata Bar */}
+        <div className="absolute top-20 sm:top-24 left-0 right-0 z-20">
+          <div className="mx-auto max-w-[1600px] px-6 sm:px-8 md:px-12 flex items-center justify-between text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.28em] text-[#FAF8F5]/75 border-b border-[#FAF8F5]/15 pb-3">
+            <div className="flex items-center gap-3">
+              <span className="text-[#FAF8F5] font-semibold">WASTE® ARCHIVE</span>
+              <span className="w-6 h-[1px] bg-[#FAF8F5]/30" aria-hidden="true" />
+              <span>VOL. 2024</span>
+            </div>
+            <span>NEW JAIPUR, IN // 28°38&apos;N</span>
           </div>
         </div>
-      </div>
 
-      {/* =========================================================================
-          HERO — THE MAGAZINE COVER
-          Oversized WASTE wordmark, headline “BEYOND THE FIT.”, supporting copy:
-          “Not made to fit in.”, large framed campaign photograph, archival metadata.
-          ========================================================================= */}
-      <section className="relative w-full border-b-2 border-[#111111] bg-[#F5F0E6] px-4 py-12 sm:px-6 sm:py-16 md:px-12 md:py-24">
-        <div className="mx-auto max-w-[1600px]">
-          {/* Top Registration Bar */}
-          <div className="flex items-center justify-between font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-[#111111] pb-6 border-b-2 border-[#111111] mb-8 sm:mb-12">
-            <span>[+] 28°38&apos;N 77°13&apos;E</span>
-            <span className="font-bold">WASTE / INDIA / EST. {BRAND_CONFIG.foundingYear}</span>
-            <span>PLATE NO. 001 [+]</span>
-          </div>
-
-          {/* Magazine Cover Split Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
-            {/* Left Typography Block (7 cols) */}
-            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
-              {/* Massive Brand Name */}
-              <div className="inline-block border-2 border-[#111111] bg-[#FFFFFF] px-3.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.3em] text-[#111111] shadow-[3px_3px_0px_#111111]">
-                WASTE MAGAZINE ARCHIVE
-              </div>
-
-              <div>
-                <h1 className="font-editorial text-[clamp(3.5rem,11vw,9rem)] leading-[0.84] tracking-[-0.04em] uppercase text-[#111111]">
-                  BEYOND <br />
-                  <span className="italic font-normal">THE</span> FIT.
-                </h1>
-              </div>
-
-              {/* Supporting Editorial Statement */}
-              <div className="border-l-4 border-[#111111] pl-6 py-2 space-y-3">
-                <p className="font-editorial text-2xl sm:text-3xl md:text-4xl text-[#111111] leading-tight">
-                  &ldquo;Not made to fit in.&rdquo;
-                </p>
-                <p className="font-sans text-xs sm:text-sm font-medium leading-relaxed text-[#111111] max-w-lg">
-                  {BRAND_CONFIG.about.lead}
-                </p>
-              </div>
-
-              {/* Call to action & Print specs */}
-              <div className="pt-2 flex flex-wrap items-center gap-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[#111111]">
-                <a
-                  href="#chapter-01"
-                  className="inline-flex items-center gap-2 border-2 border-[#111111] bg-[#111111] text-[#FFFFFF] px-5 py-2.5 shadow-[3px_3px_0px_#111111] hover:bg-[#FFFFFF] hover:text-[#111111] transition-all active:translate-x-0.5 active:translate-y-0.5"
-                >
-                  <span>READ ARCHIVE</span>
-                  <span>↓</span>
-                </a>
-                <span className="border border-[#111111] px-3 py-2 bg-[#FFFFFF]">
-                  PAPER SPEC: 180 GSM UNCOATED
-                </span>
-              </div>
+        {/* Hero Narrative Core */}
+        <div className="relative z-20 w-full mx-auto max-w-[1600px] px-6 sm:px-8 md:px-12 pb-14 sm:pb-20 md:pb-24 pt-36">
+          <div className="max-w-4xl space-y-6 sm:space-y-8">
+            {/* Tagline */}
+            <div className="inline-flex items-center gap-3 text-[10px] sm:text-xs font-mono uppercase tracking-[0.3em] text-[#FAF8F5]/80">
+              <span className="w-2 h-2 bg-[#B89A62]" aria-hidden="true" />
+              <span>EDITORIAL DOSSIER</span>
             </div>
 
-            {/* Right: Large Framed Campaign Photo (5 cols) */}
-            <div className="lg:col-span-5">
-              {/* Neo-Brutalist Framed Print Plate */}
-              <div className="relative border-2 border-[#111111] bg-[#FFFFFF] p-3 sm:p-5 shadow-[6px_6px_0px_#111111] md:shadow-[10px_10px_0px_#111111] md:-rotate-1 transition-transform hover:rotate-0 duration-300">
-                {/* Photo Matting Frame */}
-                <div className="relative aspect-[3/4] w-full overflow-hidden border-2 border-[#111111] bg-[#F5F0E6]">
-                  <img
-                    src={ASSETS.heroCampaign}
-                    alt="WASTE Campaign Cover Look"
-                    className="h-full w-full object-cover grayscale contrast-125"
-                    loading="eager"
-                  />
-                  {/* Stamp in Photo Corner */}
-                  <div className="absolute top-3 left-3 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] uppercase tracking-[0.2em] text-[#111111]">
-                    COVER / FIG. 01
-                  </div>
-                </div>
+            {/* Display Headline */}
+            <div className="space-y-2">
+              <h1 className="font-editorial text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] xl:text-[8rem] font-light uppercase leading-[0.86] tracking-[-0.03em] text-[#FAF8F5]">
+                More Than <br />
+                <span className="italic font-normal">Clothing.</span>
+              </h1>
+              <p className="font-editorial italic text-2xl sm:text-3xl md:text-4xl text-[#E8E6E1]/90 tracking-tight pt-1">
+                A Point of View.
+              </p>
+            </div>
 
-                {/* Archival Caption Strip */}
-                <div className="mt-4 pt-3 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.24em] text-[#111111]">
-                  <span>Jaipur STREETSCAPE // 2024</span>
-                  <span>ORIGINAL PRINT</span>
-                </div>
-              </div>
+            {/* Short Authentic Brand Introduction */}
+            <p className="font-sans text-xs sm:text-sm md:text-base text-[#FAF8F5]/80 leading-relaxed max-w-xl font-normal">
+              {BRAND_CONFIG.about.lead}
+            </p>
+
+            {/* Action CTA & Scroll Indicator */}
+            <div className="pt-2 flex flex-wrap items-center gap-5 sm:gap-8">
+              <a
+                href="#manifesto"
+                className="group inline-flex items-center gap-3 bg-[#FAF8F5] text-[#111111] px-7 py-3.5 text-xs font-mono tracking-[0.22em] uppercase transition-all duration-300 hover:bg-[#FFFFFF] hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FAF8F5]"
+              >
+                <span>EXPLORE OUR STORY</span>
+                <span className="transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden="true">
+                  ↓
+                </span>
+              </a>
+
+              <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#FAF8F5]/60">
+                SCROLL TO READ // 08 CHAPTERS
+              </span>
             </div>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          CHAPTER 01 — THE IDEA
-          Headline: “NOT HERE TO BLEND IN.”
-          Dominant campaign image with thick visible frame and small archival caption.
-          One or two short sentences from verified content.
+          SECTION 2 — BRAND MANIFESTO
+          “Same Chaos. Different Form.” — Asymmetric split layout featuring
+          garment craftsmanship and clothing as unfiltered self-expression.
           ========================================================================= */}
       <section
-        id="chapter-01"
-        className="w-full border-b-2 border-[#111111] bg-[#FFFFFF] px-4 py-16 sm:px-6 sm:py-24 md:px-12 md:py-32"
+        id="manifesto"
+        className="w-full border-b border-[#111111]/10 bg-[#FAF8F5] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36"
       >
         <div className="mx-auto max-w-[1600px]">
-          {/* Chapter Label */}
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#111111] mb-6 flex items-center gap-3">
-            <span className="inline-block w-4 h-4 bg-[#111111]" />
-            <span>CHAPTER 01 // THE IDEA</span>
-          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-center">
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-            {/* Left Headline & Short Statement (6 cols) */}
-            <div className="lg:col-span-6 space-y-6">
-              <h2 className="font-editorial text-[clamp(2.75rem,7.5vw,6rem)] leading-[0.88] tracking-[-0.04em] uppercase text-[#111111]">
-                Not Here <br />
-                To Blend In.
-              </h2>
-
-              {/* Exact Verified Copy: 1-2 Sentences */}
-              <div className="border-2 border-[#111111] bg-[#F5F0E6] p-6 shadow-[5px_5px_0px_#111111] space-y-4">
-                <p className="font-sans text-xs sm:text-sm font-medium leading-relaxed text-[#111111]">
-                  WASTE was created with a clear intention: to build an Indian streetwear brand that represents a new generation refusing to fit into a box.
-                </p>
-                <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#111111]">
-                  We believe clothing is more than just something you wear—it is a way to express who you are, what you believe in, and how you see the world.
-                </p>
-              </div>
-
-              <div className="font-mono text-[9px] uppercase tracking-[0.24em] text-[#111111] pt-2">
-                STATEMENT ARCHIVE // FILE REF: 2024-WST
-              </div>
-            </div>
-
-            {/* Right Dominant Framed Image (6 cols) */}
-            <div className="lg:col-span-6">
-              <div className="border-2 border-[#111111] bg-[#F5F0E6] p-4 sm:p-6 shadow-[8px_8px_0px_#111111]">
-                <div className="relative aspect-[4/5] w-full overflow-hidden border-2 border-[#111111] bg-[#FFFFFF]">
-                  <img
-                    src={ASSETS.cultureModel}
-                    alt="WASTE The Idea — Campaign Image"
-                    className="h-full w-full object-cover grayscale contrast-125"
-                    loading="lazy"
-                  />
-                  <div className="absolute bottom-3 right-3 border border-[#111111] bg-[#F5F0E6] px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.2em] text-[#111111]">
-                    PLATE // CH-01
-                  </div>
-                </div>
-
-                <div className="mt-4 pt-3 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.22em] text-[#111111]">
-                  <span>FIG. 02 // ATTITUDE IN SITU</span>
-                  <span>Jaipur ARCHIVE</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* =========================================================================
-          CHAPTER 02 — THE UNIFORM
-          Headline: “WEAR YOUR POINT OF VIEW.”
-          Asymmetrical photo collage inspired by vintage contact sheets and 90s zines.
-          Mix large portrait photographs with smaller framed details and streetwear looks.
-          ========================================================================= */}
-      <section className="w-full border-b-2 border-[#111111] bg-[#F5F0E6] px-4 py-16 sm:px-6 sm:py-24 md:px-12 md:py-32">
-        <div className="mx-auto max-w-[1600px]">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between border-b-2 border-[#111111] pb-6 mb-12 sm:mb-16 gap-4">
-            <div>
-              <span className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#111111] block mb-2">
-                CHAPTER 02 // CONTACT SHEET
-              </span>
-              <h2 className="font-editorial text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] tracking-[-0.04em] uppercase text-[#111111]">
-                Wear Your <br />
-                Point Of View.
-              </h2>
-            </div>
-
-            <div className="border border-[#111111] bg-[#FFFFFF] px-4 py-2 font-mono text-[10px] uppercase tracking-[0.2em] text-[#111111] shadow-[3px_3px_0px_#111111]">
-              PROOF SHEET // 04 PRINTS
-            </div>
-          </div>
-
-          {/* Contact Sheet Asymmetrical Collage */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-8 items-start">
-            {/* Frame 1: Tall Streetwear Look (5 cols, slightly rotated) */}
-            <div className="lg:col-span-5 border-2 border-[#111111] bg-[#FFFFFF] p-4 shadow-[6px_6px_0px_#111111] md:-rotate-1 transition-transform hover:rotate-0 duration-300">
-              <div className="relative aspect-[3/4] w-full overflow-hidden border-2 border-[#111111] bg-[#F5F0E6]">
+            {/* Left Column: Macro Artwork & Detail Study (5 cols) */}
+            <div className="lg:col-span-5 space-y-4">
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15 shadow-[0_16px_36px_rgba(0,0,0,0.04)] group">
                 <img
-                  src={ASSETS.silhouetteModel}
-                  alt="WASTE Silhouette Fit"
-                  className="h-full w-full object-cover grayscale contrast-125"
+                  src={ASSETS.graphicDetail}
+                  alt="High density screenprint artwork detail"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-[1.02]"
                   loading="lazy"
                 />
-                <span className="absolute top-2 left-2 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] tracking-widest text-[#111111]">
-                  SHOT 01A
+                <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 font-mono text-[9px] uppercase tracking-[0.2em] text-[#111111]">
+                  STUDY // 01 — TACTILE INK
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68] px-1">
+                <span>HIGH-DENSITY SCREENPRINT</span>
+                <span>400+ GSM WEAVE</span>
+              </div>
+            </div>
+
+            {/* Right Column: Manifesto Narrative & Typography (7 cols) */}
+            <div className="lg:col-span-7 space-y-8 sm:space-y-10">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                  <span className="text-[#111111] font-semibold">01 // MANIFESTO</span>
+                  <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                  <span>THE PHILOSOPHY</span>
+                </div>
+
+                <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem] font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                  Same Chaos. <br />
+                  <span className="italic font-normal">Different Form.</span>
+                </h2>
+              </div>
+
+              <div className="space-y-5 max-w-xl border-l-2 border-[#111111] pl-6 sm:pl-8 py-1">
+                <p className="font-editorial text-2xl sm:text-3xl text-[#111111] leading-snug">
+                  &ldquo;Clothing is more than just something you wear. It is a way to express who you are, what you believe in, and how you see the world.&rdquo;
+                </p>
+                <p className="font-sans text-sm sm:text-base text-[#706E68] leading-relaxed font-normal">
+                  {BRAND_CONFIG.about.body[1]}
+                </p>
+              </div>
+
+              <div className="pt-2 flex flex-wrap items-center gap-6 font-mono text-[10px] uppercase tracking-[0.24em] text-[#706E68]">
+                <span className="border border-[#111111]/20 px-3.5 py-1.5 bg-[#FFFFFF]">
+                  INDIVIDUALITY
+                </span>
+                <span className="border border-[#111111]/20 px-3.5 py-1.5 bg-[#FFFFFF]">
+                  DISTINCTIVE SILHOUETTES
+                </span>
+                <span className="border border-[#111111]/20 px-3.5 py-1.5 bg-[#FFFFFF]">
+                  RAW EXPRESSION
                 </span>
               </div>
-              <div className="mt-3 pt-2 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-widest text-[#111111]">
-                <span>SILHOUETTE DRAPE</span>
-                <span>400+ GSM</span>
-              </div>
             </div>
 
-            {/* Frame 2 & 3: Right Side Stack (7 cols) */}
-            <div className="lg:col-span-7 space-y-8">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {/* Print Detail Card */}
-                <div className="border-2 border-[#111111] bg-[#FFFFFF] p-4 shadow-[6px_6px_0px_#111111] md:rotate-1 transition-transform hover:rotate-0 duration-300">
-                  <div className="relative aspect-square w-full overflow-hidden border-2 border-[#111111] bg-[#F5F0E6]">
-                    <img
-                      src={ASSETS.graphicDetail}
-                      alt="High Density Screenprint Macro"
-                      className="h-full w-full object-cover grayscale contrast-125"
-                      loading="lazy"
-                    />
-                    <span className="absolute top-2 left-2 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] tracking-widest text-[#111111]">
-                      SHOT 02B
-                    </span>
-                  </div>
-                  <div className="mt-3 pt-2 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-widest text-[#111111]">
-                    <span>MACRO SCREENPRINT</span>
-                    <span>DETAIL</span>
-                  </div>
-                </div>
-
-                {/* Hoodie Structure Card */}
-                <div className="border-2 border-[#111111] bg-[#FFFFFF] p-4 shadow-[6px_6px_0px_#111111]">
-                  <div className="relative aspect-square w-full overflow-hidden border-2 border-[#111111] bg-[#F5F0E6] p-2">
-                    <img
-                      src={ASSETS.hoodieStructure}
-                      alt="Heavyweight Hoodie Structure"
-                      className="h-full w-full object-contain grayscale contrast-125"
-                      loading="lazy"
-                    />
-                    <span className="absolute top-2 left-2 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] tracking-widest text-[#111111]">
-                      SHOT 03C
-                    </span>
-                  </div>
-                  <div className="mt-3 pt-2 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-widest text-[#111111]">
-                    <span>HOOD ANATOMY</span>
-                    <span>STRUCTURE</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Horizontal Wide Contact Frame */}
-              <div className="border-2 border-[#111111] bg-[#FFFFFF] p-4 shadow-[6px_6px_0px_#111111]">
-                <div className="relative aspect-[16/9] w-full overflow-hidden border-2 border-[#111111] bg-[#F5F0E6]">
-                  <img
-                    src={ASSETS.nightMovement}
-                    alt="Night Transit Jaipur"
-                    className="h-full w-full object-cover grayscale contrast-125"
-                    loading="lazy"
-                  />
-                  <span className="absolute top-2 left-2 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] tracking-widest text-[#111111]">
-                    SHOT 04D
-                  </span>
-                </div>
-                <div className="mt-3 pt-2 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-widest text-[#111111]">
-                  <span>NIGHT MOVEMENT // AFTER HOURS</span>
-                  <span>Jaipur METRO</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          CHAPTER 03 — ROOTED HERE
-          Headline: “MADE IN INDIA. BUILT FOR THE WORLD.”
-          Real WASTE imagery and verified brand information.
-          Editorial manifesto statement, not a corporate mission page.
+          SECTION 3 — INDIAN ROOTS
+          “From India, For the Ones Who Feel.” — Cinematic urban in situ photography
+          connecting Jaipur origins to global streetwear consciousness.
           ========================================================================= */}
-      <section className="w-full border-b-2 border-[#111111] bg-[#FFFFFF] px-4 py-16 sm:px-6 sm:py-24 md:px-12 md:py-32">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-            {/* Left Framed Spread (5 cols) */}
-            <div className="lg:col-span-5 order-2 lg:order-1">
-              <div className="border-2 border-[#111111] bg-[#F5F0E6] p-4 sm:p-6 shadow-[8px_8px_0px_#111111] md:rotate-1 transition-transform hover:rotate-0 duration-300">
-                <div className="relative aspect-[4/5] w-full overflow-hidden border-2 border-[#111111] bg-[#FFFFFF]">
-                  <img
-                    src={ASSETS.closingCampaign}
-                    alt="WASTE Urban In Situ Movement"
-                    className="h-full w-full object-cover grayscale contrast-125"
-                    loading="lazy"
-                  />
-                  <div className="absolute top-3 left-3 border border-[#111111] bg-[#FFFFFF] px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
-                    PLATE // CH-03
-                  </div>
-                </div>
+      <section className="w-full border-b border-[#111111]/10 bg-[#FFFFFF] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
+        <div className="mx-auto max-w-[1600px] space-y-12 sm:space-y-16">
 
-                <div className="mt-4 pt-3 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.24em] text-[#111111]">
-                  <span>IN SITU // TRANSIT MOMENTUM</span>
-                  <span>28°38&apos;N</span>
-                </div>
+          {/* Section Header */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-[#111111]/10 pb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                <span className="text-[#111111] font-semibold">02 // ROOTS</span>
+                <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                <span>ORIGIN &amp; PLACE</span>
+              </div>
+              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                From India, <br />
+                <span className="italic font-normal">For the Ones</span> Who Feel.
+              </h2>
+            </div>
+
+            <div className="max-w-md space-y-2">
+              <p className="font-sans text-sm sm:text-base text-[#706E68] leading-relaxed">
+                {BRAND_CONFIG.ourStory.paragraphs[2]}
+              </p>
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#111111]">
+                FOUNDED IN NEW JAIPUR // EST. 2024
+              </p>
+            </div>
+          </div>
+
+          {/* Documentary Photography Spread */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8 items-center">
+            {/* Dominant Urban In-Situ Movement Image (8 cols) */}
+            <div className="md:col-span-8 space-y-3">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#FAF8F5] border border-[#111111]/15 shadow-sm group">
+                <img
+                  src={ASSETS.closingCampaign}
+                  alt="WASTE Streetwear in urban motion"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-[1.015]"
+                  loading="lazy"
+                />
+                <span className="absolute bottom-3 left-3 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2.5 py-1 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  IN SITU // TRANSIT MOMENTUM
+                </span>
+              </div>
+              <div className="flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.22em] text-[#706E68] px-1">
+                <span>STREET ARCHITECTURE</span>
+                <span>28°38&apos;N 77°13&apos;E</span>
               </div>
             </div>
 
-            {/* Right Editorial Manifesto (7 cols) */}
-            <div className="lg:col-span-7 order-1 lg:order-2 space-y-6 sm:space-y-8">
-              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#111111] flex items-center gap-3">
-                <span className="inline-block w-4 h-4 bg-[#111111]" />
-                <span>CHAPTER 03 // CULTURAL ROOTS</span>
+            {/* Accent Documentary Image & Origin Note (4 cols) */}
+            <div className="md:col-span-4 space-y-6">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FAF8F5] border border-[#111111]/15 shadow-sm group">
+                <img
+                  src={ASSETS.nightMovement}
+                  alt="Night Transit Movement"
+                  className="w-full h-full object-cover grayscale contrast-120 transition-transform duration-700 ease-out group-hover:scale-[1.02]"
+                  loading="lazy"
+                />
+                <span className="absolute top-3 right-3 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  NIGHT TRANSIT
+                </span>
               </div>
 
-              <h2 className="font-editorial text-[clamp(2.75rem,7.5vw,6.5rem)] leading-[0.88] tracking-[-0.04em] uppercase text-[#111111]">
-                Made In India. <br />
-                <span className="italic font-normal">Built For The World.</span>
-              </h2>
-
-              <div className="border-2 border-[#111111] bg-[#F5F0E6] p-6 sm:p-8 shadow-[6px_6px_0px_#111111] space-y-4">
-                <p className="font-sans text-xs sm:text-sm font-semibold uppercase tracking-wider text-[#111111]">
-                  {BRAND_CONFIG.tagline}
+              <div className="border-l border-[#111111]/20 pl-4 py-1 space-y-2">
+                <p className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#111111] font-semibold">
+                  CULTURAL GEOGRAPHY
                 </p>
-                <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#111111]">
-                  {BRAND_CONFIG.ourStory.paragraphs[2]}
-                </p>
-                <p className="font-sans text-xs sm:text-sm leading-relaxed text-[#111111]">
+                <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
                   {BRAND_CONFIG.ourStory.paragraphs[3]}
                 </p>
               </div>
-
-              <div className="flex flex-wrap items-center gap-4 font-mono text-[9px] uppercase tracking-[0.24em] text-[#111111]">
-                <span className="border border-[#111111] px-3 py-1.5 bg-[#FFFFFF]">
-                  FOUNDED: {BRAND_CONFIG.foundingYear}
-                </span>
-                <span className="border border-[#111111] px-3 py-1.5 bg-[#FFFFFF]">
-                  ORIGIN: Jaipur, INDIA
-                </span>
-              </div>
             </div>
           </div>
+
         </div>
       </section>
 
       {/* =========================================================================
-          CHAPTER 04 — THE PEOPLE BEHIND IT
-          Include existing founder/origin story only using verified facts.
-          Founder name: Suryansh Meena. Est. 2024. New Jaipur.
-          Never invent claims. Display in strong framed composition.
+          SECTION 4 — THE MAKING OF WASTE
+          “Art in Details.” — Curated process gallery showing graphic precision,
+          hoodie architecture, denim drape, and fabric construction.
           ========================================================================= */}
-      <section className="w-full border-b-2 border-[#111111] bg-[#F5F0E6] px-4 py-16 sm:px-6 sm:py-24 md:px-12 md:py-32">
-        <div className="mx-auto max-w-[1600px]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-            {/* Left Founder Portrait & Details (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center text-center py-4 sm:py-6 lg:py-8">
-              {/* Single Tilted Editorial Photo Frame (Printed Photographic Paper Aesthetic) */}
-              <div className="mx-auto w-[220px] sm:w-[250px] md:w-[265px] lg:w-[260px] xl:w-[280px] -rotate-[2.5deg] motion-reduce:rotate-0 transition-transform duration-300 hover:rotate-0">
-                <div className="bg-[#FAF8F5] p-3 sm:p-3.5 pb-4 sm:pb-5 border border-[#111111]/20 shadow-[0_16px_36px_-6px_rgba(0,0,0,0.18),0_6px_16px_-4px_rgba(0,0,0,0.08)]">
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15">
-                    <img
-                      src={ASSETS.founderPortrait}
-                      alt="Suryansh Meena, founder of WASTE"
-                      className="h-full w-full object-cover object-[center_20%] grayscale contrast-[1.12] brightness-[0.98] select-none"
-                      loading="eager"
-                      decoding="async"
-                    />
-                  </div>
-                </div>
-              </div>
+      <section className="w-full border-b border-[#111111]/10 bg-[#FAF8F5] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
+        <div className="mx-auto max-w-[1600px] space-y-12 sm:space-y-16">
 
-              {/* Founder Name, Role, Location directly on Warm Cream Canvas */}
-              <div className="mt-6 sm:mt-7 space-y-1">
-                <h3 className="font-editorial text-3xl sm:text-4xl uppercase tracking-tight text-[#111111]">
-                  {BRAND_CONFIG.founder.name}
-                </h3>
-                <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-[#111111]">
-                  {BRAND_CONFIG.founder.role} &mdash; {BRAND_CONFIG.brandName}
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#111111]/10 pb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                <span className="text-[#111111] font-semibold">03 // PROCESS</span>
+                <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                <span>MATERIAL &amp; EXECUTION</span>
+              </div>
+              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                Art in <span className="italic font-normal">Details.</span>
+              </h2>
+            </div>
+
+            <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed max-w-md">
+              Every garment is an architectural composition. Heavyweight loopback cotton fleece, dropped shoulders, and multi-layered silk screenprints.
+            </p>
+          </div>
+
+          {/* 4-Panel Process Gallery */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+
+            {/* Detail 1: Screenprint Ink Depth */}
+            <div className="space-y-3 group">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15 shadow-sm">
+                <img
+                  src={ASSETS.whiteArtTee}
+                  alt="High-density screenprint on combed cotton"
+                  className="w-full h-full object-cover object-[center_35%] grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute top-2.5 left-2.5 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  STAGE 01
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="font-sans text-xs font-semibold uppercase tracking-wider text-[#111111]">
+                  Screenprint Architecture
                 </p>
-                <p className="font-mono text-xs text-[#111111]/75">
-                  NEW Jaipur, INDIA
+                <p className="font-mono text-[10px] text-[#706E68]">
+                  MULTI-LAYERED INK / HIGH DENSITY
                 </p>
               </div>
             </div>
 
-            {/* Right Verified Narrative (7 cols) */}
-            <div className="lg:col-span-7 space-y-6 sm:space-y-8">
-              <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-[#111111] flex items-center gap-3">
-                <span className="inline-block w-4 h-4 bg-[#111111]" />
-                <span>CHAPTER 04 // LEADERSHIP</span>
+            {/* Detail 2: Garment Structure */}
+            <div className="space-y-3 group">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15 shadow-sm p-4 flex items-center justify-center">
+                <img
+                  src={ASSETS.hoodieStructure}
+                  alt="Heavyweight hoodie structure"
+                  className="w-full h-full object-contain grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute top-2.5 left-2.5 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  STAGE 02
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="font-sans text-xs font-semibold uppercase tracking-wider text-[#111111]">
+                  Loopback Fleece Geometry
+                </p>
+                <p className="font-mono text-[10px] text-[#706E68]">
+                  500 GSM / REINFORCED SEAMS
+                </p>
+              </div>
+            </div>
+
+            {/* Detail 3: Architectural Drape */}
+            <div className="space-y-3 group">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15 shadow-sm">
+                <img
+                  src={ASSETS.silhouetteModel}
+                  alt="Drop-shoulder silhouette drape"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute top-2.5 left-2.5 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  STAGE 03
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="font-sans text-xs font-semibold uppercase tracking-wider text-[#111111]">
+                  Drop-Shoulder Drape
+                </p>
+                <p className="font-mono text-[10px] text-[#706E68]">
+                  BOX CUT / PROPORTIONAL DRAPE
+                </p>
+              </div>
+            </div>
+
+            {/* Detail 4: Street In Situ */}
+            <div className="space-y-3 group">
+              <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15 shadow-sm">
+                <img
+                  src={ASSETS.cultureModel}
+                  alt="Streetwear in motion"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute top-2.5 left-2.5 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  STAGE 04
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="font-sans text-xs font-semibold uppercase tracking-wider text-[#111111]">
+                  Everyday Permanence
+                </p>
+                <p className="font-mono text-[10px] text-[#706E68]">
+                  TESTED FOR WEAR &amp; TRANSIT
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 5 — THE FOUNDER (MANDATORY & PROMINENT)
+          “A Different Perspective.” — Authentic, emotional, verified founder section.
+          Features Suryansh Meena's portrait, real biography, handwritten note quote,
+          and studio enquiry channel.
+          ========================================================================= */}
+      <section className="w-full border-b border-[#111111]/10 bg-[#FFFFFF] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
+        <div className="mx-auto max-w-[1600px]">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-center">
+
+            {/* Left Column: Authentic Founder Portrait (5 cols) */}
+            <div className="lg:col-span-5 flex flex-col items-center">
+              <div className="relative w-full max-w-md mx-auto">
+                {/* Photographic Print Paper Matting */}
+                <div className="bg-[#FAF8F5] p-3.5 sm:p-4 pb-6 sm:pb-8 border border-[#111111]/20 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.12)]">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15">
+                    <img
+                      src={ASSETS.founderPortrait}
+                      alt="Suryansh Meena, Founder of WASTE"
+                      className="h-full w-full object-cover object-[center_20%] grayscale contrast-[1.12] brightness-[0.98]"
+                      loading="lazy"
+                    />
+                  </div>
+
+                  {/* Caption underneath portrait */}
+                  <div className="mt-4 pt-3 border-t border-[#111111]/15 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.24em] text-[#111111]">
+                    <span className="font-semibold">{BRAND_CONFIG.founder.name}</span>
+                    <span className="text-[#706E68]">{BRAND_CONFIG.founder.role}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Founder Narrative & Handwritten Note (7 cols) */}
+            <div className="lg:col-span-7 space-y-8 sm:space-y-10">
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                  <span className="text-[#111111] font-semibold">04 // LEADERSHIP</span>
+                  <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                  <span>THE FOUNDER</span>
+                </div>
+
+                <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl lg:text-[5rem] font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                  A Different <br />
+                  <span className="italic font-normal">Perspective.</span>
+                </h2>
               </div>
 
-              <h2 className="font-editorial text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.88] tracking-[-0.04em] uppercase text-[#111111]">
-                The People Behind It.
-              </h2>
-
-              <div className="border-l-4 border-[#111111] pl-6 py-2 space-y-3 bg-[#FFFFFF] border-2 border-r-2 border-y-2 p-6 shadow-[5px_5px_0px_#111111]">
-                <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#111111] font-bold">
-                  DIRECT STATEMENT
+              {/* Verified Founder Narrative */}
+              <div className="space-y-5 max-w-xl font-sans text-sm sm:text-base text-[#706E68] leading-relaxed">
+                <p className="text-[#111111] font-medium leading-relaxed">
+                  {BRAND_CONFIG.founder.bio}
                 </p>
-                <p className="font-editorial text-xl sm:text-2xl leading-snug text-[#111111]">
-                  &ldquo;{BRAND_CONFIG.founder.bio}&rdquo;
-                </p>
-              </div>
-
-              <div className="border-2 border-[#111111] bg-[#FFFFFF] p-6 shadow-[5px_5px_0px_#111111] space-y-3 font-sans text-xs sm:text-sm text-[#111111] leading-relaxed">
                 <p>
-                  {BRAND_CONFIG.ourStory.lead}
+                  {BRAND_CONFIG.ourStory.paragraphs[0]}
                 </p>
                 <p>
                   {BRAND_CONFIG.ourStory.paragraphs[1]}
                 </p>
               </div>
 
-              {/* Verified Contact Details in Brutalist Box */}
-              <div className="border-2 border-[#111111] bg-[#FFFFFF] p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-[#111111]">
+              {/* Handwritten Note Callout */}
+              <div className="border-l-2 border-[#111111] pl-6 py-2 bg-[#FAF8F5] p-6 max-w-xl border border-r-0 border-y-0 shadow-sm">
+                <p className="font-reenie text-3xl sm:text-4xl text-[#111111] leading-tight select-none">
+                  &ldquo;Wear what you feel. Stand out rather than fit in.&rdquo;
+                </p>
+                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
+                  — {BRAND_CONFIG.founder.name}, NEW JAIPUR
+                </p>
+              </div>
+
+              {/* Direct Studio Contact Channel */}
+              <div className="pt-2 flex flex-wrap items-center gap-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
                 <div>
-                  <span className="block font-bold">STUDIO ENQUIRIES</span>
+                  <span className="block text-[#111111] font-semibold">STUDIO ENQUIRIES</span>
                   <a
                     href={`mailto:${BRAND_CONFIG.founder.email}`}
-                    className="underline text-xs lowercase mt-0.5 block hover:opacity-75 transition-opacity"
+                    className="underline lowercase text-xs text-[#111111] hover:text-[#B89A62] transition-colors"
                   >
                     {BRAND_CONFIG.founder.email}
                   </a>
                 </div>
-                <div>
-                  <span className="block font-bold">LOCATION</span>
-                  <span className="text-xs mt-0.5 block">NEW Jaipur, INDIA 🇮🇳</span>
+                <div className="border-l border-[#111111]/15 pl-6">
+                  <span className="block text-[#111111] font-semibold">LOCATION</span>
+                  <span className="text-xs text-[#111111]">NEW JAIPUR, INDIA 🇮🇳</span>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          CLOSING CHAPTER — THE MAGAZINE SPREAD
-          Bold final magazine-spread layout with the WASTE identity,
-          one strong photograph, and a clear EXPLORE THE COLLECTION link to shop.
+          SECTION 6 — BRAND VALUES
+          Four concise values in a refined horizontal editorial layout:
+          Creative Freedom, People First, Art in Everyday Life, A Global Perspective.
           ========================================================================= */}
-      <section className="w-full bg-[#FFFFFF] px-4 py-20 sm:px-6 sm:py-28 md:px-12 md:py-36 text-center">
-        <div className="mx-auto max-w-4xl space-y-8 sm:space-y-12">
-          {/* Issue Sign-Off Badge */}
-          <div className="inline-block border-2 border-[#111111] bg-[#F5F0E6] px-4 py-1.5 font-mono text-[10px] uppercase tracking-[0.28em] text-[#111111] shadow-[3px_3px_0px_#111111]">
-            ISSUE 01 // CLOSING SPREAD
+      <section className="w-full border-b border-[#111111]/10 bg-[#FAF8F5] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
+        <div className="mx-auto max-w-[1600px] space-y-12 sm:space-y-16">
+
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#111111]/10 pb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                <span className="text-[#111111] font-semibold">05 // VALUES</span>
+                <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                <span>WHAT GUIDES US</span>
+              </div>
+              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                Core <span className="italic font-normal">Principles.</span>
+              </h2>
+            </div>
+
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#706E68]">
+              NO SHORTCUTS // NO COMPROMISE
+            </p>
           </div>
 
-          <h2 className="font-editorial text-[clamp(3rem,9vw,8rem)] leading-[0.84] tracking-[-0.04em] uppercase text-[#111111]">
+          {/* 4 Values Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10">
+
+            {/* Value 1 */}
+            <div className="space-y-4 border-t border-[#111111] pt-6">
+              <span className="font-mono text-xs font-semibold text-[#111111]">01</span>
+              <h3 className="font-editorial text-2xl sm:text-3xl uppercase tracking-tight text-[#111111]">
+                Creative Freedom
+              </h3>
+              <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
+                Refusing to fit into pre-existing boxes. Designing garments that prioritize distinctive silhouettes, bold graphic identity, and raw artistic autonomy.
+              </p>
+            </div>
+
+            {/* Value 2 */}
+            <div className="space-y-4 border-t border-[#111111] pt-6">
+              <span className="font-mono text-xs font-semibold text-[#111111]">02</span>
+              <h3 className="font-editorial text-2xl sm:text-3xl uppercase tracking-tight text-[#111111]">
+                People First
+              </h3>
+              <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
+                Created for a community that chooses individuality over conformity. Clothing built to connect with the ones who find beauty in the unfiltered.
+              </p>
+            </div>
+
+            {/* Value 3 */}
+            <div className="space-y-4 border-t border-[#111111] pt-6">
+              <span className="font-mono text-xs font-semibold text-[#111111]">03</span>
+              <h3 className="font-editorial text-2xl sm:text-3xl uppercase tracking-tight text-[#111111]">
+                Art in Everyday Life
+              </h3>
+              <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
+                Everyday streetwear treated as an authentic gallery canvas. High-density screenprinted graphics and tactile fabric permanence.
+              </p>
+            </div>
+
+            {/* Value 4 */}
+            <div className="space-y-4 border-t border-[#111111] pt-6">
+              <span className="font-mono text-xs font-semibold text-[#111111]">04</span>
+              <h3 className="font-editorial text-2xl sm:text-3xl uppercase tracking-tight text-[#111111]">
+                A Global Perspective
+              </h3>
+              <p className="font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
+                Proudly conceived, tested, and crafted in India, built with the uncompromising ambition to stand tall on the global streetwear stage.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 7 — WASTE IN REAL LIFE
+          Streetwear campaign and documentary archive strip. Varied photographic
+          crops celebrating the living garments in transit, light, and motion.
+          ========================================================================= */}
+      <section className="w-full border-b border-[#111111]/10 bg-[#FFFFFF] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
+        <div className="mx-auto max-w-[1600px] space-y-12 sm:space-y-16">
+
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-[#111111]/10 pb-8">
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
+                <span className="text-[#111111] font-semibold">06 // ARCHIVE</span>
+                <span className="w-8 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+                <span>IN REAL LIFE</span>
+              </div>
+              <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl font-light leading-[0.9] tracking-[-0.03em] uppercase text-[#111111]">
+                Living <span className="italic font-normal">Archive.</span>
+              </h2>
+            </div>
+
+            <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#706E68]">
+              DELHI &bull; JAIPUR &bull; TRANSIT
+            </p>
+          </div>
+
+          {/* Documentary Campaign Mosaic */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
+            {/* Shot 1 (5 cols) */}
+            <div className="lg:col-span-5 relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] border border-[#111111]/15 group">
+              <img
+                src={ASSETS.silhouetteModel}
+                alt="WASTE streetwear fit in natural light"
+                className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                loading="lazy"
+              />
+              <span className="absolute bottom-3 left-3 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                CAMPAIGN // 01A
+              </span>
+            </div>
+
+            {/* Shot 2 & 3 Stack (7 cols) */}
+            <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8">
+              <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] border border-[#111111]/15 group">
+                <img
+                  src={ASSETS.cultureModel}
+                  alt="Streetwear attitude"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute bottom-3 left-3 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  CULTURE // 02B
+                </span>
+              </div>
+
+              <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF8F5] border border-[#111111]/15 group">
+                <img
+                  src={ASSETS.denimJeans}
+                  alt="Architectural denim in motion"
+                  className="w-full h-full object-cover grayscale contrast-115 transition-transform duration-700 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute bottom-3 left-3 bg-[#FFFFFF]/90 backdrop-blur-sm border border-[#111111]/10 px-2 py-0.5 font-mono text-[8px] uppercase tracking-widest text-[#111111]">
+                  DENIM // 03C
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* =========================================================================
+          SECTION 8 — FEATURED SILHOUETTES
+          Connected to live product catalogue. Frameless, pure white containers,
+          actual product data, prices, and links.
+          ========================================================================= */}
+      <ProductCollectionStrip products={resolvedProducts} />
+
+      {/* =========================================================================
+          CLOSING EDITORIAL SPREAD & SHOP ACTION
+          ========================================================================= */}
+      <section className="w-full bg-[#FFFFFF] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36 text-center border-t border-[#111111]/10">
+        <div className="mx-auto max-w-4xl space-y-8 sm:space-y-10">
+          <div className="inline-flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.28em] text-[#706E68]">
+            <span>END OF STORY</span>
+            <span className="w-6 h-[1px] bg-[#111111]/20" aria-hidden="true" />
+            <span>BEGINNING OF YOU</span>
+          </div>
+
+          <h2 className="font-editorial text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-light leading-[0.88] tracking-[-0.03em] uppercase text-[#111111]">
             Your Style. <br />
             Your World. <br />
             <span className="italic font-normal">Your WASTE.</span>
           </h2>
 
-          <p className="mx-auto max-w-md font-sans text-xs sm:text-sm font-medium leading-relaxed text-[#111111]">
-            The 2024 archive is live. Distinctive heavyweight silhouettes and screenprinted artworks designed for everyday life.
+          <p className="mx-auto max-w-md font-sans text-xs sm:text-sm text-[#706E68] leading-relaxed">
+            The 2024 archive is live. Heavyweight drop-shoulder cotton, loopback fleece hoodies, and screenprinted artworks designed for everyday life.
           </p>
 
-          {/* Hard-Edged Physical Action Button */}
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-5">
             <Link
               href="/shop"
-              className="inline-flex min-h-12 w-full sm:w-auto items-center justify-center gap-3 border-2 border-[#111111] bg-[#111111] px-10 text-[11px] font-mono font-bold uppercase tracking-[0.25em] text-[#FFFFFF] shadow-[5px_5px_0px_#111111] hover:bg-[#FFFFFF] hover:text-[#111111] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[7px_7px_0px_#111111] active:translate-x-1 active:translate-y-1 active:shadow-none transition-all"
+              className="inline-flex min-h-12 w-full sm:w-auto items-center justify-center gap-3 bg-[#111111] px-9 py-3.5 text-xs font-mono tracking-[0.24em] uppercase text-[#FAF8F5] transition-all duration-300 hover:bg-black/85 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]"
             >
               <span>EXPLORE THE COLLECTION</span>
-              <span>→</span>
+              <span aria-hidden="true">→</span>
             </Link>
-          </div>
-
-          {/* Registration Footer Marker */}
-          <div className="pt-12 border-t-2 border-[#111111] flex items-center justify-between font-mono text-[9px] uppercase tracking-[0.24em] text-[#111111]">
-            <span>END OF ISSUE 01</span>
-            <span>&bull;</span>
-            <span>WASTE EDITORIAL PRINT // Jaipur</span>
-            <span>&bull;</span>
-            <span>[+] REG. OK</span>
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          FEATURED SILHOUETTES CAROUSEL
+          SECTION 9 — FOOTER
+          Reusing existing storefront footer.
           ========================================================================= */}
-      <ProductCollectionStrip products={resolvedProducts} />
-
-      {/* =========================================================================
-          SOCIAL ARCHIVE — @WASTEINDIA
-          ========================================================================= */}
-      <InstagramEditorialCollage />
-
-      {/* Shared Storefront Footer */}
       <Footer />
+
     </main>
   );
 }

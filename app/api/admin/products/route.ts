@@ -87,6 +87,10 @@ export async function POST(req: Request) {
       featured,
       tags,
       images,
+      isPreorder,
+      releaseDate,
+      expectedShipmentText,
+      preorderCapacity,
     } = body;
 
     if (!name || !price) {
@@ -114,6 +118,10 @@ export async function POST(req: Request) {
         inventory: parseInt(inventory || "0", 10),
         featured: Boolean(featured),
         tags: Array.isArray(tags) ? tags : typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : [],
+        isPreorder: Boolean(isPreorder),
+        releaseDate: releaseDate ? new Date(releaseDate) : null,
+        expectedShipmentText: expectedShipmentText || null,
+        preorderCapacity: preorderCapacity !== undefined && preorderCapacity !== null && preorderCapacity !== "" ? parseInt(String(preorderCapacity), 10) : null,
         images: {
           create: Array.isArray(images)
             ? images.map((img: { imageUrl: string; altText?: string }, index: number) => ({

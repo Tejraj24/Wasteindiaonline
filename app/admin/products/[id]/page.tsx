@@ -38,6 +38,10 @@ export default function EditProductPage() {
     inventory: "10",
     featured: false,
     tags: "",
+    isPreorder: false,
+    preorderCapacity: "50",
+    releaseDate: "",
+    expectedShipmentText: "",
   });
 
   const [images, setImages] = useState<UploadedImage[]>([]);
@@ -76,6 +80,10 @@ export default function EditProductPage() {
             inventory: data.inventory?.toString() || "0",
             featured: Boolean(data.featured),
             tags: Array.isArray(data.tags) ? data.tags.join(", ") : "",
+            isPreorder: Boolean(data.isPreorder),
+            preorderCapacity: data.preorderCapacity?.toString() || "",
+            releaseDate: data.releaseDate ? new Date(data.releaseDate).toISOString().split("T")[0] : "",
+            expectedShipmentText: data.expectedShipmentText || "",
           });
           setImages(
             (data.images || []).map((img: { imageUrl: string; altText?: string }, i: number) => ({
@@ -426,6 +434,64 @@ export default function EditProductPage() {
                   </span>
                 </div>
               </label>
+            </div>
+
+            {/* Pre-Order Section */}
+            <div className="border-t border-zinc-800/80 pt-4 space-y-3">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={form.isPreorder}
+                  onChange={(e) => setForm({ ...form, isPreorder: e.target.checked })}
+                  className="h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-blue-600 focus:ring-blue-500"
+                />
+                <div>
+                  <span className="text-xs font-semibold text-white">Pre-Order Product</span>
+                  <span className="block text-[10px] text-zinc-500">
+                    Accept advance orders with estimated production release timeline
+                  </span>
+                </div>
+              </label>
+
+              {form.isPreorder && (
+                <div className="mt-3 space-y-3 pl-7">
+                  <div>
+                    <label className="block text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1">
+                      Pre-order Capacity Limit
+                    </label>
+                    <input
+                      type="number"
+                      value={form.preorderCapacity}
+                      onChange={(e) => setForm({ ...form, preorderCapacity: e.target.value })}
+                      placeholder="50"
+                      className="h-9 w-full rounded border border-zinc-800 bg-zinc-900 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1">
+                      Expected Release Date
+                    </label>
+                    <input
+                      type="date"
+                      value={form.releaseDate}
+                      onChange={(e) => setForm({ ...form, releaseDate: e.target.value })}
+                      className="h-9 w-full rounded border border-zinc-800 bg-zinc-900 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-medium uppercase tracking-wider text-zinc-400 mb-1">
+                      Arrival Disclosure Text
+                    </label>
+                    <input
+                      type="text"
+                      value={form.expectedShipmentText}
+                      onChange={(e) => setForm({ ...form, expectedShipmentText: e.target.value })}
+                      placeholder="e.g. Arrives November 2026"
+                      className="h-9 w-full rounded border border-zinc-800 bg-zinc-900 px-3 text-xs text-white outline-none"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

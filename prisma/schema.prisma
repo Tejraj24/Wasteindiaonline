@@ -58,6 +58,12 @@ model Product {
   inventory        Int            @default(10)
   featured         Boolean        @default(false)
   tags             String[]       @default([])
+  isPreorder       Boolean        @default(false)
+  releaseDate      DateTime?
+  expectedShipmentText String?
+  preorderCapacity Int?
+  preorderAllocated Int           @default(0)
+  preorderSizes    Json?
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @default(now()) @updatedAt
 
@@ -78,38 +84,61 @@ model ProductImage {
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  userId          String?
-  orderNumber     String      @unique
-  customerName    String?
-  customerEmail   String?
-  customerPhone   String?
-  shippingAddress Json?
-  subtotal        Float
-  shipping        Float       @default(0)
-  tax             Float       @default(0)
-  total           Float
-  paymentStatus   String      @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
-  orderStatus     String      @default("PENDING") // PENDING, CONFIRMED, PACKED, SHIPPED, DELIVERED, CANCELLED
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @default(now()) @updatedAt
+  id               String               @id @default(cuid())
+  userId           String?
+  orderNumber      String               @unique
+  merchantOrderId  String?              @unique
+  phonePeOrderId   String?
+  isPreorder       Boolean              @default(false)
+  releaseDate      DateTime?
+  expiresAt        DateTime?
+  capacityReserved Boolean              @default(false)
+  customerName     String?
+  customerEmail    String?
+  customerPhone    String?
+  shippingAddress  Json?
+  subtotal         Float
+  shipping         Float                @default(0)
+  tax              Float                @default(0)
+  total            Float
+  paymentStatus    String               @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  orderStatus      String               @default("PENDING") // PENDING, CONFIRMED, PACKED, SHIPPED, DELIVERED, CANCELLED
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @default(now()) @updatedAt
 
-  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
+  user             User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items            OrderItem[]
+  payments         PaymentTransaction[]
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
-  orderId   String
-  productId String?
-  title     String
-  size      String?
-  quantity  Int
-  price     Float
-  image     String?
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String?
+  title       String
+  size        String?
+  quantity    Int
+  price       Float
+  image       String?
+  isPreorder  Boolean  @default(false)
+  releaseDate DateTime?
 
-  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
+
+model PaymentTransaction {
+  id                String   @id @default(cuid())
+  orderId           String
+  merchantOrderId   String
+  phonePeOrderId    String?
+  amount            Float
+  state             String   // PENDING, COMPLETED, FAILED
+  paymentInstrument Json?
+  rawResponse       Json?
+  createdAt         DateTime @default(now())
+
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Cart {

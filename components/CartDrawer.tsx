@@ -102,9 +102,21 @@ export function CartDrawer() {
                   </div>
                   <div className="flex min-w-0 flex-1 flex-col justify-between">
                     <div>
-                      <h3 className="break-words font-bold uppercase leading-tight text-brand-black">{item.title}</h3>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <h3 className="break-words font-bold uppercase leading-tight text-brand-black">{item.title}</h3>
+                        {item.isPreorder && (
+                          <span className="inline-block border border-brand-black bg-brand-black px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white">
+                            Pre-Order
+                          </span>
+                        )}
+                      </div>
                       <p className="mt-1 text-sm text-brand-muted">{formatPrice(item.price)}</p>
                       <p className="mt-1 text-xs uppercase tracking-wide text-brand-muted">Size: {item.size}</p>
+                      {item.expectedShipmentText && (
+                        <p className="mt-1 text-[10px] uppercase tracking-wider text-amber-700">
+                          {item.expectedShipmentText}
+                        </p>
+                      )}
                     </div>
                     <div className="mt-4 flex items-center justify-between gap-3">
                       <div className="flex items-center border border-brand-border bg-brand-surface" aria-label={`Quantity for ${item.title}`}>
@@ -153,13 +165,22 @@ export function CartDrawer() {
               <span>Subtotal</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
-            <a
-              href="/cart"
-              onClick={closeCart}
-              className="block w-full bg-brand-black py-4 text-center font-bold uppercase tracking-wider text-white transition-colors hover:bg-brand-black/90"
-            >
-              View cart
-            </a>
+            <div className="flex flex-col gap-2">
+              <a
+                href="/checkout"
+                onClick={closeCart}
+                className="block w-full bg-brand-black py-4 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-brand-black/90 active:scale-[0.99]"
+              >
+                Checkout
+              </a>
+              <a
+                href="/cart"
+                onClick={closeCart}
+                className="block w-full border border-brand-border py-3 text-center text-xs uppercase tracking-wider text-brand-muted transition-colors hover:border-brand-black hover:text-brand-black"
+              >
+                View bag
+              </a>
+            </div>
           </div>
         )}
       </aside>
