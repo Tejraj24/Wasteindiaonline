@@ -167,7 +167,7 @@ export default function AdminDashboardPage() {
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.revenueChange || "+14.8%"}</span>
+            <span className="font-semibold">{stats?.revenueChange || "+100%"}</span>
             <span className="text-zinc-500">vs last month</span>
           </div>
         </div>
@@ -185,7 +185,7 @@ export default function AdminDashboardPage() {
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.ordersChange || "+8.2%"}</span>
+            <span className="font-semibold">{stats?.ordersChange || "+100%"}</span>
             <span className="text-zinc-500">vs last month</span>
           </div>
         </div>
@@ -203,8 +203,8 @@ export default function AdminDashboardPage() {
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-purple-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.customersChange || "+12.4%"}</span>
-            <span className="text-zinc-500">active members</span>
+            <span className="font-semibold">{stats?.customersChange || "+100%"}</span>
+            <span className="text-zinc-500">vs last month</span>
           </div>
         </div>
 
