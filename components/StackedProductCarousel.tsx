@@ -497,7 +497,7 @@ export function StackedProductCarousel({
                 >
                   {/* Category & Badge Header Overlay */}
                   <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between p-2.5 sm:p-3.5">
-                    <span className="bg-white/90 px-2 py-0.5 text-[8px] uppercase tracking-[0.2em] text-brand-black backdrop-blur-md border border-brand-border sm:text-[9px] sm:tracking-[0.22em] sm:py-1">
+                    <span className="bg-white/90 px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-brand-black backdrop-blur-md border border-brand-border sm:text-[10px] sm:tracking-[0.18em] sm:py-1">
                       {product.category || "Streetwear"}
                     </span>
                     {product.compareAtPrice && (
@@ -533,18 +533,18 @@ export function StackedProductCarousel({
                     {/* Non-center card interactive tap hint */}
                     {!isCenter && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <span className="border border-brand-border bg-white/95 px-2.5 py-1 text-[8px] uppercase tracking-[0.22em] text-brand-black shadow-md backdrop-blur-sm sm:text-[9px]">
+                        <span className="border border-brand-border bg-white/95 px-2.5 py-1 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] text-brand-black shadow-md backdrop-blur-sm">
                           Tap to View
                         </span>
                       </div>
                     )}
 
                     {/* Minimal bottom card identifier */}
-                    <div className="absolute right-0 bottom-0 left-0 z-20 flex items-center justify-between p-3 sm:p-4 bg-gradient-to-t from-black/90 via-black/40 to-transparent">
-                      <span className="text-[8px] sm:text-[9px] uppercase tracking-[0.2em] text-white/70">
+                    <div className="absolute right-0 bottom-0 left-0 z-20 flex items-center justify-between p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/50 to-transparent">
+                      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-white/90 font-mono font-medium">
                         {product.sku}
                       </span>
-                      <span className="text-[10px] sm:text-xs font-semibold text-white font-mono">
+                      <span className="text-xs sm:text-sm font-semibold text-white font-mono">
                         {formatPrice(product.price)}
                       </span>
                     </div>
@@ -578,12 +578,12 @@ export function StackedProductCarousel({
         <div className="mt-8 border-t border-brand-border pt-6 sm:mt-12 sm:pt-8 md:mt-14">
           <div className="grid gap-6 sm:grid-cols-2 md:items-end lg:grid-cols-[1.25fr_0.75fr]">
             <div>
-              <div className="flex flex-wrap items-center gap-2 font-tenor text-[10px] uppercase tracking-[0.2em] text-brand-gold xs:text-xs">
+              <div className="flex flex-wrap items-center gap-2 font-tenor text-xs sm:text-[13px] uppercase tracking-[0.16em] text-brand-gold">
                 <span>Active Piece</span>
                 <span className="text-brand-muted/40">/</span>
                 <span className="text-brand-muted">{activeProduct.category || "Essential"}</span>
                 {activeProduct.compareAtPrice && (
-                  <span className="ml-1 border border-brand-gold/40 bg-brand-goldMuted px-1.5 py-0.5 text-[8px] font-bold text-brand-black xs:text-[9px]">
+                  <span className="ml-1 border border-brand-gold/40 bg-brand-goldMuted px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-brand-black">
                     {Math.round(
                       ((activeProduct.compareAtPrice - activeProduct.price) /
                         activeProduct.compareAtPrice) *
@@ -594,12 +594,12 @@ export function StackedProductCarousel({
                 )}
               </div>
 
-              <h3 className="mt-2 line-clamp-2 font-editorial text-2xl leading-[1.05] tracking-tight xs:text-3xl sm:text-4xl md:text-5xl text-brand-black">
+              <h3 className="mt-2 line-clamp-2 font-editorial text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.04] tracking-tight text-brand-black">
                 {activeProduct.name}
               </h3>
 
               {activeProduct.description && (
-                <p className="mt-2.5 line-clamp-2 max-w-xl text-xs leading-relaxed text-brand-muted sm:line-clamp-3 sm:text-sm">
+                <p className="mt-2.5 line-clamp-2 max-w-xl text-sm sm:text-[15px] leading-relaxed text-brand-muted sm:line-clamp-3">
                   {activeProduct.description}
                 </p>
               )}
@@ -607,11 +607,11 @@ export function StackedProductCarousel({
 
             <div className="flex flex-col gap-3.5 sm:items-end sm:text-right">
               <div className="flex items-baseline gap-2.5">
-                <span className="font-editorial text-2xl tracking-tight text-brand-black xs:text-3xl sm:text-4xl">
+                <span className="font-mono text-2xl sm:text-3xl font-semibold tracking-tight text-brand-black">
                   {formatPrice(activeProduct.price)}
                 </span>
                 {activeProduct.compareAtPrice && (
-                  <span className="text-xs text-brand-muted line-through sm:text-sm">
+                  <span className="font-mono text-xs sm:text-sm text-brand-muted line-through">
                     {formatPrice(activeProduct.compareAtPrice)}
                   </span>
                 )}
@@ -621,7 +621,7 @@ export function StackedProductCarousel({
               <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 w-full sm:w-auto">
                 <Link
                   href={`/product/${activeProduct.slug}`}
-                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 font-tenor text-[10px] xs:text-xs font-normal uppercase tracking-[0.18em] text-white transition-colors duration-300 hover:bg-brand-black/85"
+                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 font-tenor text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-white transition-colors duration-300 hover:bg-brand-black/85"
                 >
                   <span>Inspect Piece</span>
                   <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
@@ -631,7 +631,7 @@ export function StackedProductCarousel({
 
                 <Link
                   href="/shop"
-                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 font-tenor text-[10px] xs:text-xs font-normal uppercase tracking-[0.18em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
+                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 font-tenor text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
                 >
                   Shop All →
                 </Link>

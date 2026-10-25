@@ -87,7 +87,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
           FEATURED PRODUCTS
         </h2>
         <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity hidden md:block">
-          VIEW ALL â†’
+          VIEW ALL →
         </a>
       </div>
 
@@ -135,10 +135,10 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
               <div className="flex flex-col pt-3 sm:pt-4">
                 <div className="flex items-start justify-between gap-2 sm:gap-3">
                   <div className="min-w-0 flex-1">
-                    <h3 className="line-clamp-2 text-[11px] font-bold uppercase leading-[1.3] tracking-[0.07em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted sm:text-xs md:text-sm">
+                    <h3 className="line-clamp-2 text-[13px] sm:text-sm font-semibold uppercase leading-snug tracking-[0.06em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted">
                       {product.name}
                     </h3>
-                    <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:text-[10px]">
+                    <p className="mt-1 text-[10px] sm:text-[11px] uppercase tracking-[0.14em] text-brand-muted">
                       {product.category}
                     </p>
                   </div>
@@ -153,7 +153,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
                 </div>
                 <div className="mt-2 flex items-center justify-between text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:mt-2.5 sm:text-[10px]">
                   <span>Explore</span>
-                  <span className="transition-transform duration-300 group-hover:translate-x-1">â†’</span>
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
                 </div>
               </div>
             </a>
@@ -175,7 +175,7 @@ export function ProductGrid({ products = [] }: ProductGridProps) {
 
       <div className="mt-12 text-center md:hidden">
         <a href="/shop" className="body-upper text-brand-muted hover:text-brand-black transition-opacity">
-          VIEW ALL PRODUCTS â†’
+          VIEW ALL PRODUCTS →
         </a>
       </div>
     </section>

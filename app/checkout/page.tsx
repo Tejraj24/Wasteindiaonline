@@ -7,7 +7,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { BackButton } from "@/components/navigation/BackButton";
 import { Footer } from "@/components/Footer";
 import { listAddresses, getUserProfile } from "@/lib/firebase/account";
-import { Loader2, ShieldCheck, ArrowRight, AlertCircle } from "lucide-react";
+import { Loader2, ShieldCheck, ArrowRight, AlertCircle, Info } from "lucide-react";
 
 function formatPrice(val: number) {
   return new Intl.NumberFormat("en-IN", {
@@ -73,6 +73,7 @@ export default function CheckoutPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return; // Prevent duplicate submissions
     setErrorMessage("");
 
     if (items.length === 0) {
@@ -121,17 +122,18 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Unable to initiate payment session.");
+        throw new Error(data.error || "Unable to submit your preorder. Please try again.");
       }
 
       if (data.redirectUrl) {
-        // Redirect to PhonePe Standard Hosted Checkout
-        window.location.href = data.redirectUrl;
+        router.push(data.redirectUrl);
+      } else if (data.orderNumber) {
+        router.push(`/checkout/result?orderNumber=${encodeURIComponent(data.orderNumber)}`);
       } else {
-        throw new Error("No payment redirect URL returned by gateway.");
+        throw new Error("Preorder confirmation reference was not returned.");
       }
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "Payment error occurred";
+      const msg = err instanceof Error ? err.message : "Error placing preorder. Please try again.";
       setErrorMessage(msg);
       setLoading(false);
     }
@@ -142,7 +144,7 @@ export default function CheckoutPage() {
       <div className="min-h-screen bg-brand-bg text-brand-black flex flex-col justify-between">
         <main className="px-6 pb-24 pt-36 md:px-12">
           <p className="text-xs uppercase tracking-[0.25em] text-brand-muted">
-            Preparing checkout...
+            Preparing preorder checkout...
           </p>
         </main>
         <Footer />
@@ -156,7 +158,7 @@ export default function CheckoutPage() {
         <main className="px-6 pb-24 pt-36 md:px-12">
           <div className="mx-auto max-w-4xl text-center">
             <h1 className="font-editorial text-5xl text-brand-black">Your bag is empty</h1>
-            <p className="mt-4 text-sm text-brand-muted">Select pieces before proceeding to checkout.</p>
+            <p className="mt-4 text-sm text-brand-muted">Select pieces before proceeding to preorder.</p>
             <a href="/shop" className="mt-8 inline-block border-b border-brand-black pb-1 text-xs uppercase tracking-widest text-brand-black">
               Return to Collection
             </a>
@@ -167,15 +169,18 @@ export default function CheckoutPage() {
     );
   }
 
-  const hasPreorder = items.some((i) => i.isPreorder);
-
   return (
     <div className="min-h-screen bg-brand-bg text-brand-black flex flex-col justify-between">
       <main className="px-6 pb-24 pt-32 md:px-12 md:pt-40">
         <div className="mx-auto max-w-6xl">
           <div className="mb-10 flex items-center justify-between border-b border-brand-border pb-5">
             <BackButton fallbackHref="/cart" label="Back to Bag" variant="default" />
-            <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">WASTE. / Checkout</p>
+            <div className="flex items-center gap-3">
+              <span className="bg-brand-black px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.2em] text-white">
+                PREORDER
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">WASTE. / Preorder Checkout</p>
+            </div>
           </div>
 
           <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-16">
@@ -187,6 +192,19 @@ export default function CheckoutPage() {
               <p className="mt-2 text-xs uppercase tracking-[0.18em] text-brand-muted">
                 Complimentary carbon-neutral domestic delivery across India
               </p>
+
+              {/* Clear Preorder Notice Banner */}
+              <div className="mt-6 border-l-2 border-brand-black bg-brand-surfaceSubtle p-4 sm:p-5">
+                <div className="flex items-center gap-2">
+                  <Info className="h-4 w-4 text-brand-black" />
+                  <span className="text-xs uppercase tracking-wider text-brand-black font-semibold">
+                    PREORDER ALLOCATION
+                  </span>
+                </div>
+                <p className="mt-2 text-xs text-brand-muted leading-relaxed">
+                  PREORDER — No payment is required at this stage. Our team will contact you with the next steps.
+                </p>
+              </div>
 
               {errorMessage && (
                 <div className="mt-6 flex items-start gap-3 border border-red-300 bg-red-50 p-4 text-xs text-red-700" role="alert">
@@ -203,33 +221,36 @@ export default function CheckoutPage() {
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">Full name *</label>
                       <input
                         required
+                        disabled={loading}
                         type="text"
                         value={form.name}
                         onChange={(e) => setForm({ ...form, name: e.target.value })}
                         placeholder="e.g. Suryansh Meena"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">Email address *</label>
                       <input
                         required
+                        disabled={loading}
                         type="email"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
                         placeholder="concierge@wasteindiaonline.com"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div className="sm:col-span-2">
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">Phone number (for delivery SMS &amp; tracking) *</label>
                       <input
                         required
+                        disabled={loading}
                         type="tel"
                         value={form.phone}
                         onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         placeholder="+91 98765 43210"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                   </div>
@@ -242,55 +263,60 @@ export default function CheckoutPage() {
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">Address line 1 *</label>
                       <input
                         required
+                        disabled={loading}
                         type="text"
                         value={form.addressLine1}
                         onChange={(e) => setForm({ ...form, addressLine1: e.target.value })}
                         placeholder="Apartment, suite, street address"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div className="sm:col-span-2">
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">Address line 2 (optional)</label>
                       <input
+                        disabled={loading}
                         type="text"
                         value={form.addressLine2}
                         onChange={(e) => setForm({ ...form, addressLine2: e.target.value })}
                         placeholder="Landmark, building name"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">City *</label>
                       <input
                         required
+                        disabled={loading}
                         type="text"
                         value={form.city}
                         onChange={(e) => setForm({ ...form, city: e.target.value })}
                         placeholder="New Delhi"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">State *</label>
                       <input
                         required
+                        disabled={loading}
                         type="text"
                         value={form.state}
                         onChange={(e) => setForm({ ...form, state: e.target.value })}
                         placeholder="Delhi"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div>
                       <label className="text-[10px] uppercase tracking-wider text-brand-muted">PIN Code *</label>
                       <input
                         required
+                        disabled={loading}
                         type="text"
                         maxLength={6}
                         value={form.pincode}
                         onChange={(e) => setForm({ ...form, pincode: e.target.value })}
                         placeholder="110001"
-                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black"
+                        className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>
                     <div>
@@ -314,18 +340,18 @@ export default function CheckoutPage() {
                     {loading ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        <span>Connecting to PhonePe...</span>
+                        <span>Placing Preorder...</span>
                       </>
                     ) : (
                       <>
-                        <span>Pay {formatPrice(subtotal)} with PhonePe</span>
+                        <span>Place Preorder</span>
                         <ArrowRight className="h-4 w-4" />
                       </>
                     )}
                   </button>
                   <div className="mt-4 flex items-center justify-center gap-2 text-[10px] uppercase tracking-widest text-brand-muted">
                     <ShieldCheck className="h-3.5 w-3.5" />
-                    <span>256-Bit Encrypted &bull; PhonePe Sandbox &bull; UPI &bull; Cards</span>
+                    <span>No Payment Required Today &bull; Direct Studio Registration &bull; Complimentary Delivery</span>
                   </div>
                 </div>
               </form>
@@ -334,7 +360,7 @@ export default function CheckoutPage() {
             {/* Right: Order Summary Sidebar */}
             <aside className="border border-brand-border bg-brand-surface p-6 sm:p-8 self-start">
               <h2 className="text-xs uppercase tracking-[0.25em] text-brand-black font-semibold">
-                Order Summary ({items.length})
+                Preorder Summary ({items.length})
               </h2>
 
               <ul className="mt-6 divide-y divide-brand-border">
@@ -358,18 +384,16 @@ export default function CheckoutPage() {
                         <p className="mt-1 text-[10px] uppercase tracking-wider text-brand-muted">
                           Size: {item.size} &bull; Qty: {item.quantity}
                         </p>
-                        {item.isPreorder && (
-                          <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                            <span className="bg-brand-black px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white">
-                              Pre-Order
+                        <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                          <span className="bg-brand-black px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white">
+                            Pre-Order
+                          </span>
+                          {item.expectedShipmentText && (
+                            <span className="text-[9px] uppercase tracking-wider text-amber-700">
+                              {item.expectedShipmentText}
                             </span>
-                            {item.expectedShipmentText && (
-                              <span className="text-[9px] uppercase tracking-wider text-amber-700">
-                                {item.expectedShipmentText}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
                     </div>
                   </li>
@@ -390,19 +414,17 @@ export default function CheckoutPage() {
                   <span>Included</span>
                 </div>
                 <div className="border-t border-brand-border pt-4 flex justify-between text-sm font-semibold text-brand-black tracking-widest">
-                  <span>Total Amount</span>
+                  <span>Estimated Total</span>
                   <span className="font-mono text-base">{formatPrice(subtotal)}</span>
                 </div>
               </div>
 
-              {hasPreorder && (
-                <div className="mt-6 border-l-2 border-brand-black bg-brand-surfaceSubtle p-3 text-[10px] leading-5 text-brand-muted">
-                  <p className="font-semibold uppercase tracking-wider text-brand-black">Pre-order Notice</p>
-                  <p className="mt-1">
-                    Your allocation is reserved upon confirmed payment. Production timelines and shipment tracking will be sent to your email.
-                  </p>
-                </div>
-              )}
+              <div className="mt-6 border-l-2 border-brand-black bg-brand-surfaceSubtle p-4 text-[10px] leading-5 text-brand-muted">
+                <p className="font-semibold uppercase tracking-wider text-brand-black">Preorder Allocation</p>
+                <p className="mt-1">
+                  No payment is collected today. Your pieces are registered directly with our Jaipur studio. Our concierge team will reach out with production timeline and delivery coordination.
+                </p>
+              </div>
             </aside>
           </div>
         </div>

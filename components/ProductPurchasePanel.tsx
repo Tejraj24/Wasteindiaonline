@@ -37,18 +37,18 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
     <div className="mt-8 border-t border-brand-border pt-6 sm:mt-10 sm:pt-7">
       {product.isPreorder && (
         <div className="mb-5 flex flex-wrap items-center gap-2.5">
-          <span className="inline-block border border-brand-black bg-brand-black px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-white">
+          <span className="inline-block border border-brand-black bg-brand-black px-2.5 py-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.16em] text-white">
             Pre-Order
           </span>
           {shipmentNotice && (
-            <span className="text-[10px] uppercase tracking-[0.18em] text-amber-700 font-medium">
+            <span className="text-xs sm:text-[13px] uppercase tracking-[0.14em] text-amber-700 font-medium">
               {shipmentNotice}
             </span>
           )}
         </div>
       )}
 
-      <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-brand-black">
+      <div className="flex items-center justify-between text-xs sm:text-[13px] uppercase tracking-[0.16em] text-brand-black">
         <span>
           Size: <strong className="font-semibold text-brand-black">{size}</strong>
         </span>
@@ -60,7 +60,7 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
             key={option}
             type="button"
             onClick={() => setSize(option)}
-            className={`min-h-11 border py-3 text-xs font-semibold uppercase tracking-wider transition-all duration-200 ${
+            className={`min-h-11 border py-3 text-xs sm:text-[13px] font-semibold uppercase tracking-wider transition-all duration-200 ${
               size === option
                 ? "border-brand-black bg-brand-black text-white shadow-sm"
                 : "border-brand-border bg-brand-surface text-brand-black hover:border-brand-black hover:bg-brand-surfaceSubtle"
@@ -89,7 +89,7 @@ export function ProductPurchasePanel({ product }: ProductPurchasePanelProps) {
           })
         }
         disabled={product.soldOut}
-        className="mt-4 w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
+        className="mt-4 w-full bg-brand-black py-4 text-[13px] sm:text-sm font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
       >
         {product.soldOut
           ? product.isPreorder

@@ -71,13 +71,13 @@ function InformationAccordion({
 }) {
   return (
     <details className="group border-t border-brand-border py-4 sm:py-5">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-[10px] uppercase tracking-[0.22em] text-brand-black transition-colors hover:text-brand-muted [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-xs sm:text-[13px] font-medium uppercase tracking-[0.16em] text-brand-black transition-colors hover:text-brand-muted [&::-webkit-details-marker]:hidden">
         <span>{title}</span>
         <span className="text-lg font-light text-brand-muted transition-transform duration-300 group-open:rotate-45 group-hover:text-brand-black">
           +
         </span>
       </summary>
-      <div className="max-w-md pb-2 pt-2 text-xs leading-6 text-brand-muted">
+      <div className="max-w-md pb-2 pt-2 text-xs sm:text-sm leading-relaxed text-[#706E68]">
         {children}
       </div>
     </details>
@@ -92,14 +92,14 @@ async function RelatedProducts({ product }: { product: StorefrontProduct }) {
   return (
     <section className="border-t border-brand-border px-6 py-20 md:px-12 md:py-28">
       <div className="mb-10 flex items-end justify-between border-b border-brand-border pb-5">
-        <h2 className="font-editorial text-[clamp(2.5rem,7vw,4.5rem)] leading-none tracking-[-0.05em] text-brand-black md:text-6xl">
+        <h2 className="font-editorial text-3xl sm:text-4xl md:text-5xl leading-none tracking-[-0.03em] text-brand-black">
           You may also like
         </h2>
         <Link
           href="/shop"
-          className="hidden text-[10px] uppercase tracking-[0.2em] text-brand-muted transition hover:text-brand-black sm:block"
+          className="hidden text-xs sm:text-[13px] uppercase tracking-[0.16em] text-brand-muted transition hover:text-brand-black sm:block"
         >
-          View collection â†’
+          View collection →
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 md:gap-5">
@@ -117,11 +117,11 @@ async function RelatedProducts({ product }: { product: StorefrontProduct }) {
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
               />
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 pt-3 sm:pt-4 text-[10px] uppercase tracking-[0.1em] text-brand-black">
-              <span className="truncate leading-tight group-hover:text-brand-muted transition-colors">
-                {relatedProduct.title.split(" â€” ")[0]}
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-3 pt-3 sm:pt-4 text-[13px] sm:text-sm uppercase tracking-[0.08em] text-brand-black">
+              <span className="truncate leading-tight font-medium group-hover:text-brand-muted transition-colors">
+                {relatedProduct.title.split(" — ")[0] || relatedProduct.title.split(" - ")[0]}
               </span>
-              <span className="whitespace-nowrap font-mono font-semibold text-brand-black">
+              <span className="whitespace-nowrap font-mono text-xs sm:text-sm font-semibold text-brand-black">
                 {formatPrice(relatedProduct.price)}
               </span>
             </div>
@@ -148,17 +148,17 @@ export default async function ProductPage({
             <BackButton fallbackHref="/shop" label="Back to shop" variant="default" />
             <nav
               aria-label="Breadcrumb"
-              className="text-[10px] uppercase tracking-[0.25em] text-brand-muted"
+              className="text-xs sm:text-[13px] font-mono uppercase tracking-[0.16em] text-brand-muted"
             >
               <Link href="/" className="transition hover:text-brand-black">
                 WASTE.
               </Link>
-              <span className="mx-3 text-brand-border">/</span>
+              <span className="mx-2.5 text-brand-border">/</span>
               <Link href="/shop" className="transition hover:text-brand-black">
                 Shop
               </Link>
-              <span className="mx-3 text-brand-border">/</span>
-              <span className="text-brand-black">{product.title.split(" â€” ")[0]}</span>
+              <span className="mx-2.5 text-brand-border">/</span>
+              <span className="text-brand-black font-medium">{product.title.split(" — ")[0] || product.title.split(" - ")[0]}</span>
             </nav>
           </div>
 
@@ -166,21 +166,23 @@ export default async function ProductPage({
             <ProductGallery product={product} />
 
             <section className="lg:sticky lg:top-32 lg:self-start">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-brand-muted">
+              <p className="text-xs sm:text-[13px] font-mono uppercase tracking-[0.18em] text-brand-muted font-medium">
                 {product.category} / {product.sku}
               </p>
-              <h1 className="mt-5 max-w-xl font-editorial text-[clamp(2.75rem,6vw,5.5rem)] leading-[0.85] tracking-[-0.05em] text-brand-black break-words">
+              <h1 className="mt-4 max-w-xl font-editorial text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-[3rem] leading-[1.05] tracking-[-0.02em] text-brand-black break-words">
                 {product.title}
               </h1>
-              <div className="mt-6 flex items-center gap-3 text-sm">
-                <span className="font-semibold text-brand-black">{formatPrice(product.price)}</span>
+              <div className="mt-5 flex items-baseline gap-3">
+                <span className="text-2xl sm:text-[1.75rem] font-mono font-semibold tracking-tight text-brand-black">
+                  {formatPrice(product.price)}
+                </span>
                 {product.compareAtPrice && (
-                  <span className="text-brand-muted line-through">
+                  <span className="text-sm sm:text-base font-mono text-brand-muted line-through">
                     {formatPrice(product.compareAtPrice)}
                   </span>
                 )}
               </div>
-              <p className="mt-7 max-w-md text-xs sm:text-sm leading-6 sm:leading-7 text-brand-muted">
+              <p className="mt-6 max-w-md text-sm sm:text-[15px] lg:text-base leading-relaxed text-[#706E68]">
                 {product.description}
               </p>
 
