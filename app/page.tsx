@@ -43,6 +43,7 @@ export default async function Home() {
       <StackedProductCarousel
         products={resolvedFeaturedProducts}
         overrides={homepageContent.featuredOverrides}
+        title="Street Articles"
       />
       {/* Temporarily commented out for full-width image replacement
       <CategorySection categories={categories} />

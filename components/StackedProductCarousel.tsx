@@ -33,8 +33,8 @@ function formatPrice(price: number) {
 
 export function StackedProductCarousel({
   products = [],
-  title = "FEATURED SILHOUETTES",
-  tagline = "2024 DROP // THE 3D LOOKBOOK",
+  title = "Street Articles",
+  tagline,
   overrides,
   silhouettes,
 }: StackedProductCarouselProps) {
@@ -370,20 +370,22 @@ export function StackedProductCarousel({
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
-      aria-label="WASTE Featured Collection 3D Carousel"
-      className="relative w-full overflow-hidden bg-transparent py-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:py-20 md:py-28"
+      aria-label="WASTE Street Articles 3D Carousel"
+      className="relative w-full overflow-hidden bg-transparent pt-6 pb-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:pt-8 sm:pb-20 md:pt-10 md:pb-28"
     >
       <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12">
-        {/* Section Header: Consistent with WASTE navbar & editorial headings */}
-        <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16">
-          <div className="min-w-0 -ml-0 sm:-ml-2 md:-ml-4">
-            <div className="flex items-center gap-2.5">
-              <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
-              <p className="truncate font-tenor text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
-                {tagline}
-              </p>
-            </div>
-            <h2 className="mt-2 font-tenor text-[clamp(1.25rem,3.2vw,2.25rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+        {/* Section Header: Centered basic brand heading vertically balanced */}
+        <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16 md:pb-10">
+          <div className="mx-auto flex flex-col items-center justify-center text-center">
+            {tagline && (
+              <div className="mb-2.5 flex items-center justify-center gap-2.5">
+                <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
+                <p className="font-tenor text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
+                  {tagline}
+                </p>
+              </div>
+            )}
+            <h2 className="font-tenor text-[clamp(1.35rem,3.4vw,2.35rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
               {title}
             </h2>
           </div>
