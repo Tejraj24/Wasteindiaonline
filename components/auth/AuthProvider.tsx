@@ -28,9 +28,11 @@ type AuthContextValue = {
   isAdmin: boolean;
   loading: boolean;
   isConfigured: boolean;
+  authError: string | null;
+  clearAuthError: () => void;
   signUp: (email: string, password: string) => Promise<{ user: User; role: UserRole }>;
   login: (email: string, password: string) => Promise<{ user: User; role: UserRole }>;
-  signInWithGoogle: () => Promise<{ user: User; role: UserRole }>;
+  signInWithGoogle: (customRedirectTarget?: string | null) => Promise<{ user: User; role: UserRole }>;
   linkGoogleAccount: () => Promise<{ user: User; role: UserRole }>;
   logout: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
@@ -53,7 +55,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole>("CUSTOMER");
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
   const previousUserRef = useRef<User | null>(null);
+  const redirectUserHandledRef = useRef<boolean>(false);
   const isAdmin = checkIsAdmin(role);
 
   useEffect(() => {
@@ -119,14 +123,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
+    let isRedirectPending = false;
+    try {
+      isRedirectPending = sessionStorage.getItem("waste_auth_pending_redirect") === "true";
+    } catch {
+      // sessionStorage unavailable
+    }
+
+    console.log("[Auth Diagnostic] Provider Mount:", {
+      pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
+      authDomain: auth.config.authDomain,
+      hasPendingRedirectFlag: isRedirectPending,
+    });
+
     // 1. Process getRedirectResult once on mount for returning mobile redirect users
     getRedirectResult(auth)
       .then(async (credential) => {
+        console.log("[Auth Diagnostic] getRedirectResult returned:", {
+          hasUser: Boolean(credential?.user),
+          uid: credential?.user ? credential.user.uid : null,
+          pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
+        });
+
         if (credential?.user) {
-          console.log("[Auth Flow] Redirect sign-in resolved successfully for user:", {
+          redirectUserHandledRef.current = true;
+          console.log("[Auth Diagnostic] getRedirectResult successfully resolved user:", {
             uid: credential.user.uid,
-            email: credential.user.email,
           });
+
+          try {
+            sessionStorage.removeItem("waste_auth_pending_redirect");
+            sessionStorage.removeItem("waste_auth_redirect_time");
+          } catch {}
+
           setUser(credential.user);
           await syncCartWithUser(credential.user.uid);
           try {
@@ -137,14 +166,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             );
             await fetchUserRole(credential.user);
           } catch (err) {
-            console.error("[Auth Flow] Error during redirect profile/role sync:", err);
+            console.error("[Auth Diagnostic] Error during redirect profile/role sync:", err);
           }
         } else {
-          console.log("[Auth Flow] No redirect result found (standard page load).");
+          if (isRedirectPending) {
+            console.warn(
+              "[Auth Diagnostic] Redirect flag was present, but getRedirectResult returned null. " +
+              "Likely cause: Browser partitioned/blocked third-party storage between host and authDomain, " +
+              "or Google OAuth redirect URIs lack the proxy handler."
+            );
+            try {
+              sessionStorage.removeItem("waste_auth_pending_redirect");
+              sessionStorage.removeItem("waste_auth_redirect_time");
+            } catch {}
+          } else {
+            console.log("[Auth Diagnostic] No redirect result found (standard page load).");
+          }
         }
       })
       .catch((error: any) => {
-        console.warn("[Auth Flow] getRedirectResult failed with code:", error?.code || error?.message);
+        console.error("[Auth Diagnostic] getRedirectResult error:", {
+          code: error?.code,
+          message: error?.message,
+          pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
+        });
+        try {
+          sessionStorage.removeItem("waste_auth_pending_redirect");
+          sessionStorage.removeItem("waste_auth_redirect_time");
+        } catch {}
+        if (error?.code) {
+          setAuthError(error.code);
+        }
       })
       .finally(() => {
         redirectResolved = true;
@@ -153,19 +205,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Listen to onAuthStateChanged and synchronize loading
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
-      console.log("[Auth Flow] onAuthStateChanged emitted:", nextUser ? nextUser.uid : "null");
+      console.log("[Auth Diagnostic] onAuthStateChanged emitted:", {
+        hasUser: Boolean(nextUser),
+        uid: nextUser ? nextUser.uid : null,
+        pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
+      });
       previousUserRef.current = nextUser;
       setUser(nextUser);
 
-      // User Scoped Cart (Option B): Merge on login / Revert to guest cart on logout
+      // User Scoped Cart: Merge on login / Revert to guest cart on logout
       await syncCartWithUser(nextUser ? nextUser.uid : null);
 
       if (nextUser) {
-        try {
-          await ensureUserProfile(nextUser.uid, nextUser.email ?? "", nextUser.displayName ?? "");
-          await fetchUserRole(nextUser);
-        } catch (error) {
-          console.error("Unable to synchronize the Firebase user profile.", error);
+        // If already processed in this mount cycle by getRedirectResult, avoid duplicate profile calls
+        if (!redirectUserHandledRef.current) {
+          try {
+            await ensureUserProfile(nextUser.uid, nextUser.email ?? "", nextUser.displayName ?? "");
+            await fetchUserRole(nextUser);
+          } catch (error) {
+            console.error("Unable to synchronize the Firebase user profile.", error);
+          }
         }
       } else {
         setRole("CUSTOMER");
@@ -180,6 +239,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  const clearAuthError = () => setAuthError(null);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user,
@@ -187,6 +248,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isAdmin: checkIsAdmin(role),
       loading,
       isConfigured: isFirebaseConfigured,
+      authError,
+      clearAuthError,
       signUp: async (email, password) => {
         const result = await createUserWithEmailAndPassword(requireAuth(), email, password);
         await sendEmailVerification(result.user);
@@ -200,37 +263,71 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const resolvedRole = await fetchUserRole(result.user);
         return { user: result.user, role: resolvedRole };
       },
-      signInWithGoogle: async () => {
+      signInWithGoogle: async (customRedirectTarget?: string | null) => {
         const auth = requireAuth();
         const provider = new GoogleAuthProvider();
         provider.setCustomParameters({ prompt: "select_account" });
 
-        const isMobile =
+        const isLocalhost =
           typeof window !== "undefined" &&
-          (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-            window.innerWidth < 768);
+          (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
-        if (isMobile) {
-          console.log("[Auth Flow] Initiating signInWithRedirect for mobile device");
+        const isMobileDevice =
+          typeof window !== "undefined" &&
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+        console.log("[Auth Diagnostic] signInWithGoogle initiated:", {
+          isLocalhost,
+          isMobileDevice,
+          pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
+          authDomain: auth.config.authDomain,
+        });
+
+        // On localhost, always use popup to prevent cross-origin iframe storage blocks with Firebase upstream
+        if (isLocalhost) {
+          console.log("[Auth Diagnostic] Using signInWithPopup for local development");
+          const result = await signInWithPopup(auth, provider);
+          await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
+          const resolvedRole = await fetchUserRole(result.user);
+          return { user: result.user, role: resolvedRole };
+        }
+
+        // On mobile devices in production, initiate signInWithRedirect using the first-party proxy
+        if (isMobileDevice) {
+          console.log("[Auth Diagnostic] Initiating signInWithRedirect for mobile device");
+          try {
+            sessionStorage.setItem("waste_auth_pending_redirect", "true");
+            sessionStorage.setItem("waste_auth_redirect_time", String(Date.now()));
+            if (customRedirectTarget) {
+              sessionStorage.setItem("waste_auth_redirect_target", customRedirectTarget);
+            }
+          } catch {}
           await signInWithRedirect(auth, provider);
-          // Return a pending promise since mobile browser is navigating away to Google
+          // Return pending promise as browser navigates to identity provider
           return new Promise<{ user: User; role: UserRole }>(() => {});
         }
 
-        console.log("[Auth Flow] Initiating signInWithPopup for desktop device");
+        console.log("[Auth Diagnostic] Initiating signInWithPopup for desktop device");
         try {
           const result = await signInWithPopup(auth, provider);
           await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
           const resolvedRole = await fetchUserRole(result.user);
           return { user: result.user, role: resolvedRole };
         } catch (popupError: any) {
-          console.warn("[Auth Flow] Desktop popup sign-in failed with code:", popupError?.code);
+          console.warn("[Auth Diagnostic] Desktop popup sign-in failed with code:", popupError?.code);
           // Fallback to redirect only if popup was blocked or unsupported
           if (
             popupError?.code === "auth/popup-blocked" ||
             popupError?.code === "auth/cancelled-popup-request"
           ) {
-            console.log("[Auth Flow] Popup blocked/unsupported. Falling back to signInWithRedirect");
+            console.log("[Auth Diagnostic] Popup blocked. Falling back to signInWithRedirect");
+            try {
+              sessionStorage.setItem("waste_auth_pending_redirect", "true");
+              sessionStorage.setItem("waste_auth_redirect_time", String(Date.now()));
+              if (customRedirectTarget) {
+                sessionStorage.setItem("waste_auth_redirect_target", customRedirectTarget);
+              }
+            } catch {}
             await signInWithRedirect(auth, provider);
             return new Promise<{ user: User; role: UserRole }>(() => {});
           }
@@ -301,7 +398,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return "CUSTOMER";
       },
     }),
-    [loading, role, user]
+    [loading, role, user, authError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,15 +1,16 @@
-const firebaseAuthDomain =
-  process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'wasteindia.firebaseapp.com';
+const FIREBASE_UPSTREAM_DOMAIN = 'wasteindia.firebaseapp.com';
 
 const nextConfig = {
   reactStrictMode: true,
   async rewrites() {
-    return [
-      {
-        source: '/__/auth/:path*',
-        destination: `https://${firebaseAuthDomain}/__/auth/:path*`,
-      },
-    ];
+    return {
+      beforeFiles: [
+        {
+          source: '/__/auth/:path*',
+          destination: `https://${FIREBASE_UPSTREAM_DOMAIN}/__/auth/:path*`,
+        },
+      ],
+    };
   },
   images: {
     remotePatterns: [
