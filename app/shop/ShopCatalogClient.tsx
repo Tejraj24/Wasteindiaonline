@@ -9,7 +9,7 @@ import { WishlistButton } from "@/components/WishlistButton";
 import { StorefrontProduct } from "@/lib/services/product.service";
 
 const editorialImages = [
-  "https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=1800&q=85",
+  "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792927963/lepord_1_q03oy1.png",
   "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1800&q=85",
   "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1800&q=85",
 ];
@@ -340,7 +340,7 @@ export function ShopCatalogClient({
             <img
               src={editorialImages[0]}
               alt="WASTE collection editorial banner"
-              className="h-full w-full object-cover object-[center_28%] grayscale brightness-95"
+              className="h-full w-full object-cover object-center"
               loading="eager"
               fetchPriority="high"
             />
