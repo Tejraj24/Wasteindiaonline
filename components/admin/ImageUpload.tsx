@@ -15,6 +15,7 @@ import {
   Sparkles,
   Undo2,
   RefreshCw,
+  Trash2,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
@@ -46,6 +47,7 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [urlInput, setUrlInput] = useState("");
   const [autoRemoveBg, setAutoRemoveBg] = useState(true);
+  const [confirmDeleteIndex, setConfirmDeleteIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Cloudinary Free tier allows images up to 10 MB (10,485,760 bytes)
@@ -551,11 +553,12 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
 
                     <button
                       type="button"
-                      onClick={() => handleRemove(index)}
-                      className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600/80 text-white hover:bg-red-600"
-                      title="Delete image"
+                      onClick={() => setConfirmDeleteIndex(index)}
+                      className="flex h-6 w-6 items-center justify-center rounded-lg bg-red-600/80 text-white hover:bg-red-600 transition cursor-pointer"
+                      title="Remove this image"
+                      aria-label={`Remove gallery image ${index + 1}`}
                     >
-                      <X className="h-3.5 w-3.5" />
+                      <Trash2 className="h-3 w-3" />
                     </button>
                   </div>
 
@@ -623,6 +626,70 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Confirmation Dialog: "Remove this image?" */}
+      {confirmDeleteIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
+          onClick={() => setConfirmDeleteIndex(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-zinc-950 p-5 shadow-2xl space-y-4 text-zinc-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/15 text-red-400 border border-red-500/30 shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  Remove this image?
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  Gallery Image #{confirmDeleteIndex + 1}
+                </p>
+              </div>
+            </div>
+
+            {images[confirmDeleteIndex] && (
+              <div className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5">
+                <div className="h-12 w-12 rounded overflow-hidden bg-zinc-950 shrink-0 border border-zinc-800 flex items-center justify-center">
+                  <img
+                    src={images[confirmDeleteIndex].imageUrl}
+                    alt={`Gallery Image ${confirmDeleteIndex + 1}`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+                <p className="text-xs text-zinc-300 leading-relaxed min-w-0 flex-1">
+                  Remove this image from the gallery? Other images and product data will remain intact.
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-zinc-800/80">
+              <button
+                type="button"
+                onClick={() => setConfirmDeleteIndex(null)}
+                className="rounded-lg border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const idx = confirmDeleteIndex;
+                  setConfirmDeleteIndex(null);
+                  handleRemove(idx);
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-500 active:bg-red-700 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Remove Image</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

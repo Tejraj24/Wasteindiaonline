@@ -26,6 +26,7 @@ export interface HomepageContentConfig {
   heroSlides: HeroSlideContent[];
   featuredOverrides: Record<string, { image1?: string; image2?: string }>;
   carouselImages: CarouselSlideContent[];
+  carouselProductIds?: string[];
   updatedAt?: string;
 }
 
@@ -94,6 +95,7 @@ export async function getHomepageContent(): Promise<HomepageContentConfig> {
         heroSlides: DEFAULT_HERO_SLIDES,
         featuredOverrides: {},
         carouselImages: DEFAULT_CAROUSEL_ITEMS,
+        carouselProductIds: [],
       };
     }
 
@@ -103,9 +105,20 @@ export async function getHomepageContent(): Promise<HomepageContentConfig> {
       ? row.heroSlides
       : DEFAULT_HERO_SLIDES;
 
-    const featuredOverrides = row.featuredOverrides && typeof row.featuredOverrides === "object"
+    const rawOverrides = row.featuredOverrides && typeof row.featuredOverrides === "object"
       ? row.featuredOverrides
       : {};
+
+    const carouselProductIds = Array.isArray(rawOverrides._carouselProductIds)
+      ? rawOverrides._carouselProductIds
+      : [];
+
+    const featuredOverrides: Record<string, { image1?: string; image2?: string }> = {};
+    for (const [k, v] of Object.entries(rawOverrides)) {
+      if (k !== "_carouselProductIds" && v && typeof v === "object") {
+        featuredOverrides[k] = v as { image1?: string; image2?: string };
+      }
+    }
 
     const carouselImages = Array.isArray(row.carouselImages) && row.carouselImages.length > 0
       ? row.carouselImages
@@ -115,6 +128,7 @@ export async function getHomepageContent(): Promise<HomepageContentConfig> {
       heroSlides,
       featuredOverrides,
       carouselImages,
+      carouselProductIds,
       updatedAt: row.updatedAt ? new Date(row.updatedAt).toISOString() : undefined,
     };
   } catch (error) {
@@ -123,6 +137,7 @@ export async function getHomepageContent(): Promise<HomepageContentConfig> {
       heroSlides: DEFAULT_HERO_SLIDES,
       featuredOverrides: {},
       carouselImages: DEFAULT_CAROUSEL_ITEMS,
+      carouselProductIds: [],
     };
   }
 }
@@ -133,8 +148,13 @@ export async function updateHomepageContent(
   const current = await getHomepageContent();
 
   const heroSlides = data.heroSlides ?? current.heroSlides;
-  const featuredOverrides = data.featuredOverrides ?? current.featuredOverrides;
+  const featuredOverrides = { ...(data.featuredOverrides ?? current.featuredOverrides) };
   const carouselImages = data.carouselImages ?? current.carouselImages;
+  const carouselProductIds = data.carouselProductIds ?? current.carouselProductIds;
+
+  if (Array.isArray(carouselProductIds)) {
+    (featuredOverrides as any)._carouselProductIds = carouselProductIds;
+  }
 
   await prisma.$executeRawUnsafe(
     `INSERT INTO "SiteContent" ("id", "heroSlides", "featuredOverrides", "carouselImages", "updatedAt")
@@ -154,6 +174,7 @@ export async function updateHomepageContent(
     heroSlides,
     featuredOverrides,
     carouselImages,
+    carouselProductIds,
     updatedAt: new Date().toISOString(),
   };
 }

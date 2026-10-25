@@ -412,10 +412,11 @@ export function StackedProductCarousel({
             // 1. Explicit admin override saved for this specific product ID
             // 2. Authoritative catalog product photo from database
             // 3. Default fallback image
-            const adminOverride1 =
-              overrides?.[product.id]?.image1 ||
-              product.carouselOverride1 ||
+            const rawOverride1 =
+              overrides?.[product.id]?.image1 ??
+              product.carouselOverride1 ??
               product.adminProductOverride1;
+            const adminOverride1 = rawOverride1 === "none" ? "" : rawOverride1;
 
             const catalogDefaultImage =
               (product.images && product.images[0]) ||
@@ -427,19 +428,20 @@ export function StackedProductCarousel({
               fallbackImage;
 
             // Optional secondary hover view (when cursor hovers on active center card)
-            const adminOverride2 =
-              overrides?.[product.id]?.image2 ||
-              product.carouselOverride2 ||
+            const rawOverride2 =
+              overrides?.[product.id]?.image2 ??
+              product.carouselOverride2 ??
               product.adminProductOverride2;
+            const isSecondaryExplicitlyDisabled = rawOverride2 === "none";
+            const adminOverride2 = isSecondaryExplicitlyDisabled ? "" : rawOverride2;
 
-            const catalogSecondaryImage =
-              (product.images && product.images[1]) ||
-              product.image2;
+            const catalogSecondaryImage = isSecondaryExplicitlyDisabled
+              ? ""
+              : ((product.images && product.images[1]) || product.image2);
 
-            const secondaryImage =
-              adminOverride2 ||
-              catalogSecondaryImage ||
-              primaryImage;
+            const secondaryImage = isSecondaryExplicitlyDisabled
+              ? primaryImage
+              : (adminOverride2 || catalogSecondaryImage || primaryImage);
 
             return (
               <div

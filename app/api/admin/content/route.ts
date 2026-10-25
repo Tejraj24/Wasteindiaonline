@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/prisma";
 import { requireAdminAuth } from "@/lib/auth/admin";
 import {
   getHomepageContent,
   updateHomepageContent,
   HomepageContentConfig,
 } from "@/lib/services/content.service";
-import { getFeaturedProducts } from "@/lib/services/product.service";
+import { getCarouselProducts } from "@/lib/services/product.service";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +16,13 @@ export async function GET(req: Request) {
     await requireAdminAuth(req);
 
     const config = await getHomepageContent();
-    const featuredProducts = await getFeaturedProducts(8);
+    const explicitIds = (config.featuredOverrides as any)?._carouselProductIds;
+    const featuredProducts = await getCarouselProducts(explicitIds, 12);
 
     return NextResponse.json({
       success: true,
       config,
+      carouselProductIds: explicitIds || featuredProducts.map((p) => p.id),
       featuredProducts: featuredProducts.map((p, idx) => ({
         id: p.id,
         name: p.name,
@@ -52,7 +55,7 @@ export async function PUT(req: Request) {
     await requireAdminAuth(req);
 
     const body = await req.json();
-    const { heroSlides, featuredOverrides, carouselImages } = body;
+    const { heroSlides, featuredOverrides, carouselImages, carouselProductIds } = body;
 
     // Validate heroSlides
     if (heroSlides && !Array.isArray(heroSlides)) {
@@ -97,9 +100,29 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: "featuredOverrides must be an object" }, { status: 400 });
     }
 
+    // Validate carouselProductIds
+    if (carouselProductIds && !Array.isArray(carouselProductIds)) {
+      return NextResponse.json({ error: "carouselProductIds must be an array of product IDs" }, { status: 400 });
+    }
+
+    const mergedOverrides = { ...(featuredOverrides || {}) };
+    if (Array.isArray(carouselProductIds)) {
+      mergedOverrides._carouselProductIds = carouselProductIds;
+
+      // Keep catalog product featured status aligned
+      try {
+        await prisma.product.updateMany({
+          where: { id: { in: carouselProductIds } },
+          data: { featured: true },
+        });
+      } catch (dbSyncErr) {
+        console.warn("[PUT /api/admin/content] Product featured status sync warning:", dbSyncErr);
+      }
+    }
+
     const payload: Partial<HomepageContentConfig> = {};
     if (heroSlides) payload.heroSlides = heroSlides;
-    if (featuredOverrides) payload.featuredOverrides = featuredOverrides;
+    payload.featuredOverrides = mergedOverrides;
     if (carouselImages) payload.carouselImages = carouselImages;
 
     const updatedConfig = await updateHomepageContent(payload);

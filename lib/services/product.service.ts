@@ -220,6 +220,47 @@ export async function getFeaturedProducts(limit: number = 8): Promise<Storefront
   }
 }
 
+export async function getCarouselProducts(
+  explicitIds?: string[],
+  limit: number = 10
+): Promise<StorefrontProduct[]> {
+  try {
+    if (Array.isArray(explicitIds) && explicitIds.length > 0) {
+      const found = await prisma.product.findMany({
+        where: {
+          id: { in: explicitIds },
+          status: "ACTIVE",
+        },
+        include: {
+          category: true,
+          images: {
+            orderBy: { sortOrder: "asc" },
+          },
+        },
+      });
+
+      const formatted = found.map(formatStorefrontProduct);
+      // Retain the exact order specified by explicitIds
+      const ordered: StorefrontProduct[] = [];
+      for (const id of explicitIds) {
+        const item = formatted.find((p) => p.id === id);
+        if (item) {
+          ordered.push(item);
+        }
+      }
+
+      if (ordered.length > 0) {
+        return ordered;
+      }
+    }
+
+    return getFeaturedProducts(limit);
+  } catch (error) {
+    console.error("Error fetching carousel products from database:", error);
+    return getFeaturedProducts(limit);
+  }
+}
+
 export async function getProductBySlug(slug: string): Promise<StorefrontProduct | null> {
   try {
     const product = await prisma.product.findFirst({

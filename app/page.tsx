@@ -6,16 +6,18 @@ import { EditorialCollectionSection } from "@/components/EditorialCollectionSect
 import { ProductGrid } from "@/components/ProductGrid";
 import { Gallery } from "@/components/Gallery";
 import { Footer } from "@/components/Footer";
-import { getFeaturedProducts, getCategories } from "@/lib/services/product.service";
+import { getFeaturedProducts, getCarouselProducts, getCategories } from "@/lib/services/product.service";
 import { getHomepageContent } from "@/lib/services/content.service";
 
 export const revalidate = 0; // Dynamic homepage with live database featured items
 
 export default async function Home() {
-  const [featuredProducts, categories, homepageContent] = await Promise.all([
-    getFeaturedProducts(8),
+  const homepageContent = await getHomepageContent();
+  const explicitCarouselIds = (homepageContent.featuredOverrides as any)?._carouselProductIds;
+
+  const [featuredProducts, categories] = await Promise.all([
+    getCarouselProducts(explicitCarouselIds, 8),
     getCategories(),
-    getHomepageContent(),
   ]);
 
   // Apply visual overrides for 3D lookbook carousel and featured products

@@ -168,6 +168,9 @@ export default function AdminProductsPage() {
       if (res.ok) {
         setProducts((prev) => prev.filter((p) => p.id !== id));
         setSelectedIds((prev) => prev.filter((item) => item !== id));
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || "Failed to delete product");
       }
     } catch (e) {
       console.error(e);

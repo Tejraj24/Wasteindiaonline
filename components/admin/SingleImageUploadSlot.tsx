@@ -10,6 +10,8 @@ import {
   Eye,
   Sparkles,
   Loader2,
+  Trash2,
+  X,
 } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import {
@@ -25,6 +27,10 @@ interface SingleImageUploadSlotProps {
   aspectRatio?: "16/9" | "3/4" | "4/3" | "1/1";
   onImageChange: (newUrl: string) => void;
   onResetToDefault?: () => void;
+  onDeleteImage?: () => void;
+  deleteAriaLabel?: string;
+  deleteConfirmTitle?: string;
+  deleteConfirmMessage?: string;
   isModified?: boolean;
   badge?: string;
   enableBackgroundRemoval?: boolean;
@@ -38,6 +44,10 @@ export function SingleImageUploadSlot({
   aspectRatio = "16/9",
   onImageChange,
   onResetToDefault,
+  onDeleteImage,
+  deleteAriaLabel,
+  deleteConfirmTitle,
+  deleteConfirmMessage,
   isModified = false,
   badge,
   enableBackgroundRemoval = true,
@@ -51,6 +61,10 @@ export function SingleImageUploadSlot({
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
   const [cachedOriginalUrl, setCachedOriginalUrl] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Normalize sentinel "none" to empty string for preview display
+  const displayUrl = currentImageUrl === "none" ? "" : currentImageUrl;
 
   const aspectClass = {
     "16/9": "aspect-[16/9]",
@@ -59,8 +73,8 @@ export function SingleImageUploadSlot({
     "1/1": "aspect-square",
   }[aspectRatio] || "aspect-[16/9]";
 
-  const hasBgRemoved = isBackgroundRemovedUrl(currentImageUrl);
-  const isCloudinary = isCloudinaryUrl(currentImageUrl);
+  const hasBgRemoved = isBackgroundRemovedUrl(displayUrl);
+  const isCloudinary = isCloudinaryUrl(displayUrl);
 
   // Background removal API helper
   const processBackgroundRemoval = async (imageUrl: string, action: "remove" | "restore" = "remove") => {
@@ -313,9 +327,9 @@ export function SingleImageUploadSlot({
           handleFileSelect(e.dataTransfer.files);
         }}
       >
-        {currentImageUrl ? (
+        {displayUrl ? (
           <img
-            src={currentImageUrl}
+            src={displayUrl}
             alt={label}
             className="h-full w-full object-contain object-center transition duration-300 group-hover:scale-[1.02]"
           />
@@ -324,6 +338,23 @@ export function SingleImageUploadSlot({
             <UploadCloud className="h-8 w-8 text-zinc-600" />
             <span>Click or drag image here to upload</span>
           </div>
+        )}
+
+        {/* Subtle Individual Delete Button directly on the image preview */}
+        {displayUrl && onDeleteImage && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowDeleteConfirm(true);
+            }}
+            aria-label={deleteAriaLabel || `Remove ${label.toLowerCase()}`}
+            title={deleteAriaLabel || `Remove ${label.toLowerCase()}`}
+            className="absolute top-2.5 right-2.5 z-30 flex h-7 w-7 items-center justify-center rounded-lg border border-red-500/40 bg-zinc-950/85 text-red-400 hover:bg-red-600 hover:text-white transition-all shadow-md cursor-pointer sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         )}
 
         {/* Hover / Focus Overlay with clear instructions */}
@@ -336,9 +367,9 @@ export function SingleImageUploadSlot({
             or drag and drop a new file here
           </span>
 
-          {currentImageUrl && (
+          {displayUrl && (
             <a
-              href={currentImageUrl}
+              href={displayUrl}
               target="_blank"
               rel="noopener noreferrer"
               onClick={(e) => e.stopPropagation()}
@@ -406,13 +437,13 @@ export function SingleImageUploadSlot({
           </button>
 
           {/* AI Background Removal Toggle / Action */}
-          {currentImageUrl && isCloudinary && (
+          {displayUrl && isCloudinary && (
             <>
               {hasBgRemoved ? (
                 <button
                   type="button"
                   disabled={isUploading || isRemovingBg}
-                  onClick={() => processBackgroundRemoval(currentImageUrl, "restore")}
+                  onClick={() => processBackgroundRemoval(displayUrl, "restore")}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 active:bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white transition cursor-pointer"
                   title="Revert back to original uploaded image with its background"
                 >
@@ -423,7 +454,7 @@ export function SingleImageUploadSlot({
                 <button
                   type="button"
                   disabled={isUploading || isRemovingBg}
-                  onClick={() => processBackgroundRemoval(currentImageUrl, "remove")}
+                  onClick={() => processBackgroundRemoval(displayUrl, "remove")}
                   className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/30 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 transition cursor-pointer"
                   title="Remove solid background using Cloudinary AI"
                 >
@@ -447,12 +478,26 @@ export function SingleImageUploadSlot({
               <span>Reset to Default</span>
             </button>
           )}
+
+          {/* Delete / Clear Image Override */}
+          {onDeleteImage && displayUrl && (
+            <button
+              type="button"
+              disabled={isUploading || isRemovingBg}
+              onClick={() => setShowDeleteConfirm(true)}
+              className="inline-flex items-center gap-1.5 rounded-lg border border-red-500/30 bg-red-600/10 hover:bg-red-600 hover:text-white active:bg-red-700 px-2.5 py-1.5 text-xs font-medium text-red-400 transition cursor-pointer"
+              title={deleteAriaLabel || `Remove ${label.toLowerCase()}`}
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              <span>Delete Image</span>
+            </button>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
-          {currentImageUrl && (
+          {displayUrl && (
             <a
-              href={currentImageUrl}
+              href={displayUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-200 transition"
@@ -481,15 +526,77 @@ export function SingleImageUploadSlot({
             <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />
             <span className="truncate">{errorMessage}</span>
           </div>
-          {currentImageUrl && isCloudinary && (
+          {displayUrl && isCloudinary && (
             <button
               type="button"
-              onClick={() => processBackgroundRemoval(cachedOriginalUrl || currentImageUrl, "remove")}
+              onClick={() => processBackgroundRemoval(cachedOriginalUrl || displayUrl, "remove")}
               className="shrink-0 rounded bg-red-600/30 px-2 py-0.5 text-[10px] font-semibold text-red-200 hover:bg-red-600/50 transition cursor-pointer"
             >
               Retry
             </button>
           )}
+        </div>
+      )}
+
+      {/* Confirmation Dialog: "Remove this image?" */}
+      {showDeleteConfirm && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm animate-in fade-in duration-150"
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowDeleteConfirm(false);
+          }}
+        >
+          <div
+            className="w-full max-w-sm rounded-2xl border border-zinc-800 bg-zinc-950 p-5 shadow-2xl space-y-4 text-zinc-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-600/15 text-red-400 border border-red-500/30 shrink-0">
+                <Trash2 className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">
+                  {deleteConfirmTitle || "Remove this image?"}
+                </h3>
+                <p className="text-xs text-zinc-400 mt-0.5">
+                  {label}
+                </p>
+              </div>
+            </div>
+
+            {displayUrl && (
+              <div className="flex items-center gap-3 rounded-lg border border-zinc-800 bg-zinc-900/50 p-2.5">
+                <div className="h-12 w-12 rounded overflow-hidden bg-zinc-950 shrink-0 border border-zinc-800 flex items-center justify-center">
+                  <img src={displayUrl} alt={label} className="h-full w-full object-contain" />
+                </div>
+                <p className="text-xs text-zinc-300 leading-relaxed min-w-0 flex-1">
+                  {deleteConfirmMessage || `Are you sure you want to remove this ${label.toLowerCase()}? Other images and product data will remain unchanged.`}
+                </p>
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-zinc-800/80">
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="rounded-lg border border-zinc-800 bg-zinc-900 px-3.5 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowDeleteConfirm(false);
+                  onDeleteImage?.();
+                }}
+                className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 hover:bg-red-500 active:bg-red-700 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition cursor-pointer"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                <span>Remove Image</span>
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

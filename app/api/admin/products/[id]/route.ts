@@ -151,6 +151,37 @@ export async function PUT(
   }
 }
 
+async function cleanUpProductFromSiteContent(productId: string) {
+  try {
+    const siteContent = await prisma.siteContent.findUnique({
+      where: { id: "homepage" },
+    });
+    if (siteContent && siteContent.featuredOverrides) {
+      const overrides = { ...(siteContent.featuredOverrides as Record<string, any>) };
+      let modified = false;
+
+      if (overrides[productId]) {
+        delete overrides[productId];
+        modified = true;
+      }
+
+      if (Array.isArray(overrides._carouselProductIds) && overrides._carouselProductIds.includes(productId)) {
+        overrides._carouselProductIds = overrides._carouselProductIds.filter((pid: string) => pid !== productId);
+        modified = true;
+      }
+
+      if (modified) {
+        await prisma.siteContent.update({
+          where: { id: "homepage" },
+          data: { featuredOverrides: overrides },
+        });
+      }
+    }
+  } catch (err) {
+    console.error("[cleanUpProductFromSiteContent] Error:", err);
+  }
+}
+
 export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
@@ -158,12 +189,103 @@ export async function DELETE(
   try {
     await requireAdminAuth(req);
     const { id } = params;
+    const { searchParams } = new URL(req.url);
+    const archiveIfOrdered = searchParams.get("archive") === "true";
 
-    await prisma.product.delete({
+    const product = await prisma.product.findUnique({
       where: { id },
+      include: {
+        _count: {
+          select: {
+            orderItems: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ success: true, message: "Product deleted" });
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Check dependencies: never delete order history
+    if (product._count.orderItems > 0) {
+      if (archiveIfOrdered) {
+        await prisma.product.update({
+          where: { id },
+          data: {
+            status: "ARCHIVED",
+            featured: false,
+          },
+        });
+
+        await cleanUpProductFromSiteContent(id);
+
+        revalidatePath("/");
+        revalidatePath("/shop");
+        revalidatePath("/admin/content");
+        revalidatePath("/admin/products");
+        if (product.slug) {
+          revalidatePath(`/product/${product.slug}`);
+        }
+
+        return NextResponse.json({
+          success: true,
+          archived: true,
+          message: `Product "${product.name}" has been archived to preserve order history.`,
+        });
+      }
+
+      return NextResponse.json(
+        {
+          error: `Cannot permanently delete "${product.name}" because it is referenced in ${product._count.orderItems} existing order record(s). Deleting it would compromise store order history and tax records. You can archive or deactivate this product instead to remove it from the storefront and carousel.`,
+          code: "PRODUCT_HAS_ORDERS",
+          orderCount: product._count.orderItems,
+          canArchive: true,
+          productId: product.id,
+        },
+        { status: 409 }
+      );
+    }
+
+    // Safe transactional deletion for zero-order product
+    await prisma.$transaction(async (tx) => {
+      // 1. Clean up wishlist references
+      await tx.wishlist.deleteMany({
+        where: { productId: id },
+      });
+
+      // 2. Clean up cart items
+      await tx.cartItem.deleteMany({
+        where: { productId: id },
+      });
+
+      // 3. Clean up product images
+      await tx.productImage.deleteMany({
+        where: { productId: id },
+      });
+
+      // 4. Delete the product
+      await tx.product.delete({
+        where: { id },
+      });
+    });
+
+    // 5. Clean up from featured carousel content
+    await cleanUpProductFromSiteContent(id);
+
+    // 6. Invalidate caches across storefront and admin
+    revalidatePath("/");
+    revalidatePath("/shop");
+    revalidatePath("/admin/content");
+    revalidatePath("/admin/products");
+    if (product.slug) {
+      revalidatePath(`/product/${product.slug}`);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: `Product "${product.name}" has been permanently deleted from the store catalog.`,
+    });
   } catch (error: unknown) {
     const err = error as Error;
     if (err.message === "UNAUTHORIZED") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

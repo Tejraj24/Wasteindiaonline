@@ -879,25 +879,33 @@ export function ProductDetailsModal({
                     <SingleImageUploadSlot
                       label="Primary Carousel Silhouette Override"
                       sublabel="Replaces main 3D carousel visual without altering standard shop photo"
-                      currentImageUrl={overrideImage1 || images[0]?.imageUrl || ""}
+                      currentImageUrl={overrideImage1 === "none" ? "" : (overrideImage1 || images[0]?.imageUrl || "")}
                       defaultImageUrl={images[0]?.imageUrl || ""}
                       aspectRatio="3/4"
                       badge="Carousel Primary"
                       isModified={Boolean(overrideImage1 && overrideImage1 !== images[0]?.imageUrl)}
                       onImageChange={(url) => setOverrideImage1(url)}
                       onResetToDefault={() => setOverrideImage1("")}
+                      onDeleteImage={() => setOverrideImage1("none")}
+                      deleteAriaLabel="Remove primary carousel silhouette override"
+                      deleteConfirmTitle="Remove this image?"
+                      deleteConfirmMessage="Remove primary carousel silhouette override? The card will fall back to the catalog default image."
                     />
 
                     <SingleImageUploadSlot
                       label="Secondary Hover View (Optional)"
                       sublabel="Alternate angle revealed when cursor hovers over active card"
-                      currentImageUrl={overrideImage2 || images[1]?.imageUrl || ""}
+                      currentImageUrl={overrideImage2 === "none" ? "" : (overrideImage2 || images[1]?.imageUrl || "")}
                       defaultImageUrl={images[1]?.imageUrl || ""}
                       aspectRatio="3/4"
                       badge="Carousel Hover"
                       isModified={Boolean(overrideImage2 && overrideImage2 !== images[1]?.imageUrl)}
                       onImageChange={(url) => setOverrideImage2(url)}
                       onResetToDefault={() => setOverrideImage2("")}
+                      onDeleteImage={() => setOverrideImage2("none")}
+                      deleteAriaLabel="Remove secondary hover view"
+                      deleteConfirmTitle="Remove this image?"
+                      deleteConfirmMessage="Remove secondary hover view? This will disable the hover-image animation for this silhouette and retain the primary image."
                     />
                   </div>
                 </div>
