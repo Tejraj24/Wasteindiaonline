@@ -32,6 +32,7 @@ const config: Config = {
         cormorant: ["var(--font-cormorant)", "'Cormorant Garamond'", "Georgia", "serif"],
         anton: ["var(--font-anton)", "Impact", "Anton", "Haettenschweiler", "Arial Black", "sans-serif"],
         reenie: ["var(--font-reenie)", "'Reenie Beanie'", "cursive", "sans-serif"],
+        helvetica: ['"Helvetica Neue"', "Helvetica", "Arial", "sans-serif"],
       },
       letterSpacing: {
         tighter: "-0.04em",

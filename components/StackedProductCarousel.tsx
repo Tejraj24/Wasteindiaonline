@@ -371,21 +371,22 @@ export function StackedProductCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label="WASTE Street Articles 3D Carousel"
-      className="relative w-full overflow-hidden bg-transparent pt-6 pb-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:pt-8 sm:pb-20 md:pt-10 md:pb-28"
+      className="relative w-full overflow-hidden bg-transparent pt-6 pb-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:pt-8 sm:pb-20 md:pt-10 md:pb-28 font-helvetica"
+      style={{ fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' }}
     >
-      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12">
+      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12 font-helvetica">
         {/* Section Header: Centered basic brand heading vertically balanced */}
         <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16 md:pb-10">
           <div className="mx-auto flex flex-col items-center justify-center text-center">
             {tagline && (
               <div className="mb-2.5 flex items-center justify-center gap-2.5">
                 <span className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold animate-pulse" />
-                <p className="font-tenor text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
+                <p className="font-helvetica text-[10px] uppercase tracking-[0.22em] text-brand-muted xs:text-xs xs:tracking-[0.25em]">
                   {tagline}
                 </p>
               </div>
             )}
-            <h2 className="font-tenor text-[clamp(1.35rem,3.4vw,2.35rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+            <h2 className="font-helvetica text-[clamp(1.35rem,3.4vw,2.35rem)] font-bold uppercase tracking-[0.14em] text-brand-black">
               {title}
             </h2>
           </div>
@@ -516,39 +517,15 @@ export function StackedProductCarousel({
         </div>
 
         {/* ACTIVE PRODUCT EDITORIAL DETAIL DOCK: Clearly separated section below stage to prevent overlaps */}
-        <div className="mt-8 border-t border-brand-border pt-6 sm:mt-12 sm:pt-8 md:mt-14">
+        <div className="mt-8 border-t border-brand-border pt-6 sm:mt-12 sm:pt-8 md:mt-14 font-helvetica">
           <div className="grid gap-6 sm:grid-cols-2 md:items-end lg:grid-cols-[1.25fr_0.75fr]">
             <div>
-              <div className="flex flex-wrap items-center gap-2 font-tenor text-xs sm:text-[13px] uppercase tracking-[0.16em] text-brand-gold">
-                <span>Active Piece</span>
-                <span className="text-brand-muted/40">/</span>
-                <span className="text-brand-muted">{activeProduct.category || "Essential"}</span>
-                {activeProduct.sku && (
-                  <>
-                    <span className="text-brand-muted/40">/</span>
-                    <span className="font-mono text-[11px] text-brand-muted tracking-[0.14em]">
-                      {activeProduct.sku}
-                    </span>
-                  </>
-                )}
-                {activeProduct.compareAtPrice && (
-                  <span className="ml-1 border border-brand-gold/40 bg-brand-goldMuted px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-brand-black">
-                    {Math.round(
-                      ((activeProduct.compareAtPrice - activeProduct.price) /
-                        activeProduct.compareAtPrice) *
-                        100
-                    )}
-                    % Off
-                  </span>
-                )}
-              </div>
-
-              <h3 className="mt-2 line-clamp-2 font-editorial text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.04] tracking-tight text-brand-black">
+              <h3 className="line-clamp-2 font-helvetica text-2xl sm:text-3xl md:text-[2.25rem] font-bold leading-tight tracking-[-0.01em] text-brand-black">
                 {activeProduct.name}
               </h3>
 
               {activeProduct.description && (
-                <p className="mt-2.5 line-clamp-2 max-w-xl text-sm sm:text-[15px] leading-relaxed text-brand-muted sm:line-clamp-3">
+                <p className="mt-2.5 line-clamp-2 max-w-xl text-sm sm:text-[15px] leading-relaxed text-brand-muted sm:line-clamp-3 font-helvetica">
                   {activeProduct.description}
                 </p>
               )}
@@ -556,11 +533,11 @@ export function StackedProductCarousel({
 
             <div className="flex flex-col gap-3.5 sm:items-end sm:text-right">
               <div className="flex items-baseline gap-2.5">
-                <span className="font-mono text-2xl sm:text-3xl font-semibold tracking-tight text-brand-black">
+                <span className="font-helvetica text-2xl sm:text-3xl font-bold tracking-tight text-brand-black">
                   {formatPrice(activeProduct.price)}
                 </span>
                 {activeProduct.compareAtPrice && (
-                  <span className="font-mono text-xs sm:text-sm text-brand-muted line-through">
+                  <span className="font-helvetica text-xs sm:text-sm text-brand-muted line-through font-normal">
                     {formatPrice(activeProduct.compareAtPrice)}
                   </span>
                 )}
@@ -570,7 +547,7 @@ export function StackedProductCarousel({
               <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2.5 w-full sm:w-auto">
                 <Link
                   href={`/product/${activeProduct.slug}`}
-                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 font-tenor text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-white transition-colors duration-300 hover:bg-brand-black/85"
+                  className="group inline-flex min-h-11 xs:min-h-12 flex-1 sm:flex-initial items-center justify-center bg-brand-black px-5 xs:px-7 font-helvetica text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-white transition-colors duration-300 hover:bg-brand-black/85"
                 >
                   <span>Inspect Piece</span>
                   <span className="ml-2 transition-transform duration-300 group-hover:translate-x-1">
@@ -580,7 +557,7 @@ export function StackedProductCarousel({
 
                 <Link
                   href="/shop"
-                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 font-tenor text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
+                  className="inline-flex min-h-11 xs:min-h-12 items-center justify-center border border-brand-border bg-white px-4 xs:px-5 font-helvetica text-xs sm:text-[13px] font-medium uppercase tracking-[0.15em] text-brand-black shadow-sm transition-colors duration-300 hover:border-brand-black hover:bg-brand-surfaceSubtle"
                 >
                   Shop All →
                 </Link>
