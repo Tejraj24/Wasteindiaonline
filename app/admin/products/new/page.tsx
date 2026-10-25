@@ -38,13 +38,7 @@ export default function NewProductPage() {
     expectedShipmentText: "",
   });
 
-  const [images, setImages] = useState<UploadedImage[]>([
-    {
-      imageUrl: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=900&q=80",
-      altText: "Primary Product Photo",
-      sortOrder: 0,
-    },
-  ]);
+  const [images, setImages] = useState<UploadedImage[]>([]);
 
   useEffect(() => {
     async function fetchCats() {
@@ -84,6 +78,11 @@ export default function NewProductPage() {
     e.preventDefault();
     if (!form.name || !form.price) {
       setError("Product Name and Price are mandatory.");
+      return;
+    }
+
+    if (!images || images.length === 0) {
+      setError("At least one product image is required.");
       return;
     }
 

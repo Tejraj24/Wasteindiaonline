@@ -1,10 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { StorefrontProduct } from "@/lib/services/product.service";
-import { WishlistButton } from "@/components/WishlistButton";
 import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/content.service";
 
 interface StackedProductCarouselProps {
@@ -30,6 +29,7 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+
 export function StackedProductCarousel({
   products = [],
   title = "FEATURED SILHOUETTES",
@@ -51,8 +51,20 @@ export function StackedProductCarousel({
   const touchStartY = useRef<number | null>(null);
   const isSwiping = useRef(false);
 
+  // Render all valid configured products directly from admin/catalog
+  const carouselProducts = useMemo(() => {
+    return (products || []).filter((p) => Boolean(p && p.id));
+  }, [products]);
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const total = products.length;
+  const total = carouselProducts.length;
+
+  // Ensure activeIndex is always valid for remaining products
+  useEffect(() => {
+    if (activeIndex >= total && total > 0) {
+      setActiveIndex(0);
+    }
+  }, [activeIndex, total]);
 
   // Track document visibility to pause autoplay when tab is hidden
   useEffect(() => {
@@ -213,11 +225,11 @@ export function StackedProductCarousel({
     touchStartY.current = null;
   };
 
-  if (!products || products.length === 0) {
+  if (!carouselProducts || carouselProducts.length === 0) {
     return null;
   }
 
-  const activeProduct = products[activeIndex] || products[0];
+  const activeProduct = carouselProducts[activeIndex] || carouselProducts[0];
 
   // Helper to compute circular distance from active index
   const getDiff = (index: number) => {
@@ -361,14 +373,8 @@ export function StackedProductCarousel({
       role="region"
       aria-roledescription="carousel"
       aria-label="WASTE Featured Collection 3D Carousel"
-      className="relative w-full overflow-hidden bg-brand-bg py-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:py-20 md:py-28"
+      className="relative w-full overflow-hidden bg-transparent py-14 text-brand-black focus:outline-none focus-visible:ring-1 focus-visible:ring-brand-black sm:py-20 md:py-28"
     >
-      {/* Background ambient subtle warmth */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_35%,rgba(184,154,98,0.06),rgba(250,250,248,0))]"
-        aria-hidden="true"
-      />
-
       <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 md:px-12">
         {/* Section Header: Consistent with WASTE navbar & editorial headings */}
         <div className="mb-8 border-b border-brand-border pb-6 sm:mb-12 sm:pb-8 md:mb-16">
@@ -397,7 +403,7 @@ export function StackedProductCarousel({
             perspectiveOrigin: "50% 50%",
           }}
         >
-          {products.map((product, index) => {
+          {carouselProducts.map((product, index) => {
             const diff = getDiff(index);
             const style = getCardTransform(diff);
             const isCenter = diff === 0;
@@ -446,23 +452,6 @@ export function StackedProductCarousel({
               existingDefaultImage ||
               fallbackImage;
 
-            const adminCardOverride2 =
-              product.carouselOverride2 ||
-              overrides?.[product.id]?.image2 ||
-              overrides?.[`slot-${targetSlotId}`]?.image2 ||
-              (hasAdminSilhouetteOverride && matchingSilhouette?.mobileImage && matchingSilhouette.mobileImage !== matchingSilhouette.image
-                ? matchingSilhouette.mobileImage
-                : undefined);
-
-            const existingSecondaryImage =
-              (product.images && product.images[1]) ||
-              product.image2;
-
-            const secondaryImage =
-              adminCardOverride2 ||
-              existingSecondaryImage ||
-              primaryImage;
-
             return (
               <div
                 key={product.id}
@@ -487,87 +476,17 @@ export function StackedProductCarousel({
                   transformStyle: "preserve-3d",
                 }}
               >
-                {/* CARD BODY */}
-                <div
-                  className={`group relative h-full w-full overflow-hidden border bg-white shadow-2xl transition-all duration-500 ${
-                    isCenter
-                      ? "border-brand-border shadow-[0_24px_50px_-12px_rgba(0,0,0,0.14),0_4px_16px_rgba(0,0,0,0.06)] ring-1 ring-brand-border/60"
-                      : "border-brand-border shadow-[0_12px_30px_-10px_rgba(0,0,0,0.08)] hover:border-brand-black/40"
-                  }`}
-                >
-                  {/* Category & Badge Header Overlay */}
-                  <div className="absolute top-0 right-0 left-0 z-20 flex items-center justify-between p-2.5 sm:p-3.5">
-                    <span className="bg-white/90 px-2 py-0.5 text-[9px] uppercase tracking-[0.16em] text-brand-black backdrop-blur-md border border-brand-border sm:text-[10px] sm:tracking-[0.18em] sm:py-1">
-                      {product.category || "Streetwear"}
-                    </span>
-                    {product.compareAtPrice && (
-                      <span className="bg-brand-gold px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.16em] text-brand-black sm:text-[9px] sm:py-1">
-                        Sale
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Primary & Secondary Images */}
-                  <div className="relative h-full w-full overflow-hidden bg-brand-surfaceSubtle">
+                {/* CARD BODY — Clean Image-Only Silhouette */}
+                <div className="group relative h-full w-full overflow-hidden bg-transparent transition-all duration-500">
+                  <div className="relative h-full w-full overflow-hidden bg-transparent">
                     <img
                       src={primaryImage}
                       alt={product.name}
                       loading={Math.abs(diff) <= 1 ? "eager" : "lazy"}
                       draggable={false}
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                      className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                     />
-
-                    {/* Secondary image crossfade on center card hover */}
-                    {secondaryImage !== primaryImage && isCenter && (
-                      <img
-                        src={secondaryImage}
-                        alt={`${product.name} alternate view`}
-                        draggable={false}
-                        className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
-                      />
-                    )}
-
-                    {/* Subtle vignette gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20" />
-
-                    {/* Non-center card interactive tap hint */}
-                    {!isCenter && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/35 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                        <span className="border border-brand-border bg-white/95 px-2.5 py-1 text-[10px] sm:text-[11px] font-mono uppercase tracking-[0.18em] text-brand-black shadow-md backdrop-blur-sm">
-                          Tap to View
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Minimal bottom card identifier */}
-                    <div className="absolute right-0 bottom-0 left-0 z-20 flex items-center justify-between p-3 sm:p-4 bg-gradient-to-t from-black/95 via-black/50 to-transparent">
-                      <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-white/90 font-mono font-medium">
-                        {product.sku}
-                      </span>
-                      <span className="text-xs sm:text-sm font-semibold text-white font-mono">
-                        {formatPrice(product.price)}
-                      </span>
-                    </div>
                   </div>
-
-                  {/* Wishlist Button Overlay on Center Card */}
-                  {isCenter && (
-                    <div
-                      className="absolute top-2.5 right-2.5 z-30 sm:top-3.5 sm:right-3.5"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <WishlistButton
-                        item={{
-                          productId: product.id,
-                          name: product.name,
-                          slug: product.slug,
-                          image: primaryImage,
-                          price: product.price,
-                          category: product.category || "Featured",
-                        }}
-                      />
-                    </div>
-                  )}
                 </div>
               </div>
             );

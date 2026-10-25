@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import Link from "next/link";
 import {
@@ -55,6 +55,7 @@ export default function AdminProductsPage() {
   const [categories, setCategories] = useState<CategoryOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");
   const [page, setPage] = useState(1);
@@ -62,6 +63,24 @@ export default function AdminProductsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+  const fetchControllerRef = useRef<AbortController | null>(null);
+
+  // Debounce search query by 300ms to eliminate keystroke query flooding
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch((prev) => {
+        if (prev !== search) {
+          setPage(1);
+          return search;
+        }
+        return prev;
+      });
+    }, 300);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [search]);
 
   async function loadCategories() {
     if (!user) return;
@@ -79,21 +98,30 @@ export default function AdminProductsPage() {
     }
   }
 
-  async function loadProducts() {
+  const loadProducts = useCallback(async () => {
     if (!user) return;
+
+    // Abort previous in-flight request to prevent race conditions or stale results
+    if (fetchControllerRef.current) {
+      fetchControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    fetchControllerRef.current = controller;
+
     setLoading(true);
     try {
       const token = await user.getIdToken();
       const query = new URLSearchParams({
         page: page.toString(),
         limit: "15",
-        ...(search ? { search } : {}),
+        ...(debouncedSearch ? { search: debouncedSearch } : {}),
         ...(selectedCategory ? { category: selectedCategory } : {}),
         ...(selectedStatus !== "ALL" ? { status: selectedStatus } : {}),
       });
 
       const res = await fetch(`/api/admin/products?${query.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
+        signal: controller.signal,
       });
       if (res.ok) {
         const data = await res.json();
@@ -101,12 +129,16 @@ export default function AdminProductsPage() {
         setTotalPages(data.pagination?.totalPages || 1);
         setTotalCount(data.pagination?.total || 0);
       }
-    } catch (e) {
-      console.error(e);
+    } catch (e: any) {
+      if (e?.name !== "AbortError") {
+        console.error(e);
+      }
     } finally {
-      setLoading(false);
+      if (fetchControllerRef.current === controller) {
+        setLoading(false);
+      }
     }
-  }
+  }, [user, page, debouncedSearch, selectedCategory, selectedStatus]);
 
   useEffect(() => {
     void loadCategories();
@@ -114,7 +146,15 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     void loadProducts();
-  }, [user, page, search, selectedCategory, selectedStatus]);
+  }, [loadProducts]);
+
+  useEffect(() => {
+    return () => {
+      if (fetchControllerRef.current) {
+        fetchControllerRef.current.abort();
+      }
+    };
+  }, []);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to permanently delete this product?")) return;
@@ -231,10 +271,7 @@ export default function AdminProductsPage() {
           <input
             type="text"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by title, SKU, description..."
             className="h-9 w-full rounded-lg border border-zinc-800 bg-zinc-900/60 pl-9 pr-3 text-xs text-white placeholder-zinc-500 outline-none focus:border-blue-500"
           />

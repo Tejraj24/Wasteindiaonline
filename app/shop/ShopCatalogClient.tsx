@@ -10,7 +10,7 @@ import { StorefrontProduct } from "@/lib/services/product.service";
 
 const editorialImages = [
   "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792927963/lepord_1_q03oy1.png",
-  "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=1800&q=85",
+  "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792930001/modern-heritage_xbx276.jpg",
   "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=1800&q=85",
 ];
 
@@ -348,7 +348,7 @@ export function ShopCatalogClient({
         </div>
       </section>
 
-      <section id="collection" className="px-6 pt-4 pb-20 sm:pt-6 md:pt-8 md:pb-32 md:px-12">
+      <section id="collection" className="px-6 pt-4 pb-0 sm:pt-6 md:pt-8 md:px-12">
 
         <div className="mb-10 mt-2 sm:mt-4 flex items-end justify-between gap-4 border-b border-brand-border pb-5 sm:mb-12">
           <div>
@@ -381,29 +381,12 @@ export function ShopCatalogClient({
         )}
       </section>
 
-      <section className="relative min-h-[75vh] overflow-hidden px-6 py-24 md:px-12 md:py-40">
+      <section className="relative w-full min-h-[75vh] overflow-hidden">
         <img
           src={editorialImages[1]}
           alt="Modern heritage editorial"
-          className="absolute inset-0 h-full w-full object-cover grayscale brightness-90"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="relative flex min-h-[50vh] flex-col justify-between md:min-h-[55vh]">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-white/80">
-            WASTE. / Editorial 001
-          </p>
-          <div>
-            <p className="font-editorial text-5xl leading-[0.85] tracking-[-0.06em] text-white md:text-8xl">
-              MODERN
-              <br />
-              <em className="font-editorial">HERITAGE</em>
-            </p>
-            <p className="mt-8 max-w-xs text-xs leading-6 text-white/75">
-              Crafted for the next generation. A study in proportion, material,
-              and memory.
-            </p>
-          </div>
-        </div>
       </section>
 
       {featuredPair.length > 0 && (
