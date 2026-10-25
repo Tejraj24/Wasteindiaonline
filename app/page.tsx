@@ -2,6 +2,7 @@ import { Hero } from "@/components/Hero";
 import { StackedProductCarousel } from "@/components/StackedProductCarousel";
 import { CategorySection } from "@/components/CategorySection";
 import { ObjectsOfExpressionHero } from "@/components/ObjectsOfExpressionHero";
+import { EditorialCollectionSection } from "@/components/EditorialCollectionSection";
 import { ProductGrid } from "@/components/ProductGrid";
 import { Gallery } from "@/components/Gallery";
 import { Footer } from "@/components/Footer";
@@ -47,6 +48,8 @@ export default async function Home() {
       */}
       {/* Objects of Expression — Editorial Streetwear Hero Showcase */}
       <ObjectsOfExpressionHero />
+      {/* Editorial Collection Showcase — Drop 02 */}
+      <EditorialCollectionSection />
       <ProductGrid products={resolvedFeaturedProducts.slice(0, 4)} />
       <Gallery items={homepageContent.carouselImages} />
       <Footer />

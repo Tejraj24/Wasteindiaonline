@@ -136,16 +136,23 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     <div className="w-full">
       {/* Navigation / Category Header */}
       <div className="mb-6 flex items-center justify-between">
-        <BackButton fallbackHref="/" label="Home" variant="default" />
-        <p className="text-[10px] uppercase tracking-[0.28em] text-brand-muted font-medium">WASTE. / Account</p>
+        <BackButton
+          fallbackHref="/"
+          label="Home"
+          variant="default"
+          className="text-white md:text-black hover:text-white/80 md:hover:text-black/80"
+        />
+        <p className="text-[10px] uppercase tracking-[0.28em] text-white md:text-black font-semibold font-medium">
+          WASTE. / Account
+        </p>
       </div>
 
       {/* Heading with constrained width for intentional line breaks */}
-      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-brand-black max-w-[280px]">
+      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-brand-black md:text-black max-w-[280px]">
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
 
-      <p className="mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed text-brand-muted">
+      <p className="mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed text-white md:text-black font-semibold">
         {mode === "login"
           ? "Continue to your WASTE. account."
           : "Create an account for a more considered way to shop."}
@@ -163,19 +170,23 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       {/* Form Fields */}
       <form onSubmit={submit} className="mt-8 space-y-5">
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.22em] text-brand-muted font-medium">Email</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-white md:text-black font-semibold font-medium">
+            Email
+          </span>
           <input
             required
             type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-brand-black outline-none transition-colors duration-200 placeholder:text-[#88857D] hover:border-brand-black/60 focus:border-brand-black"
-            placeholder="you@example.com"
+            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm font-semibold text-white md:text-black outline-none transition-colors duration-200 placeholder:font-semibold placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            placeholder="your@example.com"
           />
         </label>
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.22em] text-brand-muted font-medium">Password</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-white md:text-black font-semibold font-medium">
+            Password
+          </span>
           <input
             required
             minLength={6}
@@ -183,7 +194,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-brand-black outline-none transition-colors duration-200 placeholder:text-[#88857D] hover:border-brand-black/60 focus:border-brand-black"
+            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-white md:text-black outline-none transition-colors duration-200 placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
             placeholder="••••••••"
           />
         </label>
@@ -196,14 +207,14 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
         <button
           disabled={isSubmitting || !isConfigured}
-          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted flex items-center justify-center shadow-sm"
+          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm"
         >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
 
       {/* Divider */}
-      <div className="my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-brand-muted">
+      <div className="my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-white md:text-black font-semibold">
         <span className="h-px flex-1 bg-[#E4E1DA]" />
         <span>Or</span>
         <span className="h-px flex-1 bg-[#E4E1DA]" />
@@ -220,15 +231,18 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       </button>
 
       {/* Footer Links */}
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-brand-muted font-medium">
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-white md:text-black font-semibold font-medium">
         <Link
           href={mode === "login" ? "/signup" : "/login"}
-          className="transition-colors hover:text-brand-black"
+          className="transition-colors hover:text-white/80 md:hover:text-black"
         >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
         {mode === "login" && (
-          <Link href="/forgot-password" className="transition-colors hover:text-brand-black">
+          <Link
+            href="/forgot-password"
+            className="transition-colors hover:text-white/80 md:hover:text-black"
+          >
             Forgot password
           </Link>
         )}

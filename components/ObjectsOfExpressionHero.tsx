@@ -25,9 +25,9 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
         {/* Top Minimal Editorial Bar */}
         <div className="w-full flex items-center pb-3 border-b border-brand-border/60">
           <div className="flex items-center gap-4 text-[10px] lg:text-[11px] font-mono tracking-[0.26em] uppercase text-brand-muted">
-            <span className="font-medium text-brand-black">NEW COLLECTION</span>
+            <span className="font-semibold text-brand-black">WASTE - DROP - 01</span>
             <span className="w-8 h-[1px] bg-brand-border" aria-hidden="true" />
-            <span>VOL. 01</span>
+            <span className="text-[#48533F] font-medium">LIMITED RELEASE</span>
           </div>
         </div>
 
@@ -79,15 +79,15 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
           <div className="col-span-5 xl:col-span-5 h-full relative flex items-center justify-center min-h-0 px-2">
             {/* Subtle ambient floor depth */}
             <div
-              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-3/4 h-8 bg-black/[0.04] blur-xl rounded-full pointer-events-none"
+              className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[88%] h-8 bg-black/[0.04] blur-xl rounded-full pointer-events-none"
               aria-hidden="true"
             />
             {/* The Olive-Green T-Shirt Garment */}
-            <div className="relative w-full h-full max-h-[580px] lg:max-h-[660px] flex items-center justify-center">
+            <div className="relative w-full h-full max-h-[680px] lg:max-h-[770px] flex items-center justify-center">
               <img
                 src={greenTeeUrl}
                 alt="WASTE Olive Green Graphic Streetwear T-shirt"
-                className="w-full h-full object-contain object-center drop-shadow-[0_20px_35px_rgba(0,0,0,0.08)] transition-transform duration-700 ease-out hover:scale-[1.015]"
+                className="w-full h-full object-contain object-center drop-shadow-[0_20px_35px_rgba(0,0,0,0.08)] scale-[1.18] transition-transform duration-700 ease-out hover:scale-[1.20]"
                 loading="eager"
                 decoding="async"
               />
@@ -96,7 +96,7 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
 
           {/* ZONE C: Right Editorial Image Collage & Details (Col 10-12 / 9-12) */}
           <div className="col-span-3 xl:col-span-3 h-full flex items-center justify-end z-10">
-            <div className="relative flex flex-col items-end gap-5 max-w-[240px] xl:max-w-[270px] w-full">
+            <div className="relative flex flex-col items-end gap-5 max-w-[195px] xl:max-w-[220px] w-full">
               
               {/* Primary Collage Card: Focused Close-Up of Garment Artwork */}
               <div className="relative w-full aspect-[4/5] bg-brand-surface border border-brand-border/70 overflow-hidden shadow-[0_8px_24px_rgba(0,0,0,0.03)] group">
@@ -146,11 +146,11 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
         {/* Mobile Header Metadata */}
         <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.24em] uppercase text-brand-muted pb-3 border-b border-brand-border/60">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-brand-black">NEW COLLECTION</span>
+            <span className="font-medium text-brand-black">WASTE - dROP - 01</span>
             <span className="w-6 h-[1px] bg-brand-border" aria-hidden="true" />
-            <span>VOL. 01</span>
+            <span>LIMITED EDITION</span>
           </div>
-          <span>WASTE® IN</span>
+          <span>WASTE IN</span>
         </div>
 
         {/* Mobile Editorial Headline */}
@@ -163,9 +163,9 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
         </div>
 
         {/* Mobile Central Focal Garment */}
-        <div className="relative w-full h-[320px] sm:h-[380px] flex items-center justify-center my-2">
+        <div className="relative w-full h-[375px] sm:h-[445px] flex items-center justify-center my-2">
           <div
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 w-4/5 h-6 bg-black/[0.04] blur-lg rounded-full pointer-events-none"
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 w-[88%] h-6 bg-black/[0.04] blur-lg rounded-full pointer-events-none"
             aria-hidden="true"
           />
           <img
@@ -214,7 +214,7 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
 
           <div className="flex items-center">
             {/* Macro detail thumbnail */}
-            <div className="relative w-16 h-20 bg-brand-surface border border-brand-border/70 overflow-hidden flex-shrink-0">
+            <div className="relative w-[52px] h-[66px] bg-brand-surface border border-brand-border/70 overflow-hidden flex-shrink-0">
               <img
                 src={greenTeeUrl}
                 alt="Detail close-up"
