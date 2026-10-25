@@ -9,8 +9,6 @@ interface ObjectsOfExpressionHeroProps {
 export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionHeroProps) {
   const greenTeeUrl =
     "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792828909/waste-green-tshrit_gq4mwm.png";
-  const monochromeMoodUrl =
-    "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791881073/file_0000000073748211bf37ba309647258e.jpg_ajebtr.jpg";
 
   return (
     <section
@@ -115,27 +113,14 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
                 </div>
               </div>
 
-              {/* Secondary Subordinate Card & Caption Row */}
-              <div className="w-full flex items-end justify-between gap-4">
+              {/* Secondary Subordinate Caption Row */}
+              <div className="w-full flex items-end justify-start">
                 {/* Editorial Caption */}
                 <div className="font-mono text-[9px] xl:text-[10px] leading-[1.35] tracking-[0.22em] text-brand-muted uppercase flex flex-col">
                   <span>SAME</span>
                   <span>CHAOS</span>
                   <span>DIFFERENT</span>
                   <span className="text-brand-black font-semibold">FORM</span>
-                </div>
-
-                {/* Smaller Overlapping Monochrome Mood Shot */}
-                <div className="relative w-24 xl:w-28 aspect-[3/4] bg-brand-surface border border-brand-border/70 overflow-hidden shadow-sm flex-shrink-0 group">
-                  <img
-                    src={monochromeMoodUrl}
-                    alt="Monochrome archive editorial shot"
-                    className="w-full h-full object-cover grayscale contrast-110 transition-transform duration-700 group-hover:scale-105"
-                    loading="lazy"
-                  />
-                  <div className="absolute bottom-1 right-1.5 text-[8px] font-mono tracking-widest text-white/90 drop-shadow-sm uppercase">
-                    ARCHIVE
-                  </div>
                 </div>
               </div>
 
@@ -227,22 +212,13 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center">
             {/* Macro detail thumbnail */}
             <div className="relative w-16 h-20 bg-brand-surface border border-brand-border/70 overflow-hidden flex-shrink-0">
               <img
                 src={greenTeeUrl}
                 alt="Detail close-up"
                 className="w-full h-full object-cover object-[center_36%] scale-[2.4]"
-                loading="lazy"
-              />
-            </div>
-            {/* Monochrome archive thumbnail */}
-            <div className="relative w-16 h-20 bg-brand-surface border border-brand-border/70 overflow-hidden flex-shrink-0">
-              <img
-                src={monochromeMoodUrl}
-                alt="Monochrome archive"
-                className="w-full h-full object-cover grayscale"
                 loading="lazy"
               />
             </div>

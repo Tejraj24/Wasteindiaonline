@@ -134,14 +134,13 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
 
   // Dark hero top appearance applies to homepage campaign Hero or explicit dark theme
   const hasDarkHero = isHome || isDarkTheme;
-  const isWhiteText = hasDarkHero && !isScrolled;
-  const isTransparent = isWhiteText;
+  const isTransparent = hasDarkHero && !isScrolled;
 
-  const headerBgClass = isWhiteText
-    ? "bg-transparent text-white border-b border-transparent shadow-none"
+  const headerBgClass = isTransparent
+    ? "bg-transparent text-[#000000] border-b border-transparent shadow-none"
     : isScrolled
-    ? "bg-white/95 backdrop-blur-md text-brand-black border-b border-brand-border/60 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
-    : "bg-brand-bg/85 backdrop-blur-md text-brand-black border-b border-transparent shadow-none";
+    ? "bg-white/95 backdrop-blur-md text-[#000000] border-b border-brand-border/60 shadow-[0_1px_0_rgba(0,0,0,0.03)]"
+    : "bg-brand-bg/85 backdrop-blur-md text-[#000000] border-b border-transparent shadow-none";
 
   return (
     <header
@@ -154,9 +153,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
         <div className="flex items-center">
           <Link
             href="/"
-            className={`inline-flex min-h-11 items-center font-tenor text-xl font-normal uppercase tracking-[0.2em] select-none transition-colors duration-300 sm:text-2xl ${
-              isTransparent ? "text-white hover:text-white/80" : "text-brand-black hover:opacity-80"
-            }`}
+            className="inline-flex min-h-11 items-center font-tenor text-xl font-normal uppercase tracking-[0.2em] select-none text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8] sm:text-2xl"
             data-cursor="HOME"
             aria-label="WASTE homepage"
           >
@@ -170,9 +167,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
             <Link
               key={link.name}
               href={link.href}
-              className={`text-xs font-tenor font-medium tracking-widest relative py-2 transition-colors duration-300 ${
-                isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/85 hover:text-brand-black"
-              }`}
+              className="relative py-2 text-xs font-tenor font-medium tracking-widest text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8]"
             >
               {link.name}
             </Link>
@@ -184,9 +179,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           {/* Wishlist Link (Quick Access) */}
           <Link
             href="/account#wishlist"
-            className={`relative flex h-10 w-10 items-center justify-center transition-colors duration-300 ${
-              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
-            }`}
+            className="relative flex h-10 w-10 items-center justify-center text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8]"
             aria-label={`${wishlistItems.length} saved wishlist items`}
             data-cursor="WISHLIST"
           >
@@ -221,24 +214,20 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
                   router.push("/login");
                 }
               }}
-              className={`flex h-10 items-center justify-center gap-1.5 px-2 text-xs font-tenor tracking-wider transition-colors duration-300 ${
-                isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/85 hover:text-brand-black"
-              }`}
+              className="flex h-10 items-center justify-center gap-1.5 px-2 text-xs font-tenor tracking-wider text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8]"
               data-cursor="ACCOUNT"
               aria-label={user ? (isAdmin ? "Open admin menu" : "Open customer account menu") : "Sign in"}
               aria-expanded={user ? isProfileOpen : undefined}
               aria-haspopup={user ? "menu" : undefined}
             >
               {loading ? (
-                <span className={`h-4 w-4 animate-pulse rounded-full border ${isTransparent ? "border-white/30 bg-white/10" : "border-brand-black/30 bg-brand-black/10"}`} aria-label="Checking account status" />
+                <span className={`h-4 w-4 animate-pulse rounded-full border border-[#000000]/30 bg-[#000000]/10`} aria-label="Checking account status" />
               ) : user ? (
                 <>
                   <span className="hidden max-w-[6rem] truncate sm:inline text-xs font-tenor tracking-wider">
                     {isAdmin ? "ADMIN" : accountName}
                   </span>
-                  <span className={`flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full border text-[9px] leading-none transition-all duration-300 hover:scale-105 ${
-                    isTransparent ? "border-white/40 text-white" : "border-brand-border text-brand-black"
-                  }`}>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full border border-current text-[9px] leading-none transition-all duration-300 hover:scale-105">
                     {user.photoURL && !avatarImageFailed ? (
                       <img
                         src={user.photoURL}
@@ -346,9 +335,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           <button
             type="button"
             onClick={openCart}
-            className={`relative flex h-10 w-10 items-center justify-center transition-colors duration-300 ${
-              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
-            }`}
+            className="relative flex h-10 w-10 items-center justify-center text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8]"
             data-cursor="CART"
             aria-label={`Open cart (${itemCount} ${itemCount === 1 ? "item" : "items"})`}
             aria-haspopup="dialog"
@@ -370,9 +357,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
               <path d="M16 10a4 4 0 0 1-8 0" />
             </svg>
             {itemCount > 0 && (
-              <span className={`absolute top-1.5 right-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-medium leading-none transition-colors duration-300 ${
-                isTransparent ? "bg-white text-brand-black font-semibold" : "bg-brand-black text-white"
-              }`}>
+              <span className="absolute top-1.5 right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#000000] px-1 text-[9px] font-medium leading-none text-white transition-colors duration-300">
                 {itemCount}
               </span>
             )}
@@ -381,9 +366,7 @@ export function Header({ onOpenMenu, isDarkTheme = false }: HeaderProps) {
           {/* Mobile Fullscreen Menu Toggle (Hamburger) */}
           <button
             onClick={onOpenMenu}
-            className={`flex h-10 w-10 items-center justify-center transition-colors duration-300 lg:hidden ${
-              isTransparent ? "text-white/85 hover:text-white" : "text-brand-black/80 hover:text-brand-black"
-            }`}
+            className="flex h-10 w-10 items-center justify-center text-[#000000] transition-colors duration-300 ease-in-out hover:text-[#E8DCC8] lg:hidden"
             data-cursor="MENU"
             aria-label="Open menu"
           >
