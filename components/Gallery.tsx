@@ -87,7 +87,7 @@ export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
           <div
             key={`${item.id}-${idx}`}
             ref={(el) => { itemsRef.current[idx] = el; }}
-            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-brand-surfaceSubtle border border-brand-border shadow-sm flex-shrink-0 overflow-hidden transform-gpu"
+            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-transparent flex-shrink-0 overflow-hidden transform-gpu"
           >
             {item.mobileImage && item.mobileImage !== item.image ? (
               <picture className="absolute inset-0 w-full h-full">
