@@ -60,7 +60,14 @@ function resolveRedirectPath(role: UserRole, redirectParam: string | null): stri
   return "/";
 }
 
-export function AuthForm({ mode }: { mode: AuthMode }) {
+export function AuthForm({
+  mode,
+  isDarkTheme,
+}: {
+  mode: AuthMode;
+  isDarkTheme?: boolean;
+}) {
+  const isDark = isDarkTheme ?? (mode === "signup");
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get("redirect") || searchParams.get("next");
@@ -140,19 +147,35 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
           fallbackHref="/"
           label="Home"
           variant="default"
-          className="text-white md:text-black hover:text-white/80 md:hover:text-black/80"
+          className={
+            isDark
+              ? "text-white hover:text-white/80"
+              : "text-white md:text-black hover:text-white/80 md:hover:text-black/80"
+          }
         />
-        <p className="text-[10px] uppercase tracking-[0.28em] text-white md:text-black font-semibold font-medium">
+        <p
+          className={`text-[10px] uppercase tracking-[0.28em] font-semibold font-medium ${
+            isDark ? "text-white" : "text-white md:text-black"
+          }`}
+        >
           WASTE. / Account
         </p>
       </div>
 
       {/* Heading with constrained width for intentional line breaks */}
-      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-white md:text-black max-w-[280px]">
+      <h1
+        className={`mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] max-w-[280px] ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
 
-      <p className="mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed text-white md:text-black font-semibold">
+      <p
+        className={`mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed font-semibold ${
+          isDark ? "text-white/90" : "text-white md:text-black"
+        }`}
+      >
         {mode === "login"
           ? "Continue to your WASTE. account."
           : "Create an account for a more considered way to shop."}
@@ -170,7 +193,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       {/* Form Fields */}
       <form onSubmit={submit} className="mt-8 space-y-5">
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.22em] text-white md:text-black font-semibold font-medium">
+          <span
+            className={`text-[10px] uppercase tracking-[0.22em] font-semibold font-medium ${
+              isDark ? "text-white" : "text-white md:text-black"
+            }`}
+          >
             Email
           </span>
           <input
@@ -179,12 +206,20 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm font-semibold text-white md:text-black outline-none transition-colors duration-200 placeholder:font-semibold placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            className={`mt-1 h-12 w-full border-b bg-transparent px-0 py-2.5 text-sm font-semibold outline-none transition-colors duration-200 placeholder:font-semibold ${
+              isDark
+                ? "border-white/40 text-white placeholder:text-white/60 hover:border-white/70 focus:border-white"
+                : "border-[#C8C4BA] text-white md:text-black placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            }`}
             placeholder="your@example.com"
           />
         </label>
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.22em] text-white md:text-black font-semibold font-medium">
+          <span
+            className={`text-[10px] uppercase tracking-[0.22em] font-semibold font-medium ${
+              isDark ? "text-white" : "text-white md:text-black"
+            }`}
+          >
             Password
           </span>
           <input
@@ -194,7 +229,11 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-white md:text-black outline-none transition-colors duration-200 placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            className={`mt-1 h-12 w-full border-b bg-transparent px-0 py-2.5 text-sm outline-none transition-colors duration-200 ${
+              isDark
+                ? "border-white/40 text-white placeholder:text-white/60 hover:border-white/70 focus:border-white"
+                : "border-[#C8C4BA] text-white md:text-black placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            }`}
             placeholder="••••••••"
           />
         </label>
@@ -207,17 +246,23 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
         <button
           disabled={isSubmitting || !isConfigured}
-          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm border border-white/20 md:border-transparent"
+          className={`w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm border ${
+            isDark ? "border-white/40 hover:border-white" : "border-white/20 md:border-transparent"
+          }`}
         >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
 
       {/* Divider */}
-      <div className="my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-white md:text-black font-semibold">
-        <span className="h-px flex-1 bg-[#E4E1DA]" />
+      <div
+        className={`my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] font-semibold ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
+        <span className={`h-px flex-1 ${isDark ? "bg-white/30" : "bg-[#E4E1DA]"}`} />
         <span>Or</span>
-        <span className="h-px flex-1 bg-[#E4E1DA]" />
+        <span className={`h-px flex-1 ${isDark ? "bg-white/30" : "bg-[#E4E1DA]"}`} />
       </div>
 
       {/* Outlined Google Sign-In with matching height and geometry */}
@@ -231,17 +276,25 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       </button>
 
       {/* Footer Links */}
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-white md:text-black font-semibold font-medium">
+      <div
+        className={`mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] font-semibold font-medium ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
         <Link
           href={mode === "login" ? "/signup" : "/login"}
-          className="transition-colors hover:text-white/80 md:hover:text-black"
+          className={`transition-colors ${
+            isDark ? "hover:text-white/80" : "hover:text-white/80 md:hover:text-black"
+          }`}
         >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
         {mode === "login" && (
           <Link
             href="/forgot-password"
-            className="transition-colors hover:text-white/80 md:hover:text-black"
+            className={`transition-colors ${
+              isDark ? "hover:text-white/80" : "hover:text-white/80 md:hover:text-black"
+            }`}
           >
             Forgot password
           </Link>
