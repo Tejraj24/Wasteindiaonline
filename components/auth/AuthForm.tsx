@@ -148,7 +148,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
       </div>
 
       {/* Heading with constrained width for intentional line breaks */}
-      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-brand-black md:text-black max-w-[280px]">
+      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-white md:text-black max-w-[280px]">
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
 
@@ -207,7 +207,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
         <button
           disabled={isSubmitting || !isConfigured}
-          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm"
+          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm border border-white/20 md:border-transparent"
         >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
