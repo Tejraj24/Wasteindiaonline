@@ -29,6 +29,170 @@ export function generateMerchantOrderId(): string {
   return `WST-${timestamp}-${random}`;
 }
 
+export function generatePreorderNumber(): string {
+  const datePart = new Date().toISOString().slice(2, 10).replace(/-/g, "");
+  const random = Math.random().toString(36).substring(2, 7).toUpperCase();
+  return `PRE-${datePart}-${random}`;
+}
+
+export interface CreatePreorderParams {
+  customer: CheckoutCustomerData;
+  items: CheckoutItemPayload[];
+  userId?: string | null;
+}
+
+/**
+ * Creates a payment-free preorder, atomically persisting customer shipping details
+ * and line items in PostgreSQL with status PREORDER_RECEIVED and UNPAID.
+ *
+ * No payment gateway is invoked; authoritative prices are fetched from the database.
+ */
+export async function createPreorder(params: CreatePreorderParams): Promise<{
+  orderNumber: string;
+  orderId: string;
+  total: number;
+  itemsCount: number;
+}> {
+  if (!params.items || params.items.length === 0) {
+    throw new Error("INVALID_CART: Your shopping bag is empty.");
+  }
+
+  // 1. Authoritative product lookup from database
+  const productIds = Array.from(new Set(params.items.map((i) => i.productId)));
+  const dbProducts = await prisma.product.findMany({
+    where: {
+      id: { in: productIds },
+      status: "ACTIVE",
+    },
+    include: {
+      images: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
+  });
+
+  const productMap = new Map(dbProducts.map((p) => [p.id, p]));
+
+  for (const item of params.items) {
+    const prod = productMap.get(item.productId);
+    if (!prod) {
+      throw new Error("PRODUCT_UNAVAILABLE: One or more selected pieces are no longer active.");
+    }
+    if (item.quantity <= 0 || item.quantity > 5) {
+      throw new Error("INVALID_QUANTITY: Allowed quantity is 1 to 5 units per item.");
+    }
+  }
+
+  // 2. Server-side authoritative calculation
+  let subtotal = 0;
+  let maxReleaseDate: Date | null = null;
+
+  const verifiedItems = params.items.map((item) => {
+    const prod = productMap.get(item.productId)!;
+    const itemTotal = prod.price * item.quantity;
+    subtotal += itemTotal;
+
+    if (prod.releaseDate && (!maxReleaseDate || prod.releaseDate > maxReleaseDate)) {
+      maxReleaseDate = prod.releaseDate;
+    }
+
+    const firstImage = prod.images[0]?.imageUrl || prod.slug;
+
+    return {
+      productId: prod.id,
+      title: prod.name,
+      price: prod.price,
+      size: item.size || "M",
+      quantity: item.quantity,
+      isPreorder: true,
+      releaseDate: prod.releaseDate,
+      image: firstImage,
+    };
+  });
+
+  const shipping = 0; // Complimentary domestic delivery across India
+  const tax = 0;
+  const total = subtotal + shipping + tax;
+
+  const orderNumber = generatePreorderNumber();
+
+  // 3. Atomically persist preorder in database transaction
+  const newOrder = await prisma.$transaction(async (tx) => {
+    return tx.order.create({
+      data: {
+        orderNumber,
+        merchantOrderId: orderNumber,
+        userId: params.userId || null,
+        customerName: params.customer.name.trim(),
+        customerEmail: params.customer.email.trim().toLowerCase(),
+        customerPhone: params.customer.phone.trim(),
+        shippingAddress: {
+          addressLine1: params.customer.addressLine1.trim(),
+          addressLine2: (params.customer.addressLine2 || "").trim(),
+          city: params.customer.city.trim(),
+          state: params.customer.state.trim(),
+          pincode: params.customer.pincode.trim(),
+          country: "India",
+        },
+        subtotal,
+        shipping,
+        tax,
+        total,
+        paymentStatus: "UNPAID",
+        orderStatus: "PREORDER_RECEIVED",
+        isPreorder: true,
+        releaseDate: maxReleaseDate,
+        expiresAt: null,
+        capacityReserved: false,
+        items: {
+          create: verifiedItems.map((vi) => ({
+            productId: vi.productId,
+            title: vi.title,
+            size: vi.size,
+            quantity: vi.quantity,
+            price: vi.price,
+            image: vi.image,
+            isPreorder: true,
+            releaseDate: vi.releaseDate,
+          })),
+        },
+      },
+      include: {
+        items: true,
+      },
+    });
+  });
+
+  // 4. Asynchronously attempt confirmation email dispatch
+  void sendOrderConfirmationEmail({
+    orderNumber: newOrder.orderNumber,
+    customerName: newOrder.customerName || "Customer",
+    customerEmail: newOrder.customerEmail || "",
+    isPreorder: true,
+    releaseDate: newOrder.releaseDate,
+    items: newOrder.items,
+    subtotal: newOrder.subtotal,
+    shipping: newOrder.shipping,
+    total: newOrder.total,
+    shippingAddress: {
+      addressLine1: params.customer.addressLine1.trim(),
+      addressLine2: (params.customer.addressLine2 || "").trim(),
+      city: params.customer.city.trim(),
+      state: params.customer.state.trim(),
+      pincode: params.customer.pincode.trim(),
+    },
+  }).catch((err) => {
+    console.warn("[Preorder Confirmation Email Warning]", err);
+  });
+
+  return {
+    orderNumber: newOrder.orderNumber,
+    orderId: newOrder.id,
+    total: newOrder.total,
+    itemsCount: verifiedItems.length,
+  };
+}
+
 /**
  * Creates a pending order, atomically reserves preorder capacity / in-stock inventory,
  * and initiates a PhonePe PG V2 Standard Checkout session.

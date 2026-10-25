@@ -24,7 +24,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Order not found." }, { status: 404 });
     }
 
-    // If order is still PENDING, verify status with PhonePe PG API directly
+    // Payment-free preorder status: return immediately without payment gateway calls
+    if (order.orderStatus === "PREORDER_RECEIVED" || order.paymentStatus === "UNPAID") {
+      return NextResponse.json({
+        order,
+        verifiedState: "PREORDER_RECEIVED",
+      });
+    }
+
+    // If order is still PENDING, verify status with PhonePe PG API directly (legacy/future compatibility)
     if (order.paymentStatus === "PENDING" && order.merchantOrderId) {
       try {
         const { state, order: updated } = await reconcileOrderWithPhonePe(order.merchantOrderId);
@@ -44,7 +52,7 @@ export async function GET(req: NextRequest) {
   } catch (error: unknown) {
     console.error("[GET /api/orders/verify Error]", error);
     return NextResponse.json(
-      { error: "Failed to verify order payment status." },
+      { error: "Failed to verify order status." },
       { status: 500 }
     );
   }

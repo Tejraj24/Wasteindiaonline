@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken } from "@/lib/auth/admin";
-import { createCheckoutSession } from "@/lib/services/order.service";
+import { createPreorder } from "@/lib/services/order.service";
 
 export const dynamic = "force-dynamic";
 
@@ -63,10 +63,7 @@ export async function POST(req: NextRequest) {
       // Safe fallback: allow guest checkout if unauthenticated
     }
 
-    // Determine public redirect base URL
-    const origin = req.nextUrl.origin || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-    const session = await createCheckoutSession({
+    const preorder = await createPreorder({
       customer: {
         name: name.trim(),
         email: email.trim().toLowerCase(),
@@ -83,35 +80,28 @@ export async function POST(req: NextRequest) {
         quantity: Math.max(1, parseInt(String(i.quantity || 1), 10)),
       })),
       userId,
-      redirectBaseUrl: origin,
     });
 
     return NextResponse.json(
       {
         success: true,
-        redirectUrl: session.redirectUrl,
-        orderNumber: session.orderNumber,
+        orderNumber: preorder.orderNumber,
+        redirectUrl: `/checkout/result?orderNumber=${encodeURIComponent(preorder.orderNumber)}`,
       },
       { status: 201 }
     );
   } catch (error: unknown) {
-    console.error("[POST /api/orders Error]", error);
-    const message = error instanceof Error ? error.message : "Failed to process order";
+    const message = error instanceof Error ? error.message : "Failed to process preorder";
+    console.error("[POST /api/orders Error]", message);
 
-    if (message.includes("PREORDER_CAPACITY_EXCEEDED")) {
-      return NextResponse.json({ error: message.replace("PREORDER_CAPACITY_EXCEEDED: ", "") }, { status: 409 });
+    if (message.includes("PRODUCT_UNAVAILABLE")) {
+      return NextResponse.json({ error: "One or more selected pieces are no longer active." }, { status: 409 });
     }
-    if (message.includes("INSUFFICIENT_STOCK")) {
-      return NextResponse.json({ error: message.replace("INSUFFICIENT_STOCK: ", "") }, { status: 409 });
+    if (message.includes("INVALID_QUANTITY")) {
+      return NextResponse.json({ error: "Allowed quantity is 1 to 5 units per item." }, { status: 400 });
     }
-    if (message.includes("PHONEPE_CREDENTIALS_MISSING")) {
-      return NextResponse.json(
-        {
-          error:
-            "Payment Gateway is in sandbox setup mode. Please configure PhonePe sandbox credentials in server environment settings.",
-        },
-        { status: 503 }
-      );
+    if (message.includes("INVALID_CART")) {
+      return NextResponse.json({ error: "Your shopping bag is empty." }, { status: 400 });
     }
 
     return NextResponse.json({ error: message }, { status: 500 });

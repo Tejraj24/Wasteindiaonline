@@ -34,7 +34,6 @@ const ASSETS = {
   heroCampaign: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797220/Picsart_26-10-12_14-49-47-646_ic3wwd.png",
   silhouetteModel: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797197/file_000000005ed48208abf35f02392a64b3.jpg_ibwmtc.jpg",
   cultureModel: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791797163/Picsart_26-10-12_14-31-46-544_q6xzik.png",
-  founderPortrait: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792045424/Suryansh_usdrdt.jpg",
   closingCampaign: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924402/WhatsApp_Image_2026-10-01_at_12.17.13_PM_ihlf30.jpg",
   graphicDetail: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791911772/White_Art_of_Her2_jgatn3.png",
   hoodieStructure: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791933528/Waste_Black_Hoodie1_uzcz8v.png",
@@ -428,38 +427,15 @@ export default async function OurStoryPage() {
       {/* =========================================================================
           SECTION 5 — THE FOUNDER (MANDATORY & PROMINENT)
           “A Different Perspective.” — Authentic, emotional, verified founder section.
-          Features Suryansh Meena's portrait, real biography, handwritten note quote,
+          Features Suryansh Meena's leadership narrative, biography, handwritten note quote,
           and studio enquiry channel.
           ========================================================================= */}
       <section className="w-full border-b border-[#111111]/10 bg-[#FFFFFF] px-6 py-20 sm:px-8 sm:py-28 md:px-12 md:py-36">
         <div className="mx-auto max-w-[1600px]">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-start">
 
-            {/* Left Column: Authentic Founder Portrait (5 cols) */}
-            <div className="lg:col-span-5 flex flex-col items-center">
-              <div className="relative w-full max-w-md mx-auto">
-                {/* Photographic Print Paper Matting */}
-                <div className="bg-[#FAF8F5] p-3.5 sm:p-4 pb-6 sm:pb-8 border border-[#111111]/20 shadow-[0_20px_45px_-10px_rgba(0,0,0,0.12)]">
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-[#FFFFFF] border border-[#111111]/15">
-                    <img
-                      src={ASSETS.founderPortrait}
-                      alt="Suryansh Meena, Founder of WASTE"
-                      className="h-full w-full object-cover object-[center_20%] grayscale contrast-[1.12] brightness-[0.98]"
-                      loading="lazy"
-                    />
-                  </div>
-
-                  {/* Caption underneath portrait */}
-                  <div className="mt-4 pt-3 border-t border-[#111111]/15 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.24em] text-[#111111]">
-                    <span className="font-semibold">{BRAND_CONFIG.founder.name}</span>
-                    <span className="text-[#706E68]">{BRAND_CONFIG.founder.role}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Founder Narrative & Handwritten Note (7 cols) */}
-            <div className="lg:col-span-7 space-y-8 sm:space-y-10">
+            {/* Left Column: Leadership Header & Founder Dossier (5 cols) */}
+            <div className="lg:col-span-5 space-y-8 sm:space-y-10">
               <div className="space-y-3">
                 <div className="flex items-center gap-3 font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.28em] text-[#706E68]">
                   <span className="text-[#111111] font-semibold">04 // LEADERSHIP</span>
@@ -473,43 +449,67 @@ export default async function OurStoryPage() {
                 </h2>
               </div>
 
+              {/* Founder Credential Card */}
+              <div className="pt-6 sm:pt-8 border-t border-[#111111]/15 space-y-6">
+                <div className="space-y-1.5">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.26em] text-[#706E68] block">
+                    FOUNDER &amp; CREATIVE DIRECTION
+                  </span>
+                  <p className="font-editorial text-3xl sm:text-4xl text-[#111111] tracking-tight">
+                    {BRAND_CONFIG.founder.name}
+                  </p>
+                  <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#706E68]">
+                    {BRAND_CONFIG.founder.role} // STUDIO WASTE
+                  </p>
+                </div>
+
+                {/* Direct Studio Contact Channel */}
+                <div className="pt-6 border-t border-[#111111]/10 space-y-4 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
+                  <div>
+                    <span className="block text-[#111111] font-semibold">STUDIO ENQUIRIES</span>
+                    <a
+                      href={`mailto:${BRAND_CONFIG.founder.email}`}
+                      className="underline lowercase text-xs text-[#111111] hover:text-[#B89A62] transition-colors"
+                    >
+                      {BRAND_CONFIG.founder.email}
+                    </a>
+                  </div>
+                  <div>
+                    <span className="block text-[#111111] font-semibold">LOCATION</span>
+                    <span className="text-xs text-[#111111]">NEW JAIPUR, RAJASTHAN, INDIA 🇮🇳</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Founder Narrative & Handwritten Note (7 cols) */}
+            <div className="lg:col-span-7 space-y-8 sm:space-y-10">
               {/* Verified Founder Narrative */}
-              <div className="space-y-5 max-w-xl font-sans text-sm sm:text-base text-[#706E68] leading-relaxed">
-                <p className="text-[#111111] font-medium leading-relaxed">
-                  {BRAND_CONFIG.founder.bio}
-                </p>
-                <p>
-                  {BRAND_CONFIG.ourStory.paragraphs[0]}
-                </p>
-                <p>
-                  {BRAND_CONFIG.ourStory.paragraphs[1]}
-                </p>
+              <div className="space-y-5 font-sans text-sm sm:text-base text-[#706E68] leading-relaxed">
+                <div className="border-l-2 border-[#111111] pl-5 sm:pl-6 py-1">
+                  <p className="text-base sm:text-lg text-[#111111] font-medium leading-relaxed">
+                    {BRAND_CONFIG.founder.bio}
+                  </p>
+                </div>
+
+                <div className="space-y-4 pt-2">
+                  <p>
+                    {BRAND_CONFIG.ourStory.paragraphs[0]}
+                  </p>
+                  <p>
+                    {BRAND_CONFIG.ourStory.paragraphs[1]}
+                  </p>
+                </div>
               </div>
 
               {/* Handwritten Note Callout */}
-              <div className="border-l-2 border-[#111111] pl-6 py-2 bg-[#FAF8F5] p-6 max-w-xl border border-r-0 border-y-0 shadow-sm">
+              <div className="bg-[#FAF8F5] p-6 sm:p-8 border border-[#111111]/15 shadow-sm space-y-3">
                 <p className="font-reenie text-3xl sm:text-4xl text-[#111111] leading-tight select-none">
                   &ldquo;Wear what you feel. Stand out rather than fit in.&rdquo;
                 </p>
-                <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
-                  — {BRAND_CONFIG.founder.name}, NEW JAIPUR
-                </p>
-              </div>
-
-              {/* Direct Studio Contact Channel */}
-              <div className="pt-2 flex flex-wrap items-center gap-6 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
-                <div>
-                  <span className="block text-[#111111] font-semibold">STUDIO ENQUIRIES</span>
-                  <a
-                    href={`mailto:${BRAND_CONFIG.founder.email}`}
-                    className="underline lowercase text-xs text-[#111111] hover:text-[#B89A62] transition-colors"
-                  >
-                    {BRAND_CONFIG.founder.email}
-                  </a>
-                </div>
-                <div className="border-l border-[#111111]/15 pl-6">
-                  <span className="block text-[#111111] font-semibold">LOCATION</span>
-                  <span className="text-xs text-[#111111]">NEW JAIPUR, INDIA 🇮🇳</span>
+                <div className="pt-3 border-t border-[#111111]/10 flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] uppercase tracking-[0.22em] text-[#706E68]">
+                  <span className="text-[#111111] font-semibold">— {BRAND_CONFIG.founder.name}</span>
+                  <span>NEW JAIPUR // 2024</span>
                 </div>
               </div>
             </div>
