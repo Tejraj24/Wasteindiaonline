@@ -315,7 +315,7 @@ export default function AdminSettingsPage() {
                 type="url"
                 value={form.twitter}
                 onChange={(e) => setForm({ ...form, twitter: e.target.value })}
-                placeholder="https://x.com/wasteindia"
+                placeholder="https://x.com/WasteIndiaa"
                 className="h-10 w-full rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 text-xs text-white placeholder-zinc-500 outline-none focus:border-blue-500"
               />
             </div>
