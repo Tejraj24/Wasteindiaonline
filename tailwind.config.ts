@@ -26,6 +26,7 @@ const config: Config = {
         }
       },
       fontFamily: {
+        instrument: ["'Instrument Serif'", "Georgia", "serif"],
         serif: ["var(--font-cormorant)", "'Cormorant Garamond'", "var(--font-instrument-serif)", "Instrument Serif", "Georgia", "serif"],
         sans: ["var(--font-inter)", "Inter", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
         tenor: ["var(--font-tenor-sans)", "'Tenor Sans'", "Tenor Sans Fallback", "Arial", "sans-serif"],

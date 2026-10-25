@@ -163,11 +163,11 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <p className="mt-4 text-2xl font-bold tracking-tight text-white">
-            {stats ? formatPrice(stats.totalRevenue) : formatPrice(63870)}
+            {stats ? formatPrice(stats.totalRevenue) : "—"}
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.revenueChange || "+100%"}</span>
+            <span className="font-semibold">{stats?.revenueChange || "—"}</span>
             <span className="text-zinc-500">vs last month</span>
           </div>
         </div>
@@ -181,11 +181,11 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <p className="mt-4 text-2xl font-bold tracking-tight text-white">
-            {stats ? stats.totalOrders.toLocaleString() : "43"}
+            {stats ? stats.totalOrders.toLocaleString() : "—"}
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.ordersChange || "+100%"}</span>
+            <span className="font-semibold">{stats?.ordersChange || "—"}</span>
             <span className="text-zinc-500">vs last month</span>
           </div>
         </div>
@@ -199,11 +199,11 @@ export default function AdminDashboardPage() {
             </div>
           </div>
           <p className="mt-4 text-2xl font-bold tracking-tight text-white">
-            {stats ? stats.totalCustomers.toLocaleString() : "39"}
+            {stats ? stats.totalCustomers.toLocaleString() : "—"}
           </p>
           <div className="mt-2 flex items-center gap-1.5 text-xs text-purple-400">
             <TrendingUp className="h-3.5 w-3.5" />
-            <span className="font-semibold">{stats?.customersChange || "+100%"}</span>
+            <span className="font-semibold">{stats?.customersChange || "—"}</span>
             <span className="text-zinc-500">vs last month</span>
           </div>
         </div>

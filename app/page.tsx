@@ -53,7 +53,7 @@ export default async function Home() {
       {/* Editorial Collection Showcase — Drop 02 */}
       <EditorialCollectionSection />
       <ProductGrid products={resolvedFeaturedProducts.slice(0, 4)} />
-      <Gallery items={homepageContent.carouselImages} />
+      <Gallery items={homepageContent.carouselImages} title="Luxe Art Work" />
       <Footer />
     </div>
   );

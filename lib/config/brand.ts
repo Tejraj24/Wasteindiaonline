@@ -78,7 +78,7 @@ export const BRAND_CONFIG: BrandConfig = {
     role: "Founder",
     bio: "Suryansh Meena is the founder of WASTE, an Indian streetwear brand founded in 2024. With a vision to create a distinctive Indian fashion label, he leads WASTE with a focus on creativity, individuality and modern streetwear culture.",
     email: "suryanshmeena.in@gmail.com",
-    portraitUrl: null, // Verified portrait asset of Suryansh Meena to be supplied before launch
+    portraitUrl: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792962916/FOUNDER-S_ezqclt.jpg",
   },
 
   about: {

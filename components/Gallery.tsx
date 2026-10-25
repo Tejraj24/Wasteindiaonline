@@ -8,9 +8,13 @@ import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/con
 
 interface GalleryProps {
   items?: CarouselSlideContent[];
+  title?: string;
 }
 
-export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
+export function Gallery({
+  items = DEFAULT_CAROUSEL_ITEMS,
+  title = "Luxe Art Work",
+}: GalleryProps) {
   const activeItems = items && items.length > 0 ? items : DEFAULT_CAROUSEL_ITEMS;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -72,9 +76,9 @@ export function Gallery({ items = DEFAULT_CAROUSEL_ITEMS }: GalleryProps) {
       className="py-24 bg-brand-bg text-brand-black border-t border-brand-border overflow-hidden cursor-grab active:cursor-grabbing"
       data-cursor="DRAG"
     >
-      <div className="px-4 md:px-8 mb-12 flex justify-between items-end">
-        <h2 className="font-tenor text-[clamp(1.5rem,3.8vw,2.75rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
-          ARCHIVE
+      <div className="px-4 md:px-8 mb-12 flex justify-center items-center text-center">
+        <h2 className="font-helvetica text-[clamp(1.5rem,3.8vw,2.75rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+          {title}
         </h2>
       </div>
 

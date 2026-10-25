@@ -4,19 +4,44 @@ import { requireAdminAuth } from "@/lib/auth/admin";
 
 export const dynamic = "force-dynamic";
 
+function calculateChange(current: number, previous: number): string {
+  if (previous === 0) {
+    return current > 0 ? "+100%" : "0%";
+  }
+  const diff = ((current - previous) / previous) * 100;
+  const sign = diff >= 0 ? "+" : "";
+  return `${sign}${diff.toFixed(1)}%`;
+}
+
 export async function GET(req: Request) {
   try {
     await requireAdminAuth(req);
 
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    const sevenDaysAgo = new Date(now);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
     const [
-      _dbTotalOrders,
+      totalOrders,
       paidOrders,
-      _dbTotalCustomers,
+      totalCustomers,
       totalProducts,
       recentOrders,
       lowStockProducts,
       latestCustomers,
+      thisMonthOrdersCount,
+      lastMonthOrdersCount,
+      thisMonthRevenueAgg,
+      lastMonthRevenueAgg,
+      thisMonthCustomersCount,
+      lastMonthCustomersCount,
+      recentSevenDaysOrders,
     ] = await Promise.all([
+      // Real live counts from database
       prisma.order.count(),
       prisma.order.aggregate({
         _sum: { total: true },
@@ -44,29 +69,74 @@ export async function GET(req: Request) {
           },
         },
       }),
+      // Real Month-over-Month comparison metrics
+      prisma.order.count({
+        where: { createdAt: { gte: currentMonthStart } },
+      }),
+      prisma.order.count({
+        where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+      }),
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: {
+          paymentStatus: { in: ["PAID", "CONFIRMED"] },
+          createdAt: { gte: currentMonthStart },
+        },
+      }),
+      prisma.order.aggregate({
+        _sum: { total: true },
+        where: {
+          paymentStatus: { in: ["PAID", "CONFIRMED"] },
+          createdAt: { gte: lastMonthStart, lte: lastMonthEnd },
+        },
+      }),
+      prisma.user.count({
+        where: { createdAt: { gte: currentMonthStart } },
+      }),
+      prisma.user.count({
+        where: { createdAt: { gte: lastMonthStart, lte: lastMonthEnd } },
+      }),
+      // Real 7-day orders for chart
+      prisma.order.findMany({
+        where: { createdAt: { gte: sevenDaysAgo } },
+        select: {
+          total: true,
+          paymentStatus: true,
+          createdAt: true,
+        },
+      }),
     ]);
 
-    // Admin dashboard KPI metrics
-    const totalRevenue = 63870;
-    const totalOrders = 43;
-    const totalCustomers = 39;
+    const totalRevenue = paidOrders._sum.total || 0;
+    const thisMonthRevenue = thisMonthRevenueAgg._sum.total || 0;
+    const lastMonthRevenue = lastMonthRevenueAgg._sum.total || 0;
 
-    // Generate last 7 days sales data for chart
-    const days = 7;
+    const revenueChange = calculateChange(thisMonthRevenue, lastMonthRevenue);
+    const ordersChange = calculateChange(thisMonthOrdersCount, lastMonthOrdersCount);
+    const customersChange = calculateChange(thisMonthCustomersCount, lastMonthCustomersCount);
+
+    // Build real 7-day sales overview from actual database orders
     const salesOverview = [];
-    const now = new Date();
-    for (let i = days - 1; i >= 0; i--) {
+    for (let i = 6; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
-      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59);
+      const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0);
+      const dayEnd = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
+      const dayOrders = recentSevenDaysOrders.filter(
+        (o) => o.createdAt >= dayStart && o.createdAt <= dayEnd
+      );
+      const dayPaidOrders = dayOrders.filter((o) =>
+        ["PAID", "CONFIRMED"].includes(o.paymentStatus)
+      );
+      const daySales = dayPaidOrders.reduce((sum, o) => sum + o.total, 0);
 
       salesOverview.push({
         day: dayName,
         date: dayStart.toISOString().split("T")[0],
-        sales: Math.floor(Math.random() * 4500) + 1500, // baseline visual mock blended with actual
-        orders: Math.floor(Math.random() * 4) + 1,
+        sales: daySales,
+        orders: dayOrders.length,
       });
     }
 
@@ -76,9 +146,9 @@ export async function GET(req: Request) {
         totalOrders,
         totalCustomers,
         totalProducts,
-        revenueChange: "+100%",
-        ordersChange: "+100%",
-        customersChange: "+100%",
+        revenueChange,
+        ordersChange,
+        customersChange,
         productsActive: totalProducts,
       },
       salesOverview,
