@@ -17,8 +17,18 @@ function firebaseErrorMessage(error: unknown) {
     }
     if (code.includes("email-already-in-use")) return "An account already exists for this email.";
     if (code.includes("weak-password")) return "Choose a stronger password.";
-    if (code.includes("popup-closed-by-user")) return "Google sign-in was cancelled.";
+    if (
+      code.includes("popup-closed-by-user") ||
+      code.includes("cancelled-popup-request") ||
+      code.includes("user-cancelled") ||
+      code.includes("redirect-cancelled-by-user")
+    ) {
+      return "Google sign-in was cancelled.";
+    }
     if (code.includes("popup-blocked")) return "Your browser blocked the Google sign-in window.";
+    if (code.includes("unauthorized-domain")) {
+      return "This domain is not authorized for Google Sign-In in Firebase Console.";
+    }
     if (
       code.includes("provider-already-linked") ||
       code.includes("account-exists-with-different-credential") ||
@@ -54,16 +64,36 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirectParam = searchParams.get("redirect") || searchParams.get("next");
-  const { user, role, loading, login, signUp, signInWithGoogle, isConfigured } = useAuth();
+  const { user, role, loading, login, signUp, signInWithGoogle, isConfigured, authError, clearAuthError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Surface auth errors returned from redirect resolution (e.g. mobile return or popup cancellation)
+  useEffect(() => {
+    if (authError) {
+      setError(firebaseErrorMessage({ code: authError }));
+      clearAuthError();
+    }
+  }, [authError, clearAuthError]);
+
   // If user is already authenticated when visiting /login or /signup
   useEffect(() => {
     if (!loading && user) {
-      const destination = resolveRedirectPath(role, redirectParam);
+      let targetDestination = redirectParam;
+      if (!targetDestination && typeof window !== "undefined") {
+        try {
+          targetDestination = sessionStorage.getItem("waste_auth_redirect_target");
+          sessionStorage.removeItem("waste_auth_redirect_target");
+        } catch {}
+      }
+      const destination = resolveRedirectPath(role, targetDestination);
+      console.log("[Auth Diagnostic] AuthForm navigating authenticated user:", {
+        destination,
+        role,
+        uid: user.uid,
+      });
       router.replace(destination);
     }
   }, [loading, user, role, redirectParam, router]);
@@ -92,7 +122,7 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     setError("");
     setIsSubmitting(true);
     try {
-      const result = await signInWithGoogle();
+      const result = await signInWithGoogle(redirectParam);
       const destination = resolveRedirectPath(result.role, redirectParam);
       router.replace(destination);
     } catch (authError) {
@@ -103,15 +133,19 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   }
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full">
+      {/* Navigation / Category Header */}
       <div className="mb-6 flex items-center justify-between">
         <BackButton fallbackHref="/" label="Home" variant="default" />
-        <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">WASTE. / Account</p>
+        <p className="text-[10px] uppercase tracking-[0.28em] text-brand-muted font-medium">WASTE. / Account</p>
       </div>
-      <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em] text-brand-black">
+
+      {/* Heading with constrained width for intentional line breaks */}
+      <h1 className="mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] text-brand-black max-w-[280px]">
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
-      <p className="mt-8 max-w-sm text-sm leading-6 text-brand-muted">
+
+      <p className="mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed text-brand-muted">
         {mode === "login"
           ? "Continue to your WASTE. account."
           : "Create an account for a more considered way to shop."}
@@ -119,28 +153,29 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
 
       {!isConfigured && (
         <p
-          className="mt-8 border border-amber-300 bg-amber-50 p-4 text-xs leading-5 text-amber-900"
+          className="mt-6 border border-amber-300 bg-amber-50/90 p-4 text-xs leading-5 text-amber-900 rounded-[3px]"
           role="alert"
         >
           Authentication is not configured yet. Add the Firebase environment variables before using this form.
         </p>
       )}
 
-      <form onSubmit={submit} className="mt-10 space-y-5">
+      {/* Form Fields */}
+      <form onSubmit={submit} className="mt-8 space-y-5">
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Email</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-brand-muted font-medium">Email</span>
           <input
             required
             type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black outline-none transition placeholder:text-brand-muted/40 focus:border-brand-black"
+            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-brand-black outline-none transition-colors duration-200 placeholder:text-[#88857D] hover:border-brand-black/60 focus:border-brand-black"
             placeholder="you@example.com"
           />
         </label>
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">Password</span>
+          <span className="text-[10px] uppercase tracking-[0.22em] text-brand-muted font-medium">Password</span>
           <input
             required
             minLength={6}
@@ -148,47 +183,52 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-brand-border bg-transparent px-0 text-sm text-brand-black outline-none transition placeholder:text-brand-muted/40 focus:border-brand-black"
+            className="mt-1 h-12 w-full border-b border-[#C8C4BA] bg-transparent px-0 py-2.5 text-sm text-brand-black outline-none transition-colors duration-200 placeholder:text-[#88857D] hover:border-brand-black/60 focus:border-brand-black"
             placeholder="••••••••"
           />
         </label>
+
         {error && (
-          <p className="text-sm text-red-600" role="alert">
+          <p className="text-xs text-red-600 bg-red-50/90 border-l-2 border-red-600 px-3 py-2 leading-relaxed rounded-[2px]" role="alert">
             {error}
           </p>
         )}
+
         <button
           disabled={isSubmitting || !isConfigured}
-          className="w-full bg-brand-black py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:bg-brand-black/90 disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted"
+          className="w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-brand-muted flex items-center justify-center shadow-sm"
         >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
 
-      <div className="my-7 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-brand-muted">
-        <span className="h-px flex-1 bg-brand-border" />
+      {/* Divider */}
+      <div className="my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-brand-muted">
+        <span className="h-px flex-1 bg-[#E4E1DA]" />
         <span>Or</span>
-        <span className="h-px flex-1 bg-brand-border" />
+        <span className="h-px flex-1 bg-[#E4E1DA]" />
       </div>
 
+      {/* Outlined Google Sign-In with matching height and geometry */}
       <button
         type="button"
         onClick={googleSignIn}
         disabled={isSubmitting || !isConfigured}
-        className="w-full border border-brand-border bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-black shadow-sm transition hover:border-brand-black hover:bg-brand-surfaceSubtle disabled:cursor-not-allowed disabled:opacity-40"
+        className="w-full h-12 rounded-[4px] border border-[#D0CCC3] bg-white/95 py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-black shadow-sm transition-all duration-200 hover:border-brand-black hover:bg-white active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 flex items-center justify-center"
       >
         Continue with Google
       </button>
 
-      <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-brand-muted">
+      {/* Footer Links */}
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-brand-muted font-medium">
         <Link
           href={mode === "login" ? "/signup" : "/login"}
-          className="transition hover:text-brand-black"
+          className="transition-colors hover:text-brand-black"
         >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
         {mode === "login" && (
-          <Link href="/forgot-password" className="transition hover:text-brand-black">
+          <Link href="/forgot-password" className="transition-colors hover:text-brand-black">
             Forgot password
           </Link>
         )}
