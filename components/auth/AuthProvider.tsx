@@ -270,57 +270,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const isLocalhost =
           typeof window !== "undefined" &&
-          (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+          (window.location.hostname === "localhost" ||
+           window.location.hostname === "127.0.0.1" ||
+           window.location.hostname.endsWith(".localhost"));
 
         const isMobileDevice =
           typeof window !== "undefined" &&
           /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+        const currentAuthDomain = auth.config.authDomain || "wasteindia.firebaseapp.com";
+        const expectedRedirectUri = `https://${currentAuthDomain}/__/auth/handler`;
+
         console.log("[Auth Diagnostic] signInWithGoogle initiated:", {
           isLocalhost,
           isMobileDevice,
           pathname: typeof window !== "undefined" ? window.location.pathname : "SSR",
-          authDomain: auth.config.authDomain,
+          authDomain: currentAuthDomain,
+          expectedOAuthRedirectUri: expectedRedirectUri,
         });
 
-        // On localhost, always use popup to prevent cross-origin iframe storage blocks with Firebase upstream
-        if (isLocalhost) {
-          console.log("[Auth Diagnostic] Using signInWithPopup for local development");
-          const result = await signInWithPopup(auth, provider);
-          await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
-          const resolvedRole = await fetchUserRole(result.user);
-          return { user: result.user, role: resolvedRole };
-        }
-
-        // On mobile devices in production, initiate signInWithRedirect using the first-party proxy
-        if (isMobileDevice) {
-          console.log("[Auth Diagnostic] Initiating signInWithRedirect for mobile device");
-          try {
-            sessionStorage.setItem("waste_auth_pending_redirect", "true");
-            sessionStorage.setItem("waste_auth_redirect_time", String(Date.now()));
-            if (customRedirectTarget) {
-              sessionStorage.setItem("waste_auth_redirect_target", customRedirectTarget);
-            }
-          } catch {}
-          await signInWithRedirect(auth, provider);
-          // Return pending promise as browser navigates to identity provider
-          return new Promise<{ user: User; role: UserRole }>(() => {});
-        }
-
-        console.log("[Auth Diagnostic] Initiating signInWithPopup for desktop device");
+        // Attempt signInWithPopup first across all platforms (localhost, desktop, and mobile)
+        // Popups communicate via postMessage and are naturally immune to third-party storage partitioning
         try {
+          console.log("[Auth Diagnostic] Initiating signInWithPopup");
           const result = await signInWithPopup(auth, provider);
+          console.log("[Auth Diagnostic] signInWithPopup succeeded for user:", result.user.uid);
           await ensureUserProfile(result.user.uid, result.user.email ?? "", result.user.displayName ?? "");
           const resolvedRole = await fetchUserRole(result.user);
           return { user: result.user, role: resolvedRole };
         } catch (popupError: any) {
-          console.warn("[Auth Diagnostic] Desktop popup sign-in failed with code:", popupError?.code);
-          // Fallback to redirect only if popup was blocked or unsupported
+          console.warn("[Auth Diagnostic] signInWithPopup ended with code:", popupError?.code);
+
+          // If popup is blocked by strict browser policy / in-app webview, fall back to redirect
           if (
             popupError?.code === "auth/popup-blocked" ||
             popupError?.code === "auth/cancelled-popup-request"
           ) {
-            console.log("[Auth Diagnostic] Popup blocked. Falling back to signInWithRedirect");
+            console.log("[Auth Diagnostic] Popup was blocked. Falling back to signInWithRedirect");
             try {
               sessionStorage.setItem("waste_auth_pending_redirect", "true");
               sessionStorage.setItem("waste_auth_redirect_time", String(Date.now()));
@@ -331,6 +317,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             await signInWithRedirect(auth, provider);
             return new Promise<{ user: User; role: UserRole }>(() => {});
           }
+
           throw popupError;
         }
       },

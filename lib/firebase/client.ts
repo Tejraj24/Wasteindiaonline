@@ -2,26 +2,10 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-function getEffectiveAuthDomain(): string {
-  if (typeof window !== "undefined") {
-    const host = window.location.host;
-    // When running on the deployed production domain (www.wasteluxe.in / wasteluxe.in),
-    // route Firebase Auth requests through the canonical first-party Next.js reverse proxy (/__/auth/*).
-    // This allows first-party storage access on iOS Safari and mobile Chrome for signInWithRedirect,
-    // eliminating the null credential return caused by third-party cookie/storage partitioning.
-    if (host === "wasteluxe.in" || host === "www.wasteluxe.in") {
-      return "www.wasteluxe.in";
-    }
-    if (host && !host.startsWith("localhost") && !host.startsWith("127.0.0.1")) {
-      return host;
-    }
-  }
-  return process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "wasteindia.firebaseapp.com";
-}
-
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: getEffectiveAuthDomain(),
+  authDomain:
+    process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "wasteindia.firebaseapp.com",
   projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
   storageBucket:
     process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
