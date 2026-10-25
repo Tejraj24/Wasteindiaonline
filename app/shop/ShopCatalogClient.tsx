@@ -413,22 +413,24 @@ export function ShopCatalogClient({
 
       <section
         id="story"
-        className="border-t border-brand-border bg-brand-bg px-6 py-28 text-brand-black md:px-12 md:py-48"
+        className="w-full border-t border-brand-border bg-brand-bg flex items-center justify-center"
       >
-        <div className="grid gap-12 md:grid-cols-[1fr_1.3fr] md:gap-24">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
-            The WASTE. point of view
-          </p>
-          <div>
-            <h2 className="max-w-4xl font-editorial text-6xl leading-[0.82] tracking-[-0.06em] text-brand-black md:text-9xl">
-              A modern expression of heritage
-            </h2>
-            <p className="mt-12 max-w-md text-sm leading-7 text-brand-muted">
-              WASTE merges contemporary silhouettes with timeless inspiration.
-              Each piece is considered, collected, and made to live beyond a
-              season.
-            </p>
-          </div>
+        <div className="relative w-full aspect-video flex items-center justify-center bg-brand-bg">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="metadata"
+            poster="https://res.cloudinary.com/dom7a6zlx/video/upload/v1792942409/modern-video_vgvddh.jpg"
+            className="w-full h-full object-contain pointer-events-none select-none"
+            aria-hidden="true"
+          >
+            <source
+              src="https://res.cloudinary.com/dom7a6zlx/video/upload/v1792942409/modern-video_vgvddh.mp4"
+              type="video/mp4"
+            />
+          </video>
         </div>
       </section>
 
