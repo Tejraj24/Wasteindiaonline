@@ -348,27 +348,9 @@ export function ShopCatalogClient({
         </div>
       </section>
 
-      <section id="collection" className="px-6 py-20 md:px-12 md:py-32">
-        <div className="sticky top-0 z-30 -mx-6 overflow-hidden border-y border-brand-border bg-brand-bg/95 px-6 py-4 backdrop-blur-md md:-mx-12 md:px-12">
-          <div className="flex gap-3 sm:gap-4 overflow-x-auto whitespace-nowrap [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            {filterList.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setActiveFilter(filter)}
-                className={`relative shrink-0 rounded-full border px-4 py-2 text-[10px] uppercase tracking-[0.22em] shadow-sm transition-colors ${
-                  activeFilter === filter
-                    ? "border-brand-black bg-brand-black text-white"
-                    : "border-brand-border bg-white text-brand-muted hover:border-brand-black hover:text-brand-black"
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-        </div>
+      <section id="collection" className="px-6 pt-4 pb-20 sm:pt-6 md:pt-8 md:pb-32 md:px-12">
 
-        <div className="mb-10 mt-14 flex items-end justify-between gap-4 border-b border-brand-border pb-5 sm:mb-12 sm:mt-20">
+        <div className="mb-10 mt-2 sm:mt-4 flex items-end justify-between gap-4 border-b border-brand-border pb-5 sm:mb-12">
           <div>
             <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
               WASTE. / Archive
