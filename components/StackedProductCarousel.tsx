@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback, useMemo } from "react"
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { StorefrontProduct } from "@/lib/services/product.service";
+import { WishlistButton } from "@/components/WishlistButton";
 import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/content.service";
 
 interface StackedProductCarouselProps {
@@ -290,7 +291,6 @@ export function StackedProductCarousel({
         zIndex: 30,
         pointerEvents: "auto" as const,
         visibility: "visible" as const,
-        filter: "brightness(1) contrast(1.02)",
       };
     }
 
@@ -334,7 +334,6 @@ export function StackedProductCarousel({
         zIndex: 20,
         pointerEvents: "auto" as const,
         visibility: "visible" as const,
-        filter: "brightness(0.65) grayscale(0.2)",
         cursor: "pointer",
       };
     }
@@ -352,7 +351,6 @@ export function StackedProductCarousel({
       zIndex: 10,
       pointerEvents: "auto" as const,
       visibility: "visible" as const,
-      filter: "brightness(0.4) grayscale(0.4)",
       cursor: "pointer",
     };
   };
@@ -410,47 +408,38 @@ export function StackedProductCarousel({
             const fallbackImage =
               "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791887490/file_000000006cb88208b63fe025ad85bfcc_zham6r.png";
 
-            // Resolve matching silhouette by stable slot ID (1-based), product ID/slot, or array index
-            const targetSlotId = index + 1;
-            const matchingSilhouette =
-              silhouettes?.find(
-                (s) =>
-                  s.id === targetSlotId ||
-                  (s as any).slot === targetSlotId ||
-                  String(s.id) === String(product.id) ||
-                  (s as any).productId === product.id
-              ) || silhouettes?.[index];
-
-            const defaultSilhouette =
-              DEFAULT_CAROUSEL_ITEMS.find((d) => d.id === matchingSilhouette?.id) ||
-              DEFAULT_CAROUSEL_ITEMS[index];
-
-            const hasAdminSilhouetteOverride = Boolean(
-              matchingSilhouette?.image &&
-                (
-                  matchingSilhouette.isCustom === true ||
-                  (defaultSilhouette && matchingSilhouette.image !== defaultSilhouette.image)
-                )
-            );
-
-            // Strict Priority Order for 2024 DROP // THE 3D LOOKBOOK — FEATURED SILHOUETTES:
-            // 1. Explicitly saved admin override for this carousel card/slot
-            // 2. Existing default image used by this carousel item
-            // 3. Existing fallback image
-            const adminCardOverride1 =
-              product.carouselOverride1 ||
+            // Stable Product ID Image Resolution (matches Admin Section B /admin/content):
+            // 1. Explicit admin override saved for this specific product ID
+            // 2. Authoritative catalog product photo from database
+            // 3. Default fallback image
+            const adminOverride1 =
               overrides?.[product.id]?.image1 ||
-              overrides?.[`slot-${targetSlotId}`]?.image1 ||
-              (hasAdminSilhouetteOverride ? matchingSilhouette?.image : undefined);
+              product.carouselOverride1 ||
+              product.adminProductOverride1;
 
-            const existingDefaultImage =
+            const catalogDefaultImage =
               (product.images && product.images[0]) ||
               product.image1;
 
             const primaryImage =
-              adminCardOverride1 ||
-              existingDefaultImage ||
+              adminOverride1 ||
+              catalogDefaultImage ||
               fallbackImage;
+
+            // Optional secondary hover view (when cursor hovers on active center card)
+            const adminOverride2 =
+              overrides?.[product.id]?.image2 ||
+              product.carouselOverride2 ||
+              product.adminProductOverride2;
+
+            const catalogSecondaryImage =
+              (product.images && product.images[1]) ||
+              product.image2;
+
+            const secondaryImage =
+              adminOverride2 ||
+              catalogSecondaryImage ||
+              primaryImage;
 
             return (
               <div
@@ -466,7 +455,7 @@ export function StackedProductCarousel({
                     setActiveIndex(index);
                   }
                 }}
-                className={`absolute top-1/2 left-1/2 w-[215px] xs:w-[245px] sm:w-[290px] md:w-[340px] lg:w-[380px] aspect-[3/4] select-none ${
+                className={`absolute top-1/2 left-1/2 w-[215px] xs:w-[245px] sm:w-[290px] md:w-[340px] lg:w-[380px] aspect-[3/4] select-none border-0 outline-none ring-0 shadow-none bg-transparent ${
                   prefersReducedMotion
                     ? "transition-none"
                     : "transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -477,15 +466,44 @@ export function StackedProductCarousel({
                 }}
               >
                 {/* CARD BODY — Clean Image-Only Silhouette */}
-                <div className="group relative h-full w-full overflow-hidden bg-transparent transition-all duration-500">
-                  <div className="relative h-full w-full overflow-hidden bg-transparent">
+                <div className="group relative h-full w-full overflow-hidden border-0 outline-none ring-0 shadow-none bg-transparent transition-all duration-500">
+                  <div className="relative h-full w-full overflow-hidden border-0 outline-none ring-0 shadow-none bg-transparent">
                     <img
                       src={primaryImage}
                       alt={product.name}
                       loading={Math.abs(diff) <= 1 ? "eager" : "lazy"}
                       draggable={false}
-                      className="absolute inset-0 h-full w-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                      className="absolute inset-0 h-full w-full object-contain border-0 outline-none shadow-none bg-transparent transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                     />
+
+                    {/* Optional secondary hover view on active center card if configured and distinct */}
+                    {secondaryImage && secondaryImage !== primaryImage && isCenter && (
+                      <img
+                        src={secondaryImage}
+                        alt={`${product.name} alternate view`}
+                        draggable={false}
+                        className="absolute inset-0 h-full w-full object-contain opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100"
+                      />
+                    )}
+
+                    {/* Wishlist Button Overlay on Active Center Card */}
+                    {isCenter && (
+                      <div
+                        className="absolute top-2.5 right-2.5 z-30 sm:top-3.5 sm:right-3.5"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <WishlistButton
+                          item={{
+                            productId: product.id,
+                            name: product.name,
+                            slug: product.slug,
+                            image: primaryImage,
+                            price: product.price,
+                            category: product.category || "Featured",
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -501,6 +519,14 @@ export function StackedProductCarousel({
                 <span>Active Piece</span>
                 <span className="text-brand-muted/40">/</span>
                 <span className="text-brand-muted">{activeProduct.category || "Essential"}</span>
+                {activeProduct.sku && (
+                  <>
+                    <span className="text-brand-muted/40">/</span>
+                    <span className="font-mono text-[11px] text-brand-muted tracking-[0.14em]">
+                      {activeProduct.sku}
+                    </span>
+                  </>
+                )}
                 {activeProduct.compareAtPrice && (
                   <span className="ml-1 border border-brand-gold/40 bg-brand-goldMuted px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold text-brand-black">
                     {Math.round(
@@ -554,6 +580,20 @@ export function StackedProductCarousel({
                 >
                   Shop All →
                 </Link>
+
+                <div className="flex items-center justify-center">
+                  <WishlistButton
+                    compact
+                    item={{
+                      productId: activeProduct.id,
+                      name: activeProduct.name,
+                      slug: activeProduct.slug,
+                      image: activeProduct.images?.[0] || activeProduct.image1 || "",
+                      price: activeProduct.price,
+                      category: activeProduct.category || "Featured",
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>

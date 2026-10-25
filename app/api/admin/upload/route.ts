@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/admin";
 import { uploadBufferToCloudinary } from "@/lib/cloudinary";
+import { removeBackgroundFromCloudinaryUrl } from "@/lib/background-removal";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -24,10 +25,12 @@ export async function POST(req: NextRequest) {
     // 2. Parse Multipart FormData
     const formData = await req.formData();
     const files = (formData.getAll("files").concat(formData.getAll("file"))) as File[];
+    const shouldRemoveBg = formData.get("removeBackground") !== "false";
 
     console.log("[Upload API 3. FormData Parsed]", {
       fileCount: files.length,
       files: files.map((f) => (typeof f === "object" && f.name ? { name: f.name, size: f.size, type: f.type } : "non-file")),
+      shouldRemoveBg,
     });
 
     if (!files || files.length === 0) {
@@ -60,11 +63,18 @@ export async function POST(req: NextRequest) {
         format: result.format,
       });
 
+      const originalUrl = result.secure_url;
+      const transparentUrl = shouldRemoveBg
+        ? removeBackgroundFromCloudinaryUrl(originalUrl)
+        : originalUrl;
+
       uploadedImages.push({
-        imageUrl: result.secure_url,
-        secureUrl: result.secure_url,
+        imageUrl: transparentUrl,
+        originalUrl,
+        secureUrl: transparentUrl,
         publicId: result.public_id,
         altText: baseName,
+        bgRemoved: shouldRemoveBg,
       });
     }
 

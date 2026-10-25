@@ -1,13 +1,35 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon, Star, Plus, Loader2, CheckCircle, AlertCircle } from "lucide-react";
+import {
+  Upload,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Image as ImageIcon,
+  Star,
+  Plus,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+  Sparkles,
+  Undo2,
+  RefreshCw,
+} from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import {
+  isCloudinaryUrl,
+  isBackgroundRemovedUrl,
+  getOriginalFromCloudinaryUrl,
+} from "@/lib/background-removal";
 
 export interface UploadedImage {
   imageUrl: string;
   altText?: string;
   sortOrder?: number;
+  originalUrl?: string;
+  isRemovingBg?: boolean;
+  bgError?: string;
 }
 
 interface ImageUploadProps {
@@ -23,10 +45,86 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
   const [uploadProgress, setUploadProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [urlInput, setUrlInput] = useState("");
+  const [autoRemoveBg, setAutoRemoveBg] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Cloudinary Free tier allows images up to 10 MB (10,485,760 bytes)
   const CLOUDINARY_MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+  // Single image background removal handler
+  async function handleToggleBackground(index: number, action: "remove" | "restore") {
+    if (!user) {
+      setStatusMessage({ type: "error", text: "You must be signed in as an administrator." });
+      return;
+    }
+
+    const targetImg = images[index];
+    if (!targetImg) return;
+
+    // Set loading state for this specific image
+    const updatedWithLoading = [...images];
+    updatedWithLoading[index] = { ...targetImg, isRemovingBg: true, bgError: undefined };
+    onChange(updatedWithLoading);
+
+    try {
+      const token = await user.getIdToken();
+      const targetUrl = action === "restore"
+        ? targetImg.imageUrl
+        : (targetImg.originalUrl || targetImg.imageUrl);
+
+      const res = await fetch("/api/admin/remove-background", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          imageUrl: targetUrl,
+          action,
+          verify: true,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error || `Failed to process background removal (${res.status})`);
+      }
+
+      const nextImages = [...images];
+      if (action === "remove") {
+        nextImages[index] = {
+          ...targetImg,
+          imageUrl: data.imageUrl,
+          originalUrl: targetImg.originalUrl || targetImg.imageUrl,
+          isRemovingBg: false,
+          bgError: undefined,
+        };
+        setStatusMessage({ type: "success", text: "Background removed successfully (Transparent PNG)." });
+      } else {
+        const restoredUrl = data.imageUrl || targetImg.originalUrl || getOriginalFromCloudinaryUrl(targetImg.imageUrl);
+        nextImages[index] = {
+          ...targetImg,
+          imageUrl: restoredUrl,
+          isRemovingBg: false,
+          bgError: undefined,
+        };
+        setStatusMessage({ type: "success", text: "Original background restored." });
+      }
+      onChange(nextImages);
+    } catch (err: any) {
+      console.error("[ImageUpload Toggle Background Error]:", err);
+      const nextImages = [...images];
+      nextImages[index] = {
+        ...targetImg,
+        isRemovingBg: false,
+        bgError: err.message || "Failed to remove background",
+      };
+      onChange(nextImages);
+      setStatusMessage({ type: "error", text: err.message || "Background removal failed. You can retry." });
+    } finally {
+      setTimeout(() => setStatusMessage(null), 4000);
+    }
+  }
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0 || isUploading) return;
@@ -42,12 +140,6 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
         validFiles.push(file);
       }
     }
-
-    console.log("[ImageUpload Frontend 1. Files selected]", {
-      totalSelected: files.length,
-      validImageCount: validFiles.length,
-      fileNames: validFiles.map((f) => f.name),
-    });
 
     if (validFiles.length === 0) {
       setIsUploading(false);
@@ -77,7 +169,6 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
 
       // 2. Obtain current Firebase administrator token
       if (!user) {
-        console.warn("[ImageUpload Frontend 2. Auth missing] No active user logged in.");
         throw new Error("You must be signed in as an administrator to upload images.");
       }
 
@@ -85,7 +176,6 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
       setUploadProgress(15);
 
       // 3. Request signed direct upload parameters from backend
-      console.log("[ImageUpload Frontend 3. Requesting upload signature from /api/admin/upload/sign]");
       const signResponse = await fetch("/api/admin/upload/sign", {
         method: "POST",
         headers: {
@@ -106,7 +196,6 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
         apiKey: string;
       } = await signResponse.json();
 
-      console.log("[ImageUpload Frontend 4. Signature acquired, starting direct upload to Cloudinary]");
       setUploadProgress(25);
 
       // 4. Upload files directly to Cloudinary via HTTPS
@@ -125,7 +214,7 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
           xhr.upload.onprogress = (e) => {
             if (e.lengthComputable) {
               const fileFraction = e.loaded / e.total;
-              const overallPercent = Math.min(98, Math.round(25 + ((i + fileFraction) / totalFiles) * 70));
+              const overallPercent = Math.min(85, Math.round(25 + ((i + fileFraction) / totalFiles) * 60));
               setUploadProgress(overallPercent);
             }
           };
@@ -158,24 +247,54 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
           xhr.send(uploadFormData);
         });
 
+        let finalImageUrl = uploadResult.secure_url;
+        let bgError: string | undefined = undefined;
+
+        // 5. Automatic AI background removal if enabled
+        if (autoRemoveBg) {
+          try {
+            setUploadProgress(Math.min(95, 85 + Math.round(((i + 1) / totalFiles) * 10)));
+            const bgRes = await fetch("/api/admin/remove-background", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                imageUrl: uploadResult.secure_url,
+                action: "remove",
+                verify: true,
+              }),
+            });
+
+            const bgData = await bgRes.json().catch(() => ({}));
+            if (bgRes.ok && bgData?.imageUrl) {
+              finalImageUrl = bgData.imageUrl;
+            } else {
+              bgError = bgData?.error || "Automatic background removal failed. Click Retry to run again.";
+            }
+          } catch (bgErr: any) {
+            bgError = bgErr?.message || "Background removal timed out.";
+          }
+        }
+
         uploadedCloudImages.push({
-          imageUrl: uploadResult.secure_url,
+          imageUrl: finalImageUrl,
+          originalUrl: uploadResult.secure_url,
           altText: baseName || `Product Image ${images.length + i + 1}`,
           sortOrder: images.length + i,
+          bgError,
         });
       }
 
       const newImages: UploadedImage[] = [...images, ...uploadedCloudImages];
-      console.log("[ImageUpload Frontend 5. Direct upload complete. Updating state]", {
-        previousCount: images.length,
-        newCount: newImages.length,
-      });
-
       onChange(newImages);
       setUploadProgress(100);
       setStatusMessage({
         type: "success",
-        text: `Successfully uploaded ${uploadedCloudImages.length} image${uploadedCloudImages.length > 1 ? "s" : ""} directly to Cloudinary.`,
+        text: `Successfully uploaded ${uploadedCloudImages.length} image${uploadedCloudImages.length > 1 ? "s" : ""} ${
+          autoRemoveBg ? "with automatic background removal" : "to Cloudinary"
+        }.`,
       });
 
       setTimeout(() => {
@@ -197,16 +316,17 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
     if (!urlInput.trim()) return;
     if (images.length >= maxImages) return;
 
+    const trimmed = urlInput.trim();
     const newImages = [
       ...images,
       {
-        imageUrl: urlInput.trim(),
+        imageUrl: trimmed,
+        originalUrl: trimmed,
         altText: `Product image ${images.length + 1}`,
         sortOrder: images.length,
       },
     ];
 
-    console.log("[ImageUpload Frontend Add URL]", urlInput.trim());
     onChange(newImages);
     setUrlInput("");
     setStatusMessage({ type: "success", text: "Image URL added." });
@@ -215,7 +335,6 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
 
   function handleRemove(index: number) {
     const updated = images.filter((_, i) => i !== index).map((img, i) => ({ ...img, sortOrder: i }));
-    console.log("[ImageUpload Frontend Remove Image]", { removedIndex: index, remainingCount: updated.length });
     onChange(updated);
   }
 
@@ -243,11 +362,24 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <label className="text-xs uppercase tracking-wider font-semibold text-zinc-300">
           Product Images ({images.length}/{maxImages})
         </label>
-        <span className="text-[11px] text-zinc-500">Cloudinary CDN Storage Active</span>
+
+        {/* Automatic Background Removal Toggle */}
+        <label className="flex items-center gap-2 cursor-pointer text-[11px] text-zinc-400 hover:text-zinc-200 select-none">
+          <input
+            type="checkbox"
+            checked={autoRemoveBg}
+            onChange={(e) => setAutoRemoveBg(e.target.checked)}
+            className="rounded border-zinc-700 bg-zinc-900 text-emerald-500 focus:ring-emerald-500/20 h-3.5 w-3.5 cursor-pointer"
+          />
+          <span className="flex items-center gap-1 font-medium text-emerald-400">
+            <Sparkles className="h-3 w-3" />
+            <span>Auto Background Removal (AI)</span>
+          </span>
+        </label>
       </div>
 
       {/* Drag & Drop Zone */}
@@ -282,24 +414,28 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
         </div>
         <p className="mt-3 text-sm font-medium text-zinc-200">
           {isUploading ? (
-            "Uploading directly to Cloudinary..."
+            autoRemoveBg ? "Uploading & removing background (AI)..." : "Uploading directly to Cloudinary..."
           ) : (
             <>
               Drag & drop images here, or <span className="text-blue-400 underline">browse files</span>
             </>
           )}
         </p>
-        <p className="mt-1 text-xs text-zinc-500">PNG, JPG, WebP, AVIF up to 10MB per image (Cloudinary Free Plan)</p>
+        <p className="mt-1 text-xs text-zinc-500">
+          {autoRemoveBg ? "Images will be automatically processed into transparent PNGs" : "PNG, JPG, WebP up to 10MB per image"}
+        </p>
 
         {isUploading && (
           <div className="mt-4 w-full max-w-xs">
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
               <div
-                className="h-full bg-blue-500 transition-all duration-300"
+                className="h-full bg-emerald-500 transition-all duration-300"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
-            <p className="mt-1 text-[10px] text-zinc-400">Direct Cloudinary upload ({uploadProgress}%)...</p>
+            <p className="mt-1 text-[10px] text-zinc-400">
+              {uploadProgress < 85 ? `Uploading (${uploadProgress}%)...` : "Processing AI background removal..."}
+            </p>
           </div>
         )}
       </div>
@@ -330,7 +466,7 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
             type="url"
             value={urlInput}
             onChange={(e) => setUrlInput(e.target.value)}
-            placeholder="Or paste an external image URL (Unsplash, Cloudinary, etc.)"
+            placeholder="Or paste an external image URL"
             className="h-10 w-full rounded-lg border border-zinc-800 bg-zinc-900/60 pl-9 pr-3 text-xs text-white placeholder-zinc-500 outline-none focus:border-blue-500"
           />
         </div>
@@ -345,73 +481,148 @@ export function ImageUpload({ images, onChange, maxImages = 8 }: ImageUploadProp
         </button>
       </div>
 
-      {/* Image Grid with Previews, Reordering, Remove */}
+      {/* Image Grid with Previews, Transparency Badges, AI Actions */}
       {images.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-          {images.map((img, index) => (
-            <div
-              key={`${img.imageUrl}-${index}`}
-              className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-900"
-            >
-              <img
-                src={img.imageUrl}
-                alt={img.altText || `Product Image ${index + 1}`}
-                className="h-full w-full object-cover"
-              />
+          {images.map((img, index) => {
+            const hasTransparentBg = isBackgroundRemovedUrl(img.imageUrl);
+            const isCloudinary = isCloudinaryUrl(img.imageUrl);
 
-              {/* Primary badge */}
-              {index === 0 && (
-                <span className="absolute left-2 top-2 flex items-center gap-1 rounded bg-blue-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-md">
-                  <Star className="h-2.5 w-2.5 fill-current" /> Primary
-                </span>
-              )}
+            return (
+              <div
+                key={`${img.imageUrl}-${index}`}
+                className="group relative aspect-square overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950"
+              >
+                {/* Checkerboard hint for transparent preview */}
+                <div
+                  className="h-full w-full bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:8px_8px] flex items-center justify-center p-2"
+                >
+                  <img
+                    src={img.imageUrl}
+                    alt={img.altText || `Product Image ${index + 1}`}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
 
-              {/* Action overlays on hover */}
-              <div className="absolute inset-0 flex flex-col justify-between bg-black/60 p-2 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
-                <div className="flex justify-between items-center">
-                  {index !== 0 ? (
+                {/* Primary badge */}
+                {index === 0 && (
+                  <span className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded bg-blue-600 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white shadow-md">
+                    <Star className="h-2.5 w-2.5 fill-current" /> Primary
+                  </span>
+                )}
+
+                {/* Transparency Badge */}
+                {hasTransparentBg && (
+                  <span className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded bg-emerald-950/80 border border-emerald-500/40 px-1.5 py-0.5 text-[9px] font-mono font-medium text-emerald-300 backdrop-blur-sm shadow-md">
+                    <Sparkles className="h-2.5 w-2.5 text-emerald-400" />
+                    <span>Transparent</span>
+                  </span>
+                )}
+
+                {/* Background Error Badge */}
+                {img.bgError && !img.isRemovingBg && (
+                  <div className="absolute right-2 bottom-2 z-10 flex items-center gap-1 rounded bg-red-950/90 border border-red-500/40 px-1.5 py-0.5 text-[9px] text-red-300">
+                    <AlertCircle className="h-2.5 w-2.5" />
+                    <span>BG Error</span>
+                  </div>
+                )}
+
+                {/* Loading state during background removal */}
+                {img.isRemovingBg && (
+                  <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/85 p-2 text-center">
+                    <Loader2 className="h-5 w-5 text-emerald-400 animate-spin mb-1" />
+                    <span className="text-[10px] text-white font-medium">Removing BG...</span>
+                  </div>
+                )}
+
+                {/* Action overlays on hover */}
+                <div className="absolute inset-0 z-10 flex flex-col justify-between bg-black/75 p-2 opacity-0 backdrop-blur-[2px] transition-opacity group-hover:opacity-100">
+                  <div className="flex justify-between items-center gap-1">
+                    {index !== 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSetPrimary(index)}
+                        className="rounded bg-zinc-800/90 px-2 py-1 text-[9px] uppercase font-semibold text-zinc-200 hover:bg-blue-600 hover:text-white"
+                        title="Set as primary"
+                      >
+                        Set Primary
+                      </button>
+                    ) : <div />}
+
                     <button
                       type="button"
-                      onClick={() => handleSetPrimary(index)}
-                      className="rounded bg-zinc-800/90 px-2 py-1 text-[9px] uppercase font-semibold text-zinc-200 hover:bg-blue-600 hover:text-white"
-                      title="Set as primary"
+                      onClick={() => handleRemove(index)}
+                      className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600/80 text-white hover:bg-red-600"
+                      title="Delete image"
                     >
-                      Set Primary
+                      <X className="h-3.5 w-3.5" />
                     </button>
-                  ) : <div />}
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(index)}
-                    className="flex h-6 w-6 items-center justify-center rounded-full bg-red-600/80 text-white hover:bg-red-600"
-                    title="Delete image"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+                  </div>
 
-                <div className="flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    disabled={index === 0}
-                    onClick={() => handleMove(index, "left")}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-white transition hover:bg-zinc-700 disabled:opacity-30"
-                    title="Move left"
-                  >
-                    <ArrowLeft className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={index === images.length - 1}
-                    onClick={() => handleMove(index, "right")}
-                    className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-white transition hover:bg-zinc-700 disabled:opacity-30"
-                    title="Move right"
-                  >
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </button>
+                  {/* AI Background Removal Toggle / Retry inside hover overlay */}
+                  <div className="flex flex-col gap-1 items-center">
+                    {isCloudinary && (
+                      <>
+                        {hasTransparentBg ? (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleBackground(index, "restore")}
+                            className="inline-flex items-center gap-1 rounded bg-zinc-800/90 hover:bg-zinc-700 px-2 py-1 text-[10px] text-zinc-300 transition"
+                            title="Revert back to original image with background"
+                          >
+                            <Undo2 className="h-3 w-3" />
+                            <span>Restore BG</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => handleToggleBackground(index, "remove")}
+                            className="inline-flex items-center gap-1 rounded bg-emerald-600/90 hover:bg-emerald-500 px-2 py-1 text-[10px] font-semibold text-white transition shadow-sm"
+                            title="Remove background using Cloudinary AI"
+                          >
+                            <Sparkles className="h-3 w-3" />
+                            <span>Remove BG (AI)</span>
+                          </button>
+                        )}
+                      </>
+                    )}
+
+                    {img.bgError && (
+                      <button
+                        type="button"
+                        onClick={() => handleToggleBackground(index, "remove")}
+                        className="inline-flex items-center gap-1 rounded bg-red-600 px-2 py-0.5 text-[9px] font-bold text-white hover:bg-red-500"
+                      >
+                        <RefreshCw className="h-2.5 w-2.5" />
+                        <span>Retry Removal</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      disabled={index === 0}
+                      onClick={() => handleMove(index, "left")}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-white transition hover:bg-zinc-700 disabled:opacity-30"
+                      title="Move left"
+                    >
+                      <ArrowLeft className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      disabled={index === images.length - 1}
+                      onClick={() => handleMove(index, "right")}
+                      className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-white transition hover:bg-zinc-700 disabled:opacity-30"
+                      title="Move right"
+                    >
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,8 +1,21 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { UploadCloud, RefreshCw, Undo2, CheckCircle2, AlertCircle, Eye } from "lucide-react";
+import {
+  UploadCloud,
+  RefreshCw,
+  Undo2,
+  CheckCircle2,
+  AlertCircle,
+  Eye,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
+import {
+  isCloudinaryUrl,
+  isBackgroundRemovedUrl,
+} from "@/lib/background-removal";
 
 interface SingleImageUploadSlotProps {
   currentImageUrl: string;
@@ -14,6 +27,7 @@ interface SingleImageUploadSlotProps {
   onResetToDefault?: () => void;
   isModified?: boolean;
   badge?: string;
+  enableBackgroundRemoval?: boolean;
 }
 
 export function SingleImageUploadSlot({
@@ -26,13 +40,17 @@ export function SingleImageUploadSlot({
   onResetToDefault,
   isModified = false,
   badge,
+  enableBackgroundRemoval = true,
 }: SingleImageUploadSlotProps) {
   const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isRemovingBg, setIsRemovingBg] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [cachedOriginalUrl, setCachedOriginalUrl] = useState<string | null>(null);
 
   const aspectClass = {
     "16/9": "aspect-[16/9]",
@@ -41,10 +59,63 @@ export function SingleImageUploadSlot({
     "1/1": "aspect-square",
   }[aspectRatio] || "aspect-[16/9]";
 
+  const hasBgRemoved = isBackgroundRemovedUrl(currentImageUrl);
+  const isCloudinary = isCloudinaryUrl(currentImageUrl);
+
+  // Background removal API helper
+  const processBackgroundRemoval = async (imageUrl: string, action: "remove" | "restore" = "remove") => {
+    if (!user) {
+      setErrorMessage("You must be logged in as an administrator.");
+      return;
+    }
+
+    setIsRemovingBg(true);
+    setErrorMessage(null);
+    setSuccessNotice(null);
+
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch("/api/admin/remove-background", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          imageUrl,
+          action,
+          verify: true,
+        }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data?.error || `Background removal failed (HTTP ${res.status})`);
+      }
+
+      if (data.imageUrl) {
+        if (action === "remove") {
+          setCachedOriginalUrl(imageUrl);
+          setSuccessNotice("Background removed successfully (Transparent PNG).");
+        } else {
+          setSuccessNotice("Original background restored.");
+        }
+        onImageChange(data.imageUrl);
+      }
+    } catch (err: any) {
+      console.error("[SingleImageUploadSlot BG Removal Error]:", err);
+      setErrorMessage(err.message || "Failed to process background removal. You can retry.");
+    } finally {
+      setIsRemovingBg(false);
+      setTimeout(() => setSuccessNotice(null), 4000);
+    }
+  };
+
   const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0 || isUploading) return;
     const file = files[0];
     setErrorMessage(null);
+    setSuccessNotice(null);
 
     // Validate type
     if (!file.type.startsWith("image/")) {
@@ -72,7 +143,7 @@ export function SingleImageUploadSlot({
 
       setUploadProgress(20);
 
-      // 1. Get signed params
+      // 1. Get signed upload parameters
       const signRes = await fetch("/api/admin/upload/sign", {
         method: "POST",
         headers: {
@@ -129,7 +200,45 @@ export function SingleImageUploadSlot({
       });
 
       setUploadProgress(100);
-      onImageChange(uploadResult.secure_url);
+      setCachedOriginalUrl(uploadResult.secure_url);
+
+      // 3. Automatic background removal for silhouette product slots
+      if (enableBackgroundRemoval) {
+        setIsUploading(false);
+        setIsRemovingBg(true);
+        try {
+          const bgRes = await fetch("/api/admin/remove-background", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              imageUrl: uploadResult.secure_url,
+              action: "remove",
+              verify: true,
+            }),
+          });
+
+          const bgData = await bgRes.json().catch(() => ({}));
+          if (bgRes.ok && bgData?.imageUrl) {
+            onImageChange(bgData.imageUrl);
+            setSuccessNotice("Uploaded and background automatically removed (Transparent PNG).");
+          } else {
+            // Fallback to original image if background removal fails, allowing admin retry
+            onImageChange(uploadResult.secure_url);
+            setErrorMessage(bgData?.error || "Image uploaded, but automatic background removal encountered an issue. Click 'Remove Background' to retry.");
+          }
+        } catch (bgErr: any) {
+          onImageChange(uploadResult.secure_url);
+          setErrorMessage(bgErr?.message || "Uploaded, but background removal timed out. Click 'Remove Background' to retry.");
+        } finally {
+          setIsRemovingBg(false);
+        }
+      } else {
+        onImageChange(uploadResult.secure_url);
+        setSuccessNotice("Image uploaded successfully.");
+      }
     } catch (err: any) {
       console.error("[SingleImageUploadSlot Error]", err);
       setErrorMessage(err.message || "Failed to upload image.");
@@ -138,6 +247,7 @@ export function SingleImageUploadSlot({
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
+      setTimeout(() => setSuccessNotice(null), 4000);
     }
   };
 
@@ -146,11 +256,17 @@ export function SingleImageUploadSlot({
       {/* Top Meta */}
       <div className="flex items-center justify-between mb-3">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-200">{label}</h4>
             {badge && (
               <span className="rounded bg-blue-500/10 px-1.5 py-0.5 text-[9px] font-mono font-medium text-blue-400 border border-blue-500/20">
                 {badge}
+              </span>
+            )}
+            {hasBgRemoved && (
+              <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-mono font-medium text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                <Sparkles className="h-2.5 w-2.5" />
+                <span>Transparent PNG</span>
               </span>
             )}
             {isModified && (
@@ -178,7 +294,7 @@ export function SingleImageUploadSlot({
       {/* Preview & Drop Area */}
       <div
         onClick={() => {
-          if (!isUploading) fileInputRef.current?.click();
+          if (!isUploading && !isRemovingBg) fileInputRef.current?.click();
         }}
         className={`group relative w-full ${aspectClass} overflow-hidden rounded-lg border bg-zinc-950 transition-colors cursor-pointer ${
           isDragOver
@@ -201,7 +317,7 @@ export function SingleImageUploadSlot({
           <img
             src={currentImageUrl}
             alt={label}
-            className="h-full w-full object-cover object-center transition duration-300 group-hover:scale-[1.02]"
+            className="h-full w-full object-contain object-center transition duration-300 group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-zinc-500 text-xs p-4 text-center">
@@ -251,6 +367,20 @@ export function SingleImageUploadSlot({
             <span className="text-[10px] text-zinc-400 mt-1 font-mono">{uploadProgress}%</span>
           </div>
         )}
+
+        {/* Background Removal Processing Overlay */}
+        {isRemovingBg && (
+          <div
+            className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 z-25 cursor-default"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Loader2 className="h-7 w-7 text-emerald-400 animate-spin mb-2" />
+            <p className="text-xs font-semibold text-white">Removing Background (AI)...</p>
+            <p className="text-[10px] text-zinc-400 mt-1 text-center max-w-[200px]">
+              Extracting garment outline and generating transparent alpha PNG...
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Prominent Action Bar */}
@@ -263,11 +393,11 @@ export function SingleImageUploadSlot({
           onChange={(e) => handleFileSelect(e.target.files)}
         />
 
-        <div className="flex items-center gap-2">
-          {/* Always-visible, styled primary button */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Replace Image Button */}
           <button
             type="button"
-            disabled={isUploading}
+            disabled={isUploading || isRemovingBg}
             onClick={() => fileInputRef.current?.click()}
             className="inline-flex items-center gap-2 rounded-lg bg-blue-600 hover:bg-blue-500 active:bg-blue-700 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition disabled:opacity-50 cursor-pointer"
           >
@@ -275,10 +405,40 @@ export function SingleImageUploadSlot({
             <span>{isUploading ? "Uploading..." : "Replace Image"}</span>
           </button>
 
+          {/* AI Background Removal Toggle / Action */}
+          {currentImageUrl && isCloudinary && (
+            <>
+              {hasBgRemoved ? (
+                <button
+                  type="button"
+                  disabled={isUploading || isRemovingBg}
+                  onClick={() => processBackgroundRemoval(currentImageUrl, "restore")}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 active:bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white transition cursor-pointer"
+                  title="Revert back to original uploaded image with its background"
+                >
+                  <Undo2 className="h-3.5 w-3.5 text-zinc-400" />
+                  <span>Restore Original</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  disabled={isUploading || isRemovingBg}
+                  onClick={() => processBackgroundRemoval(currentImageUrl, "remove")}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 active:bg-emerald-500/30 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 transition cursor-pointer"
+                  title="Remove solid background using Cloudinary AI"
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Remove BG (AI)</span>
+                </button>
+              )}
+            </>
+          )}
+
+          {/* Reset to Default */}
           {onResetToDefault && isModified && (
             <button
               type="button"
-              disabled={isUploading}
+              disabled={isUploading || isRemovingBg}
               onClick={onResetToDefault}
               className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 hover:bg-zinc-700 active:bg-zinc-800 px-2.5 py-1.5 text-xs font-medium text-zinc-300 hover:text-white transition cursor-pointer"
               title="Reset to default image"
@@ -302,14 +462,34 @@ export function SingleImageUploadSlot({
               <span>Preview</span>
             </a>
           )}
-          <span className="text-[10px] text-zinc-500 font-mono">Max 10MB</span>
+          <span className="text-[10px] text-zinc-500 font-mono">Cloudinary CDN</span>
         </div>
       </div>
 
+      {/* Success Notice */}
+      {successNotice && (
+        <div className="mt-2 flex items-center gap-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1.5 text-[11px] text-emerald-300">
+          <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+          <span>{successNotice}</span>
+        </div>
+      )}
+
+      {/* Error Message with Retry */}
       {errorMessage && (
-        <div className="mt-2 flex items-center gap-1.5 rounded-md bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-[11px] text-red-400">
-          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-          <span>{errorMessage}</span>
+        <div className="mt-2 flex items-center justify-between gap-2 rounded-md bg-red-500/10 border border-red-500/20 px-2.5 py-1.5 text-[11px] text-red-300">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-400" />
+            <span className="truncate">{errorMessage}</span>
+          </div>
+          {currentImageUrl && isCloudinary && (
+            <button
+              type="button"
+              onClick={() => processBackgroundRemoval(cachedOriginalUrl || currentImageUrl, "remove")}
+              className="shrink-0 rounded bg-red-600/30 px-2 py-0.5 text-[10px] font-semibold text-red-200 hover:bg-red-600/50 transition cursor-pointer"
+            >
+              Retry
+            </button>
+          )}
         </div>
       )}
     </div>

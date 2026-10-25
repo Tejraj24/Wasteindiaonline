@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { SingleImageUploadSlot } from "@/components/admin/SingleImageUploadSlot";
+import { ProductDetailsModal } from "@/components/admin/ProductDetailsModal";
 import {
   DEFAULT_HERO_SLIDES,
   DEFAULT_CAROUSEL_ITEMS,
@@ -23,6 +24,7 @@ import {
   ArrowDown,
   ExternalLink,
   Loader2,
+  Edit3,
 } from "lucide-react";
 
 interface FeaturedProductMeta {
@@ -54,6 +56,7 @@ export default function AdminContentPage() {
   const [featuredOverrides, setFeaturedOverrides] = useState<Record<string, { image1?: string; image2?: string }>>({});
   const [carouselImages, setCarouselImages] = useState<CarouselSlideContent[]>(DEFAULT_CAROUSEL_ITEMS);
   const [featuredProducts, setFeaturedProducts] = useState<FeaturedProductMeta[]>([]);
+  const [editingProductId, setEditingProductId] = useState<string | null>(null);
 
   // Initial baseline to track unsaved changes
   const [baselineConfig, setBaselineConfig] = useState<string>("");
@@ -519,7 +522,16 @@ export default function AdminContentPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => setEditingProductId(product.id)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-600/10 px-2.5 py-1 text-[11px] font-medium text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 transition"
+                      >
+                        <Edit3 className="h-3 w-3" />
+                        <span>Edit Product Details</span>
+                      </button>
+
                       {isModified && (
                         <button
                           type="button"
@@ -527,7 +539,7 @@ export default function AdminContentPage() {
                           className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800/80 px-2.5 py-1 text-[11px] text-zinc-300 hover:text-white hover:bg-zinc-700 transition"
                         >
                           <RotateCcw className="h-3 w-3" />
-                          <span>Reset to Original Product Images</span>
+                          <span>Reset Carousel Images</span>
                         </button>
                       )}
 
@@ -535,9 +547,9 @@ export default function AdminContentPage() {
                         href={`/product/${product.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-[11px] text-blue-400 hover:text-blue-300 transition"
+                        className="inline-flex items-center gap-1 text-[11px] text-zinc-400 hover:text-zinc-200 transition px-1 py-1"
                       >
-                        <span>View on Storefront</span>
+                        <span>View</span>
                         <ExternalLink className="h-3 w-3" />
                       </a>
                     </div>
@@ -672,6 +684,46 @@ export default function AdminContentPage() {
           })}
         </div>
       </section>
+
+      {/* ==========================================================
+          EDIT PRODUCT DETAILS MODAL
+         ========================================================== */}
+      <ProductDetailsModal
+        productId={editingProductId}
+        isOpen={Boolean(editingProductId)}
+        onClose={() => setEditingProductId(null)}
+        currentOverride={editingProductId ? featuredOverrides[editingProductId] : undefined}
+        onSaveOverride={(id, override) => {
+          if (override.image1 || override.image2) {
+            setFeaturedOverrides((prev) => ({
+              ...prev,
+              [id]: {
+                image1: override.image1 || prev[id]?.image1,
+                image2: override.image2 || prev[id]?.image2,
+              },
+            }));
+          }
+        }}
+        onSuccess={(updatedProduct) => {
+          setFeaturedProducts((prev) =>
+            prev.map((p) =>
+              p.id === updatedProduct.id
+                ? {
+                    ...p,
+                    name: updatedProduct.name,
+                    slug: updatedProduct.slug,
+                    price: updatedProduct.price,
+                    compareAtPrice: updatedProduct.compareAtPrice,
+                    category: updatedProduct.category?.name || p.category,
+                    image1: updatedProduct.images?.[0]?.imageUrl || p.image1,
+                    image2: updatedProduct.images?.[1]?.imageUrl || p.image2,
+                  }
+                : p
+            )
+          );
+          void loadContent();
+        }}
+      />
     </div>
   );
 }

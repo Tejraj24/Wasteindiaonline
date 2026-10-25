@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { requireAdminAuth } from "@/lib/auth/admin";
 
@@ -65,7 +66,25 @@ export async function PUT(
       releaseDate,
       expectedShipmentText,
       preorderCapacity,
+      preorderSizes,
     } = body;
+
+    // Check if target product exists
+    const existing = await prisma.product.findUnique({
+      where: { id },
+      include: { images: true },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Server-side validation
+    if (name !== undefined && (typeof name !== "string" || !name.trim())) {
+      return NextResponse.json({ error: "Product name cannot be empty" }, { status: 400 });
+    }
+    if (price !== undefined && (isNaN(parseFloat(price)) || parseFloat(price) < 0)) {
+      return NextResponse.json({ error: "Valid price is required" }, { status: 400 });
+    }
 
     // Delete existing images if new image array provided
     if (Array.isArray(images)) {
@@ -77,27 +96,28 @@ export async function PUT(
     const updated = await prisma.product.update({
       where: { id },
       data: {
-        name,
-        slug,
-        description,
-        shortDescription,
+        name: name !== undefined ? name.trim() : undefined,
+        slug: slug !== undefined ? slug.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "") : undefined,
+        description: description !== undefined ? description : undefined,
+        shortDescription: shortDescription !== undefined ? shortDescription : undefined,
         price: price !== undefined ? parseFloat(price) : undefined,
         compareAtPrice: compareAtPrice ? parseFloat(compareAtPrice) : null,
         categoryId: categoryId || null,
-        brand,
-        status,
-        inventory: inventory !== undefined ? parseInt(inventory, 10) : undefined,
+        brand: brand !== undefined ? brand : undefined,
+        status: status !== undefined ? status : undefined,
+        inventory: inventory !== undefined ? parseInt(String(inventory), 10) : undefined,
         featured: featured !== undefined ? Boolean(featured) : undefined,
         tags: Array.isArray(tags) ? tags : typeof tags === "string" ? tags.split(",").map((t: string) => t.trim()).filter(Boolean) : undefined,
         isPreorder: isPreorder !== undefined ? Boolean(isPreorder) : undefined,
         releaseDate: releaseDate !== undefined ? (releaseDate ? new Date(releaseDate) : null) : undefined,
         expectedShipmentText: expectedShipmentText !== undefined ? expectedShipmentText : undefined,
         preorderCapacity: preorderCapacity !== undefined ? (preorderCapacity ? parseInt(String(preorderCapacity), 10) : null) : undefined,
+        preorderSizes: preorderSizes !== undefined ? preorderSizes : undefined,
         images: Array.isArray(images)
           ? {
               create: images.map((img: { imageUrl: string; altText?: string }, index: number) => ({
                 imageUrl: typeof img === "string" ? img : img.imageUrl,
-                altText: (typeof img === "object" ? img.altText : null) || `${name || "Product"} view ${index + 1}`,
+                altText: (typeof img === "object" ? img.altText : null) || `${name || existing.name || "Product"} view ${index + 1}`,
                 sortOrder: index,
               })),
             }
@@ -108,6 +128,18 @@ export async function PUT(
         category: true,
       },
     });
+
+    // Invalidate caches so updates reflect immediately across the entire storefront
+    revalidatePath("/");
+    revalidatePath("/shop");
+    revalidatePath("/admin/content");
+    revalidatePath("/admin/products");
+    if (updated.slug) {
+      revalidatePath(`/product/${updated.slug}`);
+    }
+    if (existing.slug && existing.slug !== updated.slug) {
+      revalidatePath(`/product/${existing.slug}`);
+    }
 
     return NextResponse.json(updated);
   } catch (error: unknown) {

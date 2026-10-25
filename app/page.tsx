@@ -41,7 +41,6 @@ export default async function Home() {
       <StackedProductCarousel
         products={resolvedFeaturedProducts}
         overrides={homepageContent.featuredOverrides}
-        silhouettes={homepageContent.carouselImages}
       />
       {/* Temporarily commented out for full-width image replacement
       <CategorySection categories={categories} />
