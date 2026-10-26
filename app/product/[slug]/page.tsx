@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   getProductBySlug,
@@ -29,9 +29,13 @@ export async function generateMetadata({
     ? {
         title: `${product.title} | WASTE.`,
         description: product.description || `${product.title} by WASTE.`,
+        alternates: {
+          canonical: `https://www.wasteluxe.in/product/${params.slug}`,
+        },
         openGraph: {
           title: `${product.title} | WASTE.`,
           description: product.description,
+          url: `https://www.wasteluxe.in/product/${params.slug}`,
           images: product.images[0] ? [product.images[0]] : [],
         },
       }
@@ -140,8 +144,81 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product) notFound();
 
+  const isSoldOut =
+    product.soldOut ||
+    product.status !== "ACTIVE" ||
+    (!product.isPreorder && product.inventory <= 0) ||
+    (product.isPreorder &&
+      product.preorderCapacity !== null &&
+      product.preorderCapacity !== undefined &&
+      product.preorderAllocated >= product.preorderCapacity);
+
+  const availability = isSoldOut
+    ? "https://schema.org/OutOfStock"
+    : product.isPreorder
+    ? "https://schema.org/PreOrder"
+    : "https://schema.org/InStock";
+
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    image: product.images && product.images.length > 0 ? product.images : undefined,
+    description: product.description || undefined,
+    sku: product.sku || undefined,
+    brand: {
+      "@type": "Brand",
+      name: "WASTE®",
+    },
+    offers: {
+      "@type": "Offer",
+      url: `https://www.wasteluxe.in/product/${product.slug}`,
+      priceCurrency: "INR",
+      price: product.price,
+      availability,
+      itemCondition: "https://schema.org/NewCondition",
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.wasteluxe.in",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Shop",
+        item: "https://www.wasteluxe.in/shop",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: product.title,
+        item: `https://www.wasteluxe.in/product/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-black">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productSchema).replace(/</g, "\\u003c"),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <main className="pb-24 pt-32 md:pt-44">
         <div className="mx-auto max-w-[1600px] px-6 md:px-12">
           <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-brand-border pb-4">

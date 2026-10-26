@@ -1,12 +1,16 @@
 import { Suspense } from "react";
+import { Metadata } from "next";
 import { getProducts, getCategories } from "@/lib/services/product.service";
 import { ShopCatalogClient } from "./ShopCatalogClient";
 
 export const revalidate = 0; // Always fetch fresh database catalog
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Shop Collection | WASTE.",
   description: "Explore the latest curated collections, garments, and silhouettes by WASTE.",
+  alternates: {
+    canonical: "https://www.wasteluxe.in/shop",
+  },
 };
 
 export default async function ShopPage() {

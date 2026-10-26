@@ -355,9 +355,9 @@ export function ShopCatalogClient({
             <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
               WASTE. / Archive
             </p>
-            <h2 className="mt-4 font-editorial text-[clamp(2.75rem,9vw,4.5rem)] leading-none tracking-[-0.05em] text-brand-black">
+            <h1 className="mt-4 font-editorial text-[clamp(2.75rem,9vw,4.5rem)] leading-none tracking-[-0.05em] text-brand-black">
               The collection
-            </h2>
+            </h1>
           </div>
           <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">
             {visibleProducts.length} pieces

@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "Our Story — WASTE® | More Than Clothing",
   description:
     "WASTE is a streetwear label born from real people, raw emotions and the beauty in everyday chaos. Rooted in Jaipur, India. Built for the ones who feel.",
+  alternates: {
+    canonical: "https://www.wasteluxe.in/our-story",
+  },
   openGraph: {
     title: "Our Story — WASTE® | More Than Clothing",
     description:

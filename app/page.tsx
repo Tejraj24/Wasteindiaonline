@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Hero } from "@/components/Hero";
 import { StackedProductCarousel } from "@/components/StackedProductCarousel";
 import { CategorySection } from "@/components/CategorySection";
@@ -10,6 +11,12 @@ import { getFeaturedProducts, getCarouselProducts, getCategories } from "@/lib/s
 import { getHomepageContent } from "@/lib/services/content.service";
 
 export const revalidate = 0; // Dynamic homepage with live database featured items
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "https://www.wasteluxe.in",
+  },
+};
 
 export default async function Home() {
   const homepageContent = await getHomepageContent();
