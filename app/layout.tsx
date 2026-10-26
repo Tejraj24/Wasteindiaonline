@@ -3,10 +3,22 @@ import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
 import { BRAND_CONFIG } from "@/lib/config/brand";
 
+const FAVICON_URL = "https://ik.imagekit.io/d8cunijto/fav-icon-waste.png?updatedAt=1793037706361";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.wasteluxe.in"),
   title: "WASTE — Contemporary Indian Streetwear",
   description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
+  icons: {
+    icon: [
+      { url: FAVICON_URL, type: "image/png" },
+      { url: "/favicon.ico" },
+    ],
+    shortcut: [FAVICON_URL],
+    apple: [
+      { url: FAVICON_URL, sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 export const viewport: Viewport = {
@@ -46,6 +58,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="icon" href={FAVICON_URL} type="image/png" />
+        <link rel="shortcut icon" href={FAVICON_URL} />
+        <link rel="apple-touch-icon" href={FAVICON_URL} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
