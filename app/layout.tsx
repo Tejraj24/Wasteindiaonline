@@ -3,6 +3,7 @@ import "./globals.css";
 import { ClientLayout } from "@/components/ClientLayout";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.wasteluxe.in"),
   title: "WASTE — Contemporary Indian Streetwear",
   description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
 };

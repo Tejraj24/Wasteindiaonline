@@ -1,11 +1,5 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
 import { AuthForm } from "@/components/auth/AuthForm";
-
-export const metadata: Metadata = {
-  title: "Login — WASTE",
-  description: "Sign in to your WASTE account.",
-};
 
 /**
  * --------------------------------------------------------------------------

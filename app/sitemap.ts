@@ -6,7 +6,7 @@ export const revalidate = 3600; // Cache and revalidate sitemap every hour
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://www.wasteluxe.in";
 
-  // Core public, indexable pages
+  // Core public, indexable pages that actually exist in the project
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}`,

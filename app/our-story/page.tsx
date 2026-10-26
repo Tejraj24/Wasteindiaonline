@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     description:
       "WASTE is a streetwear label born from real people, raw emotions and the beauty in everyday chaos. Rooted in Jaipur, India.",
     type: "website",
-    url: "https://wasteindiaonline.vercel.app/our-story",
+    url: "https://www.wasteluxe.in/our-story",
     images: [
       {
         url: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792962520/OUT-STORY_HEOR_twahsu.jpg",

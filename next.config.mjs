@@ -2,6 +2,15 @@ const FIREBASE_UPSTREAM_DOMAIN = 'wasteindia.firebaseapp.com';
 
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/about',
+        destination: '/our-story',
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return {
       beforeFiles: [

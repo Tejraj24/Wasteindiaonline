@@ -1,11 +1,5 @@
 import { Suspense } from "react";
-import type { Metadata } from "next";
 import { AuthForm } from "@/components/auth/AuthForm";
-
-export const metadata: Metadata = {
-  title: "Create Account — WASTE",
-  description: "Create an account for a considered way to shop at WASTE.",
-};
 
 const DESKTOP_BG_IMAGE_URL =
   "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792952936/creat-account-desktop_oeuc2e.png";
