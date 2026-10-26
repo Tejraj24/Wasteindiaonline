@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/auth/admin";
 import { generateCloudinaryUploadSignature } from "@/lib/cloudinary";
+import { generateImageKitUploadAuth } from "@/lib/imagekit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -16,11 +17,27 @@ export async function POST(req: NextRequest) {
       uid: auth.firebaseUid,
     });
 
-    // 2. Generate signed parameters for direct upload to wasteindia/products
-    const signatureData = generateCloudinaryUploadSignature("wasteindia/products");
+    // 2. Parse provider selection from query parameters or JSON body
+    const { searchParams } = new URL(req.url);
+    const body = await req.json().catch(() => ({}));
+    const provider = (body.provider || searchParams.get("provider") || "cloudinary").toLowerCase();
+    const folder = body.folder || searchParams.get("folder") || "wasteindia/products";
 
+    // 3. Generate signed parameters based on selected provider
+    if (provider === "imagekit") {
+      const authData = generateImageKitUploadAuth(folder);
+      return NextResponse.json({
+        success: true,
+        provider: "imagekit",
+        ...authData,
+      });
+    }
+
+    // Default & backward-compatible: Cloudinary signed parameters
+    const signatureData = generateCloudinaryUploadSignature(folder);
     return NextResponse.json({
       success: true,
+      provider: "cloudinary",
       ...signatureData,
     });
   } catch (error: any) {

@@ -18,6 +18,7 @@ import {
   isCloudinaryUrl,
   isBackgroundRemovedUrl,
 } from "@/lib/background-removal";
+import { isImageKitUrl } from "@/lib/images";
 
 interface SingleImageUploadSlotProps {
   currentImageUrl: string;
@@ -62,6 +63,7 @@ export function SingleImageUploadSlot({
   const [isDragOver, setIsDragOver] = useState(false);
   const [cachedOriginalUrl, setCachedOriginalUrl] = useState<string | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [uploadProvider, setUploadProvider] = useState<"imagekit" | "cloudinary">("imagekit");
 
   // Normalize sentinel "none" to empty string for preview display
   const displayUrl = currentImageUrl === "none" ? "" : currentImageUrl;
@@ -75,6 +77,7 @@ export function SingleImageUploadSlot({
 
   const hasBgRemoved = isBackgroundRemovedUrl(displayUrl);
   const isCloudinary = isCloudinaryUrl(displayUrl);
+  const isImageKit = isImageKitUrl(displayUrl);
 
   // Background removal API helper
   const processBackgroundRemoval = async (imageUrl: string, action: "remove" | "restore" = "remove") => {
@@ -137,11 +140,11 @@ export function SingleImageUploadSlot({
       return;
     }
 
-    // Cloudinary Free plan limit (10MB)
-    const MAX_SIZE = 10 * 1024 * 1024;
+    // Provider size limit
+    const MAX_SIZE = uploadProvider === "imagekit" ? 15 * 1024 * 1024 : 10 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
       setErrorMessage(
-        `File is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is 10MB per image on Cloudinary Free Plan.`
+        `File is ${(file.size / (1024 * 1024)).toFixed(1)}MB. Max limit is ${uploadProvider === "imagekit" ? "15MB" : "10MB"} per image on ${uploadProvider === "imagekit" ? "ImageKit" : "Cloudinary"}.`
       );
       return;
     }
@@ -161,8 +164,13 @@ export function SingleImageUploadSlot({
       const signRes = await fetch("/api/admin/upload/sign", {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          provider: uploadProvider,
+          folder: uploadProvider === "imagekit" ? "/wasteindia/content" : "wasteindia/content",
+        }),
       });
 
       if (!signRes.ok) {
@@ -173,85 +181,134 @@ export function SingleImageUploadSlot({
       const signData = await signRes.json();
       setUploadProgress(35);
 
-      // 2. Direct upload to Cloudinary
-      const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/image/upload`;
-        xhr.open("POST", uploadUrl, true);
+      if (uploadProvider === "imagekit") {
+        // Direct upload to ImageKit
+        const uploadResult = await new Promise<{ url: string }>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "https://upload.imagekit.io/api/v1/files/upload", true);
 
-        xhr.upload.onprogress = (e) => {
-          if (e.lengthComputable) {
-            const pct = Math.min(95, Math.round(35 + (e.loaded / e.total) * 60));
-            setUploadProgress(pct);
-          }
-        };
-
-        xhr.onload = () => {
-          try {
-            const data = JSON.parse(xhr.responseText);
-            if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
-              resolve({ secure_url: data.secure_url });
-            } else {
-              reject(new Error(data?.error?.message || `Cloudinary upload failed (${xhr.status})`));
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const pct = Math.min(95, Math.round(35 + (e.loaded / e.total) * 60));
+              setUploadProgress(pct);
             }
-          } catch {
-            reject(new Error(`Failed to parse Cloudinary response (HTTP ${xhr.status})`));
-          }
-        };
+          };
 
-        xhr.onerror = () => {
-          reject(new Error("Network error during direct Cloudinary upload."));
-        };
+          xhr.onload = () => {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (xhr.status >= 200 && xhr.status < 300 && data.url) {
+                resolve({ url: data.url });
+              } else {
+                reject(new Error(data?.message || data?.help || `ImageKit upload failed (${xhr.status})`));
+              }
+            } catch {
+              reject(new Error(`Failed to parse ImageKit response (HTTP ${xhr.status})`));
+            }
+          };
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("api_key", signData.apiKey);
-        formData.append("timestamp", String(signData.timestamp));
-        formData.append("signature", signData.signature);
-        formData.append("folder", signData.folder);
+          xhr.onerror = () => {
+            reject(new Error("Network error during direct ImageKit upload."));
+          };
 
-        xhr.send(formData);
-      });
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("fileName", file.name);
+          formData.append("publicKey", signData.publicKey);
+          formData.append("signature", signData.signature);
+          formData.append("expire", String(signData.expire));
+          formData.append("token", signData.token);
+          if (signData.folder) formData.append("folder", signData.folder);
+          formData.append("useUniqueFileName", "true");
 
-      setUploadProgress(100);
-      setCachedOriginalUrl(uploadResult.secure_url);
+          xhr.send(formData);
+        });
 
-      // 3. Automatic background removal for silhouette product slots
-      if (enableBackgroundRemoval) {
-        setIsUploading(false);
-        setIsRemovingBg(true);
-        try {
-          const bgRes = await fetch("/api/admin/remove-background", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              imageUrl: uploadResult.secure_url,
-              action: "remove",
-              verify: true,
-            }),
-          });
-
-          const bgData = await bgRes.json().catch(() => ({}));
-          if (bgRes.ok && bgData?.imageUrl) {
-            onImageChange(bgData.imageUrl);
-            setSuccessNotice("Uploaded and background automatically removed (Transparent PNG).");
-          } else {
-            // Fallback to original image if background removal fails, allowing admin retry
-            onImageChange(uploadResult.secure_url);
-            setErrorMessage(bgData?.error || "Image uploaded, but automatic background removal encountered an issue. Click 'Remove Background' to retry.");
-          }
-        } catch (bgErr: any) {
-          onImageChange(uploadResult.secure_url);
-          setErrorMessage(bgErr?.message || "Uploaded, but background removal timed out. Click 'Remove Background' to retry.");
-        } finally {
-          setIsRemovingBg(false);
-        }
+        setUploadProgress(100);
+        setCachedOriginalUrl(uploadResult.url);
+        onImageChange(uploadResult.url);
+        setSuccessNotice("Uploaded to ImageKit successfully.");
       } else {
-        onImageChange(uploadResult.secure_url);
-        setSuccessNotice("Image uploaded successfully.");
+        // Direct upload to Cloudinary (exact existing flow)
+        const uploadResult = await new Promise<{ secure_url: string }>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          const uploadUrl = `https://api.cloudinary.com/v1_1/${signData.cloudName}/image/upload`;
+          xhr.open("POST", uploadUrl, true);
+
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const pct = Math.min(95, Math.round(35 + (e.loaded / e.total) * 60));
+              setUploadProgress(pct);
+            }
+          };
+
+          xhr.onload = () => {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (xhr.status >= 200 && xhr.status < 300 && data.secure_url) {
+                resolve({ secure_url: data.secure_url });
+              } else {
+                reject(new Error(data?.error?.message || `Cloudinary upload failed (${xhr.status})`));
+              }
+            } catch {
+              reject(new Error(`Failed to parse Cloudinary response (HTTP ${xhr.status})`));
+            }
+          };
+
+          xhr.onerror = () => {
+            reject(new Error("Network error during direct Cloudinary upload."));
+          };
+
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("api_key", signData.apiKey);
+          formData.append("timestamp", String(signData.timestamp));
+          formData.append("signature", signData.signature);
+          formData.append("folder", signData.folder);
+
+          xhr.send(formData);
+        });
+
+        setUploadProgress(100);
+        setCachedOriginalUrl(uploadResult.secure_url);
+
+        // Automatic background removal for silhouette product slots (Cloudinary only)
+        if (enableBackgroundRemoval) {
+          setIsUploading(false);
+          setIsRemovingBg(true);
+          try {
+            const bgRes = await fetch("/api/admin/remove-background", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                imageUrl: uploadResult.secure_url,
+                action: "remove",
+                verify: true,
+              }),
+            });
+
+            const bgData = await bgRes.json().catch(() => ({}));
+            if (bgRes.ok && bgData?.imageUrl) {
+              onImageChange(bgData.imageUrl);
+              setSuccessNotice("Uploaded and background automatically removed (Transparent PNG).");
+            } else {
+              // Fallback to original image if background removal fails, allowing admin retry
+              onImageChange(uploadResult.secure_url);
+              setErrorMessage(bgData?.error || "Image uploaded, but automatic background removal encountered an issue. Click 'Remove Background' to retry.");
+            }
+          } catch (bgErr: any) {
+            onImageChange(uploadResult.secure_url);
+            setErrorMessage(bgErr?.message || "Uploaded, but background removal timed out. Click 'Remove Background' to retry.");
+          } finally {
+            setIsRemovingBg(false);
+          }
+        } else {
+          onImageChange(uploadResult.secure_url);
+          setSuccessNotice("Image uploaded successfully.");
+        }
       }
     } catch (err: any) {
       console.error("[SingleImageUploadSlot Error]", err);
@@ -277,6 +334,11 @@ export function SingleImageUploadSlot({
                 {badge}
               </span>
             )}
+            {displayUrl && (
+              <span className="rounded bg-zinc-800/80 px-1.5 py-0.5 text-[9px] font-mono text-zinc-300 border border-zinc-700/40">
+                {isImageKit ? "ImageKit" : isCloudinary ? "Cloudinary" : "External"}
+              </span>
+            )}
             {hasBgRemoved && (
               <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-mono font-medium text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
                 <Sparkles className="h-2.5 w-2.5" />
@@ -292,17 +354,45 @@ export function SingleImageUploadSlot({
           {sublabel && <p className="text-[10px] text-zinc-500 mt-0.5">{sublabel}</p>}
         </div>
 
-        {onResetToDefault && isModified && (
-          <button
-            type="button"
-            onClick={onResetToDefault}
-            className="inline-flex items-center gap-1 text-[10px] text-zinc-400 hover:text-white transition"
-            title="Reset to default image"
-          >
-            <Undo2 className="h-3 w-3" />
-            <span>Reset</span>
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {/* Provider selector */}
+          <div className="flex items-center rounded border border-zinc-800 bg-zinc-950/70 p-0.5 text-[10px]">
+            <button
+              type="button"
+              onClick={() => setUploadProvider("imagekit")}
+              className={`px-2 py-0.5 rounded font-medium transition-all ${
+                uploadProvider === "imagekit"
+                  ? "bg-zinc-800 text-white shadow-sm"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              ImageKit
+            </button>
+            <button
+              type="button"
+              onClick={() => setUploadProvider("cloudinary")}
+              className={`px-2 py-0.5 rounded font-medium transition-all ${
+                uploadProvider === "cloudinary"
+                  ? "bg-zinc-800 text-white shadow-sm"
+                  : "text-zinc-400 hover:text-zinc-200"
+              }`}
+            >
+              Cloudinary
+            </button>
+          </div>
+
+          {onResetToDefault && isModified && (
+            <button
+              type="button"
+              onClick={onResetToDefault}
+              className="inline-flex items-center gap-1 text-[10px] text-zinc-400 hover:text-white transition"
+              title="Reset to default image"
+            >
+              <Undo2 className="h-3 w-3" />
+              <span>Reset</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Preview & Drop Area */}
