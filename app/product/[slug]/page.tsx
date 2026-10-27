@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   getProductBySlug,
   getProductsByCategory,
+  getFeaturedProducts,
   StorefrontProduct,
 } from "@/lib/services/product.service";
 import { ProductPurchasePanel } from "@/components/ProductPurchasePanel";
@@ -19,27 +20,87 @@ function formatPrice(price: number) {
   }).format(price);
 }
 
+function cleanProductMetaDescription(description?: string, title?: string): string {
+  const fallback = `${title || "Piece"} — Contemporary Indian streetwear crafted by WASTE®. Distinctive silhouette and premium heavyweight fabric.`;
+  if (!description || typeof description !== "string") return fallback;
+
+  // Split into paragraphs, clean whitespace and markdown/bullet artifacts
+  const paragraphs = description
+    .split(/\r?\n\s*\r?\n/)
+    .map((p) =>
+      p
+        .replace(/^[#\s*•\-–—]+/gm, "")
+        .replace(/\r?\n+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
+
+  const headerPrefixes = [
+    "product details",
+    "the fit",
+    "fit & feel",
+    "how to style",
+    "care instructions",
+    "the details",
+    "how it fits",
+  ];
+
+  // Find paragraphs that are genuine narrative descriptions (length >= 50, not all-caps title, not a section header)
+  const candidate = paragraphs.find((p) => {
+    if (p.length < 50) return false;
+    const lower = p.toLowerCase();
+    if (headerPrefixes.some((prefix) => lower.startsWith(prefix))) return false;
+    const letters = p.replace(/[^a-zA-Z]/g, "");
+    if (letters.length > 0 && letters === letters.toUpperCase()) return false;
+    return true;
+  });
+
+  const chosenText = candidate || paragraphs.find((p) => p.length >= 35) || fallback;
+
+  // Sensibly clamp around 155 characters at word boundary
+  const maxLen = 155;
+  if (chosenText.length <= maxLen + 5) {
+    return chosenText;
+  }
+
+  const truncated = chosenText.slice(0, maxLen);
+  const lastSpace = truncated.lastIndexOf(" ");
+  const cleanSnippet = (lastSpace > 110 ? truncated.slice(0, lastSpace) : truncated).trim();
+  return `${cleanSnippet}…`;
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: { slug: string };
 }) {
   const product = await getProductBySlug(params.slug);
-  return product
-    ? {
-        title: `${product.title} | WASTE.`,
-        description: product.description || `${product.title} by WASTE.`,
-        alternates: {
-          canonical: `https://www.wasteluxe.in/product/${params.slug}`,
-        },
-        openGraph: {
-          title: `${product.title} | WASTE.`,
-          description: product.description,
-          url: `https://www.wasteluxe.in/product/${params.slug}`,
-          images: product.images[0] ? [product.images[0]] : [],
-        },
-      }
-    : { title: "Product | WASTE." };
+  if (!product || product.status !== "ACTIVE") {
+    return {
+      title: "Product Not Found | WASTE®",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const cleanDescription = cleanProductMetaDescription(product.description, product.title);
+
+  return {
+    title: `${product.title} | WASTE®`,
+    description: cleanDescription,
+    alternates: {
+      canonical: `https://www.wasteluxe.in/product/${params.slug}`,
+    },
+    openGraph: {
+      title: `${product.title} | WASTE®`,
+      description: cleanDescription,
+      url: `https://www.wasteluxe.in/product/${params.slug}`,
+      images: product.images[0] ? [product.images[0]] : [],
+    },
+  };
 }
 
 function ProductGallery({ product }: { product: StorefrontProduct }) {
@@ -89,7 +150,13 @@ function InformationAccordion({
 }
 
 async function RelatedProducts({ product }: { product: StorefrontProduct }) {
-  const related = await getProductsByCategory(product.category, 4, product.id);
+  let related = await getProductsByCategory(product.category, 4, product.id);
+
+  // Fallback to other active catalog pieces if category has no siblings
+  if (related.length === 0) {
+    const featured = await getFeaturedProducts(5);
+    related = featured.filter((p) => p.id !== product.id).slice(0, 4);
+  }
 
   if (related.length === 0) return null;
 
@@ -142,7 +209,7 @@ export default async function ProductPage({
   params: { slug: string };
 }) {
   const product = await getProductBySlug(params.slug);
-  if (!product) notFound();
+  if (!product || product.status !== "ACTIVE") notFound();
 
   const isSoldOut =
     product.soldOut ||

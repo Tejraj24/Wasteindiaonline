@@ -7,7 +7,7 @@ const FAVICON_URL = "https://ik.imagekit.io/d8cunijto/fav-icon-waste.png?updated
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.wasteluxe.in"),
-  title: "WASTE — Contemporary Indian Streetwear",
+  title: "WASTE® — Contemporary Indian Streetwear",
   description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
   icons: {
     icon: [
@@ -41,6 +41,14 @@ const organizationSchema = {
     BRAND_CONFIG.socials.instagram.url,
     BRAND_CONFIG.socials.facebook.url,
   ],
+  hasMerchantReturnPolicy: {
+    "@type": "MerchantReturnPolicy",
+    applicableCountry: "IN",
+    returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+    merchantReturnDays: 7,
+    returnMethod: "https://schema.org/ReturnByMail",
+    returnPolicyUrl: "https://www.wasteluxe.in/return-refund-policy",
+  },
 };
 
 const websiteSchema = {
