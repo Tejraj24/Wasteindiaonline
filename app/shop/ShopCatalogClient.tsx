@@ -384,6 +384,32 @@ export function ShopCatalogClient({
           </span>
         </div>
 
+        {/* Category Navigation Pills */}
+        <nav
+          aria-label="Category Navigation"
+          className="mb-8 flex flex-wrap items-center gap-2 sm:gap-3"
+        >
+          <Link
+            href="/shop"
+            className="rounded-full border border-brand-black bg-brand-black px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-brand-black/90"
+            aria-current="page"
+          >
+            All Pieces
+          </Link>
+          <Link
+            href="/shop/t-shirts"
+            className="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-muted transition hover:border-brand-black hover:text-brand-black"
+          >
+            T-Shirts & Tops
+          </Link>
+          <Link
+            href="/shop/outerwear"
+            className="rounded-full border border-brand-border bg-brand-surface px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-brand-muted transition hover:border-brand-black hover:text-brand-black"
+          >
+            Outerwear & Layers
+          </Link>
+        </nav>
+
         {visibleProducts.length === 0 ? (
           <div className="py-20 text-center text-brand-muted uppercase tracking-[0.2em] text-xs">
             No products found in this category.

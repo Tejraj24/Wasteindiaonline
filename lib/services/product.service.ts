@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { CATEGORY_CONFIGS } from "@/lib/config/categories";
 
 export interface StorefrontProduct {
   id: string;
@@ -341,6 +342,36 @@ export async function getCategories() {
     return categories;
   } catch (error) {
     console.error("Error fetching categories:", error);
+    return [];
+  }
+}
+
+export async function getCategoryProducts(categorySlug: string): Promise<StorefrontProduct[]> {
+  const config = CATEGORY_CONFIGS[categorySlug];
+  if (!config) return [];
+
+  try {
+    const products = await prisma.product.findMany({
+      where: {
+        slug: { in: config.productSlugs },
+        status: "ACTIVE",
+      },
+      include: {
+        category: true,
+        images: {
+          orderBy: { sortOrder: "asc" },
+        },
+      },
+    });
+
+    const formatted = products.map(formatStorefrontProduct);
+
+    // Maintain ordered curation defined in category configuration
+    return config.productSlugs
+      .map((slug) => formatted.find((p) => p.slug === slug))
+      .filter((p): p is StorefrontProduct => Boolean(p));
+  } catch (error) {
+    console.error(`Error fetching products for category "${categorySlug}":`, error);
     return [];
   }
 }
