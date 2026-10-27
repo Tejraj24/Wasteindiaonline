@@ -573,7 +573,7 @@ export default function AdminAccountSecurityPage() {
       await linkGoogleAccount();
       setGoogleMessage({
         type: "success",
-        text: "Google SSO linked successfully! You can now sign in using either email/password or Google SSO with wasteindiaonline@gmail.com.",
+        text: "Google SSO linked successfully! You can now sign in using either email/password or Google SSO with wasteindia.in@gmail.com.",
       });
     } catch (err: unknown) {
       setGoogleMessage({ type: "error", text: mapFirebaseError(err) });
@@ -935,7 +935,7 @@ export default function AdminAccountSecurityPage() {
                 <p className="text-xs text-zinc-400 leading-relaxed">
                   {isGoogleProvider
                     ? "Google SSO is currently linked to your administrator account. You can sign in using either Google SSO or your email and password."
-                    : "Link your Google account (wasteindiaonline@gmail.com) to enable one-click Google SSO alongside email/password sign-in."}
+                    : "Link your Google account (wasteindia.in@gmail.com) to enable one-click Google SSO alongside email/password sign-in."}
                 </p>
               </div>
             </div>

@@ -129,7 +129,7 @@ export const BRAND_CONFIG: BrandConfig = {
   ],
 
   contact: {
-    officialBusinessEmail: "wasteindiaonline@gmail.com",
+    officialBusinessEmail: "wasteindia.in@gmail.com",
     founderEmail: "suryanshmeena.in@gmail.com",
     customerSupportEmail: null, // Customer support currently unavailable
     customerSupportPhone: null, // Telephone support currently unavailable

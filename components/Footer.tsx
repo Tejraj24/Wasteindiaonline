@@ -69,17 +69,31 @@ export function Footer() {
               <span className="text-[#88857E] text-xs font-light">→</span>
             </Link>
             <Link
-              href="/contact#privacy"
+              href="/privacy-policy"
               className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
             >
               <span>PRIVACY POLICY</span>
               <span className="text-[#88857E] text-xs font-light">→</span>
             </Link>
             <Link
-              href="/contact#terms"
+              href="/terms-and-conditions"
               className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
             >
               <span>TERMS &amp; CONDITIONS</span>
+              <span className="text-[#88857E] text-xs font-light">→</span>
+            </Link>
+            <Link
+              href="/shipping-policy"
+              className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
+            >
+              <span>SHIPPING &amp; DELIVERY</span>
+              <span className="text-[#88857E] text-xs font-light">→</span>
+            </Link>
+            <Link
+              href="/return-refund-policy"
+              className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
+            >
+              <span>RETURNS &amp; REFUNDS</span>
               <span className="text-[#88857E] text-xs font-light">→</span>
             </Link>
           </nav>
@@ -213,19 +227,33 @@ export function Footer() {
 
           {/* Right: Legal Links & Verified Social Icons */}
           <div className="flex flex-wrap items-center justify-center md:justify-end gap-5 sm:gap-7">
-            <div className="flex items-center gap-5 sm:gap-6">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-5 md:gap-6">
               <Link
-                href="/contact#privacy"
+                href="/privacy-policy"
                 className="hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:underline underline-offset-4"
               >
                 PRIVACY POLICY
               </Link>
               <span aria-hidden="true" className="h-3 w-px bg-[#D5D0C6]" />
               <Link
-                href="/contact#terms"
+                href="/terms-and-conditions"
                 className="hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:underline underline-offset-4"
               >
                 TERMS &amp; CONDITIONS
+              </Link>
+              <span aria-hidden="true" className="h-3 w-px bg-[#D5D0C6]" />
+              <Link
+                href="/shipping-policy"
+                className="hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:underline underline-offset-4"
+              >
+                SHIPPING
+              </Link>
+              <span aria-hidden="true" className="h-3 w-px bg-[#D5D0C6]" />
+              <Link
+                href="/return-refund-policy"
+                className="hover:text-[#111111] transition-colors focus-visible:outline-none focus-visible:underline underline-offset-4"
+              >
+                RETURNS &amp; REFUNDS
               </Link>
             </div>
 

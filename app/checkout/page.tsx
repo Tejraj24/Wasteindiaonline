@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                         type="email"
                         value={form.email}
                         onChange={(e) => setForm({ ...form, email: e.target.value })}
-                        placeholder="concierge@wasteindiaonline.com"
+                        placeholder="client@wasteindia.in"
                         className="mt-1 w-full border-b border-brand-border bg-transparent py-2.5 text-sm text-brand-black outline-none placeholder:text-brand-muted/40 focus:border-brand-black disabled:opacity-50"
                       />
                     </div>

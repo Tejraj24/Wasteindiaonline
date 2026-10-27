@@ -263,7 +263,7 @@ export async function POST(req: NextRequest) {
           success: false,
           delivered: false,
           error:
-            "Email delivery service is currently not configured. Please email wasteindiaonline@gmail.com directly.",
+            "Email delivery service is currently not configured. Please email wasteindia.in@gmail.com directly.",
         },
         { status: 503 }
       );
@@ -311,7 +311,7 @@ export async function POST(req: NextRequest) {
           success: false,
           delivered: false,
           error:
-            "Unable to deliver your message at this time. Please email wasteindiaonline@gmail.com directly.",
+            "Unable to deliver your message at this time. Please email wasteindia.in@gmail.com directly.",
         },
         { status: 502 }
       );
@@ -341,7 +341,7 @@ export async function POST(req: NextRequest) {
         success: false,
         delivered: false,
         error:
-          "An unexpected error occurred while processing your message. Please email wasteindiaonline@gmail.com directly.",
+          "An unexpected error occurred while processing your message. Please email wasteindia.in@gmail.com directly.",
       },
       { status: 500 }
     );

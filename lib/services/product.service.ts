@@ -61,9 +61,6 @@ export function formatStorefrontProduct(product: {
       "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=80"
     );
   }
-  if (images.length === 1) {
-    images.push(images[0]);
-  }
 
   const categoryName = product.category?.name || "General";
   const isPreorder = Boolean(product.isPreorder);

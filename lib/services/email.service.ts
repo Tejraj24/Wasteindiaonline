@@ -47,7 +47,7 @@ export async function sendOrderConfirmationEmail(
   data: OrderConfirmationEmailData
 ): Promise<{ success: boolean; id?: string; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY?.trim();
-  const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || "orders@wasteindiaonline.com";
+  const fromEmail = process.env.RESEND_FROM_EMAIL?.trim() || "orders@wasteindia.in";
 
   if (!apiKey) {
     console.warn(

@@ -37,64 +37,46 @@ function ProductCard({
   const img2 = product.images[1] || product.images[0] || "";
 
   return (
-    <article className="group">
-      <div className="relative">
-        <button
-          type="button"
-          onClick={() => onQuickView(product)}
-          className="block w-full text-left"
+    <article className="group relative flex flex-col">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-none border border-brand-border bg-brand-surfaceSubtle shadow-sm transition-shadow duration-300 group-hover:shadow-md">
+        {/* Main Product Image Navigation Link */}
+        <Link
+          href={`/product/${product.slug}`}
+          className="absolute inset-0 block z-0"
           data-cursor="VIEW"
-          aria-label={`Quick view ${product.title}`}
+          aria-label={`View ${product.title}`}
+          tabIndex={-1}
+          aria-hidden="true"
         >
-          <div className="relative aspect-[3/4] overflow-hidden rounded-none border border-brand-border bg-brand-surfaceSubtle shadow-sm transition-shadow duration-300 group-hover:shadow-md">
-            <img
-              src={img1}
-              alt={product.title}
-              className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] group-hover:opacity-0"
-            />
-            <img
-              src={img2}
-              alt={`${product.title} alternate view`}
-              className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] group-hover:opacity-100"
-            />
-            <div className="absolute inset-x-0 bottom-0 flex translate-y-3 items-end justify-between bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-[10px] uppercase tracking-[0.22em] text-white opacity-0 transition duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-              <span>Quick view</span>
-              <span className="border-b border-white/70 pb-1">View</span>
-            </div>
-            {product.soldOut ? (
-              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
-                {product.isPreorder ? "Capacity reached" : "Sold out"}
-              </span>
-            ) : product.isPreorder ? (
-              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
-                Pre-order
-              </span>
-            ) : product.compareAtPrice ? (
-              <span className="absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
-                Sale
-              </span>
-            ) : null}
-          </div>
-          <div className="flex items-start justify-between gap-2 pt-3 sm:gap-4 sm:pt-4">
-            <div className="min-w-0 flex-1">
-              <h3 className="line-clamp-2 text-[11px] font-bold uppercase leading-[1.3] tracking-[0.08em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted sm:text-xs">
-                {shortName(product.title)}
-              </h3>
-              <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:text-[10px]">
-                {product.category}
-              </p>
-            </div>
-            <div className="shrink-0 whitespace-nowrap text-right font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-black sm:text-xs">
-              <p>{formatPrice(product.price)}</p>
-              {product.compareAtPrice && (
-                <p className="mt-0.5 text-[9px] font-normal text-brand-muted line-through sm:text-[10px]">
-                  {formatPrice(product.compareAtPrice)}
-                </p>
-              )}
-            </div>
-          </div>
-        </button>
-        <div className="absolute right-2.5 top-2.5 z-10 sm:right-4 sm:top-4">
+          <img
+            src={img1}
+            alt={product.title}
+            className="absolute inset-0 h-full w-full object-cover transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] group-hover:opacity-0"
+          />
+          <img
+            src={img2}
+            alt={`${product.title} alternate view`}
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.045] group-hover:opacity-100"
+          />
+        </Link>
+
+        {/* Badges */}
+        {product.soldOut ? (
+          <span className="pointer-events-none absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
+            {product.isPreorder ? "Capacity reached" : "Sold out"}
+          </span>
+        ) : product.isPreorder ? (
+          <span className="pointer-events-none absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
+            Pre-order
+          </span>
+        ) : product.compareAtPrice ? (
+          <span className="pointer-events-none absolute left-2.5 top-2.5 z-10 bg-brand-black px-2 py-0.5 text-[8px] font-bold uppercase tracking-widest text-white sm:left-4 sm:top-4 sm:px-2.5 sm:py-1 sm:text-[9px]">
+            Sale
+          </span>
+        ) : null}
+
+        {/* Wishlist Button (Isolated Sibling) */}
+        <div className="absolute right-2.5 top-2.5 z-20 sm:right-4 sm:top-4">
           <WishlistButton
             item={{
               productId: product.id,
@@ -106,12 +88,46 @@ function ProductCard({
             }}
           />
         </div>
+
+        {/* Desktop Quick View Trigger Button (Non-nested Sibling) */}
+        <div className="absolute inset-x-0 bottom-0 z-20 hidden p-3 transition-all duration-300 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 sm:block pointer-events-none">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onQuickView(product);
+            }}
+            className="w-full border border-white/80 bg-brand-black/85 py-2 px-3 text-center text-[9px] uppercase tracking-[0.22em] text-white backdrop-blur-sm transition-colors hover:bg-brand-black focus:outline-none focus:ring-1 focus:ring-white pointer-events-auto shadow-sm"
+            aria-label={`Quick view ${product.title}`}
+          >
+            Quick View
+          </button>
+        </div>
       </div>
+
+      {/* Main Title & Price Block Navigation Link */}
       <Link
         href={`/product/${product.slug}`}
-        className="mt-2.5 inline-flex min-h-8 items-center text-[9px] uppercase tracking-[0.18em] text-brand-muted transition-colors hover:text-brand-black sm:mt-3 sm:text-[10px] sm:tracking-[0.2em]"
+        className="flex items-start justify-between gap-2 pt-3 sm:gap-4 sm:pt-4 text-left focus:outline-none"
+        aria-label={`${product.title} - View details`}
       >
-        View full details â†’
+        <div className="min-w-0 flex-1">
+          <h3 className="line-clamp-2 text-[11px] font-bold uppercase leading-[1.3] tracking-[0.08em] text-brand-black transition-colors duration-200 group-hover:text-brand-muted sm:text-xs">
+            {shortName(product.title)}
+          </h3>
+          <p className="mt-1 text-[9px] uppercase tracking-[0.16em] text-brand-muted sm:text-[10px]">
+            {product.category}
+          </p>
+        </div>
+        <div className="shrink-0 whitespace-nowrap text-right font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-brand-black sm:text-xs">
+          <p>{formatPrice(product.price)}</p>
+          {product.compareAtPrice && (
+            <p className="mt-0.5 text-[9px] font-normal text-brand-muted line-through sm:text-[10px]">
+              {formatPrice(product.compareAtPrice)}
+            </p>
+          )}
+        </div>
       </Link>
     </article>
   );
@@ -159,7 +175,11 @@ function QuickView({
         className="relative z-10 grid max-h-[92vh] w-full max-w-5xl overflow-y-auto border border-brand-border bg-brand-surface text-brand-black shadow-2xl md:grid-cols-[1.05fr_0.95fr]"
         data-lenis-prevent
       >
-        <div className="grid grid-cols-2 gap-px border-r border-brand-border bg-brand-border">
+        <div
+          className={`grid gap-px border-r border-brand-border bg-brand-border ${
+            product.images.length === 1 ? "grid-cols-1" : "grid-cols-2"
+          }`}
+        >
           {product.images.map((image, index) => (
             <img
               key={`${image}-${index}`}

@@ -266,7 +266,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
                       <span className="truncate">{userDisplayName}</span>
                     </div>
                     <p className="mt-0.5 truncate text-[10px] text-zinc-400 font-mono">
-                      {user?.email || "admin@wasteindiaonline.com"}
+                      {user?.email || "wasteindia.in@gmail.com"}
                     </p>
                   </div>
 
