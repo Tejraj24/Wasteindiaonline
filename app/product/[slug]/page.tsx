@@ -295,7 +295,7 @@ export default async function ProductPage({
               className="text-xs sm:text-[13px] font-mono uppercase tracking-[0.16em] text-brand-muted"
             >
               <Link href="/" className="transition hover:text-brand-black">
-                WASTE.
+                WASTE®
               </Link>
               <span className="mx-2.5 text-brand-border">/</span>
               <Link href="/shop" className="transition hover:text-brand-black">
@@ -353,19 +353,33 @@ export default async function ProductPage({
                   closer shape.
                 </InformationAccordion>
                 <InformationAccordion title="Product details">
-                  Crafted with considered materials and finished with the WASTE.
+                  Crafted with considered materials and finished with the WASTE®
                   point of view. See the product description above for the specific
                   construction and material notes.
                 </InformationAccordion>
                 <InformationAccordion title="Shipping">
                   Orders are prepared from India. Delivery timing and shipping
-                  rates are confirmed during checkout based on your delivery
-                  address.
+                  rates are calculated during checkout based on your delivery
+                  address. Review our{" "}
+                  <Link
+                    href="/shipping-policy"
+                    className="underline text-brand-black hover:opacity-75 transition-opacity"
+                  >
+                    Shipping &amp; Delivery Policy
+                  </Link>{" "}
+                  for full fulfillment details.
                 </InformationAccordion>
                 <InformationAccordion title="Returns">
                   Items must be unworn, unwashed, and returned with original tags.
-                  Final eligibility and the return window will be confirmed by the
-                  active WASTE. returns policy.
+                  Returns and size exchanges are accepted within 7 calendar days
+                  of delivery. View our complete{" "}
+                  <Link
+                    href="/return-refund-policy"
+                    className="underline text-brand-black hover:opacity-75 transition-opacity"
+                  >
+                    Return &amp; Refund Policy
+                  </Link>{" "}
+                  for step-by-step instructions.
                 </InformationAccordion>
               </div>
             </section>

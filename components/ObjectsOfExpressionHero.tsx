@@ -38,11 +38,11 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
           <div className="col-span-4 flex flex-col justify-center gap-5 lg:gap-7 z-10">
             {/* Editorial Serif Headline */}
             <div className="space-y-1">
-              <h1 className="font-cormorant text-5xl lg:text-6xl xl:text-[4.75rem] 2xl:text-[5.25rem] font-light leading-[0.9] tracking-[-0.03em] text-brand-black">
+              <h2 className="font-cormorant text-5xl lg:text-6xl xl:text-[4.75rem] 2xl:text-[5.25rem] font-light leading-[0.9] tracking-[-0.03em] text-brand-black">
                 Objects<br />
                 <span className="italic font-normal">of</span><br />
                 Expression
-              </h1>
+              </h2>
             </div>
 
             {/* Subtitle & Story Copy */}
@@ -155,11 +155,11 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
 
         {/* Mobile Editorial Headline */}
         <div className="space-y-1">
-          <h1 className="font-cormorant text-4xl sm:text-5xl font-light leading-[0.92] tracking-[-0.03em] text-brand-black">
+          <h2 className="font-cormorant text-4xl sm:text-5xl font-light leading-[0.92] tracking-[-0.03em] text-brand-black">
             Objects<br />
             <span className="italic font-normal">of</span><br />
             Expression
-          </h1>
+          </h2>
         </div>
 
         {/* Mobile Central Focal Garment */}

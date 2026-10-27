@@ -55,6 +55,7 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "WASTE®",
+  alternateName: ["WASTE", "WASTE India"],
   url: "https://www.wasteluxe.in",
 };
 
