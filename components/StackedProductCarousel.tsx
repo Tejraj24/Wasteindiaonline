@@ -124,8 +124,46 @@ export function StackedProductCarousel({
     [total]
   );
 
-  // Automatic rotation: 3000ms interval with pause on hover/focus/interaction/visibility
+  // Automatic rotation: 3000ms interval with smooth pause and resume on hover/focus/interaction/visibility
   const AUTOPLAY_INTERVAL = 3000;
+  const remainingTimeRef = useRef(AUTOPLAY_INTERVAL);
+  const startTimeRef = useRef<number | null>(null);
+
+  // Reset remaining time on slide transition (manual or auto)
+  useEffect(() => {
+    remainingTimeRef.current = AUTOPLAY_INTERVAL;
+  }, [activeIndex]);
+
+  // Window blur listener to release hover state if cursor leaves viewport/tab
+  useEffect(() => {
+    const handleWindowBlur = () => {
+      setIsHovered(false);
+    };
+
+    window.addEventListener("blur", handleWindowBlur);
+    return () => {
+      window.removeEventListener("blur", handleWindowBlur);
+    };
+  }, []);
+
+  const handlePointerEnter = useCallback((e: React.PointerEvent | React.MouseEvent) => {
+    if ("pointerType" in e && (e as React.PointerEvent).pointerType === "touch") return;
+    setIsHovered(true);
+  }, []);
+
+  const handlePointerLeave = useCallback((e: React.PointerEvent | React.MouseEvent) => {
+    setIsHovered(false);
+    try {
+      const isKeyFocused =
+        containerRef.current?.matches?.(":focus-visible") ||
+        Boolean(containerRef.current?.querySelector?.(":focus-visible"));
+      if (!isKeyFocused) {
+        setIsFocused(false);
+      }
+    } catch {
+      setIsFocused(false);
+    }
+  }, []);
 
   useEffect(() => {
     // Respect prefers-reduced-motion or static single piece collections
@@ -134,17 +172,33 @@ export function StackedProductCarousel({
     }
 
     // Pause autoplay while hovering, focusing, swiping/interacting, or when tab is hidden
-    if (isHovered || isFocused || isDocumentHidden || isInteracting) {
+    const isPaused = isHovered || isFocused || isDocumentHidden || isInteracting;
+
+    if (isPaused) {
+      if (startTimeRef.current !== null) {
+        const elapsed = Date.now() - startTimeRef.current;
+        remainingTimeRef.current = Math.max(300, remainingTimeRef.current - elapsed);
+        startTimeRef.current = null;
+      }
       return;
     }
 
-    // Schedule next transition; any manual change to activeIndex resets the timer
+    const delay = remainingTimeRef.current > 0 ? remainingTimeRef.current : AUTOPLAY_INTERVAL;
+    startTimeRef.current = Date.now();
+
     const timer = setTimeout(() => {
+      remainingTimeRef.current = AUTOPLAY_INTERVAL;
+      startTimeRef.current = null;
       goToNext();
-    }, AUTOPLAY_INTERVAL);
+    }, delay);
 
     return () => {
       clearTimeout(timer);
+      if (startTimeRef.current !== null) {
+        const elapsed = Date.now() - startTimeRef.current;
+        remainingTimeRef.current = Math.max(300, remainingTimeRef.current - elapsed);
+        startTimeRef.current = null;
+      }
     };
   }, [
     activeIndex,
@@ -199,6 +253,7 @@ export function StackedProductCarousel({
 
   const handleTouchEnd = (e: React.TouchEvent) => {
     setIsInteracting(false);
+    setIsHovered(false);
     if (!isSwiping.current || touchStartX.current === null) {
       isSwiping.current = false;
       return;
@@ -221,6 +276,7 @@ export function StackedProductCarousel({
 
   const handleTouchCancel = () => {
     setIsInteracting(false);
+    setIsHovered(false);
     isSwiping.current = false;
     touchStartX.current = null;
     touchStartY.current = null;
@@ -359,9 +415,18 @@ export function StackedProductCarousel({
     <section
       ref={containerRef}
       onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onFocus={() => setIsFocused(true)}
+      onFocus={(e) => {
+        try {
+          if (
+            (e.target as HTMLElement)?.matches?.(":focus-visible") ||
+            containerRef.current?.matches?.(":focus-visible")
+          ) {
+            setIsFocused(true);
+          }
+        } catch {
+          // If :focus-visible isn't supported, do not block mouse users
+        }
+      }}
       onBlur={(e) => {
         if (!containerRef.current?.contains(e.relatedTarget as Node)) {
           setIsFocused(false);
@@ -398,6 +463,10 @@ export function StackedProductCarousel({
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchCancel}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handlePointerLeave}
+          onMouseEnter={handlePointerEnter}
+          onMouseLeave={handlePointerLeave}
           className="relative mx-auto flex h-[330px] xs:h-[370px] sm:h-[430px] md:h-[490px] lg:h-[540px] w-full items-center justify-center overflow-visible"
           style={{
             perspective: isNarrowMobile ? "750px" : isMobile ? "900px" : "1200px",
