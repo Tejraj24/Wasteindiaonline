@@ -50,3 +50,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
 export const VALID_CATEGORY_SLUGS = Object.keys(CATEGORY_CONFIGS) as Array<
   keyof typeof CATEGORY_CONFIGS
 >;
+
+export function getCategoryByProductSlug(productSlug: string): CategoryConfig | null {
+  for (const config of Object.values(CATEGORY_CONFIGS)) {
+    if (config.productSlugs.includes(productSlug)) {
+      return config;
+    }
+  }
+  return null;
+}

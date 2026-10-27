@@ -6,6 +6,7 @@ import {
   getFeaturedProducts,
   StorefrontProduct,
 } from "@/lib/services/product.service";
+import { getCategoryByProductSlug } from "@/lib/config/categories";
 import { ProductPurchasePanel } from "@/components/ProductPurchasePanel";
 import { BackButton } from "@/components/navigation/BackButton";
 import { Footer } from "@/components/Footer";
@@ -87,18 +88,26 @@ export async function generateMetadata({
   }
 
   const cleanDescription = cleanProductMetaDescription(product.description, product.title);
+  const canonicalUrl = `https://www.wasteluxe.in/product/${product.slug}`;
+  const imageList = product.images[0] ? [product.images[0]] : [];
 
   return {
     title: `${product.title} | WASTE®`,
     description: cleanDescription,
     alternates: {
-      canonical: `https://www.wasteluxe.in/product/${params.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: `${product.title} | WASTE®`,
       description: cleanDescription,
-      url: `https://www.wasteluxe.in/product/${params.slug}`,
-      images: product.images[0] ? [product.images[0]] : [],
+      url: canonicalUrl,
+      images: imageList,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.title} | WASTE®`,
+      description: cleanDescription,
+      images: imageList,
     },
   };
 }
@@ -211,6 +220,8 @@ export default async function ProductPage({
   const product = await getProductBySlug(params.slug);
   if (!product || product.status !== "ACTIVE") notFound();
 
+  const categoryConfig = getCategoryByProductSlug(product.slug);
+
   const isSoldOut =
     product.soldOut ||
     product.status !== "ACTIVE" ||
@@ -247,29 +258,47 @@ export default async function ProductPage({
     },
   };
 
+  const breadcrumbItems = [
+    {
+      position: 1,
+      name: "Home",
+      item: "https://www.wasteluxe.in",
+    },
+    {
+      position: 2,
+      name: "Shop",
+      item: "https://www.wasteluxe.in/shop",
+    },
+  ];
+
+  if (categoryConfig) {
+    breadcrumbItems.push({
+      position: 3,
+      name: categoryConfig.name,
+      item: `https://www.wasteluxe.in/shop/${categoryConfig.slug}`,
+    });
+    breadcrumbItems.push({
+      position: 4,
+      name: product.title,
+      item: `https://www.wasteluxe.in/product/${product.slug}`,
+    });
+  } else {
+    breadcrumbItems.push({
+      position: 3,
+      name: product.title,
+      item: `https://www.wasteluxe.in/product/${product.slug}`,
+    });
+  }
+
   const breadcrumbSchema = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Home",
-        item: "https://www.wasteluxe.in",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "Shop",
-        item: "https://www.wasteluxe.in/shop",
-      },
-      {
-        "@type": "ListItem",
-        position: 3,
-        name: product.title,
-        item: `https://www.wasteluxe.in/product/${product.slug}`,
-      },
-    ],
+    itemListElement: breadcrumbItems.map((b) => ({
+      "@type": "ListItem",
+      position: b.position,
+      name: b.name,
+      item: b.item,
+    })),
   };
 
   return (
@@ -295,14 +324,25 @@ export default async function ProductPage({
               className="text-xs sm:text-[13px] font-mono uppercase tracking-[0.16em] text-brand-muted"
             >
               <Link href="/" className="transition hover:text-brand-black">
-                WASTE®
+                Home
               </Link>
               <span className="mx-2.5 text-brand-border">/</span>
               <Link href="/shop" className="transition hover:text-brand-black">
                 Shop
               </Link>
               <span className="mx-2.5 text-brand-border">/</span>
-              <span className="text-brand-black font-medium">{product.title.split(" — ")[0] || product.title.split(" - ")[0]}</span>
+              {categoryConfig ? (
+                <>
+                  <Link
+                    href={`/shop/${categoryConfig.slug}`}
+                    className="transition hover:text-brand-black"
+                  >
+                    {categoryConfig.name}
+                  </Link>
+                  <span className="mx-2.5 text-brand-border">/</span>
+                </>
+              ) : null}
+              <span className="text-brand-black font-medium">{product.title}</span>
             </nav>
           </div>
 
@@ -311,7 +351,22 @@ export default async function ProductPage({
 
             <section className="lg:sticky lg:top-32 lg:self-start">
               <p className="text-xs sm:text-[13px] font-mono uppercase tracking-[0.18em] text-brand-muted font-medium">
-                {product.category} / {product.sku}
+                {categoryConfig ? (
+                  <Link
+                    href={`/shop/${categoryConfig.slug}`}
+                    className="transition-colors hover:text-brand-black underline-offset-4 hover:underline"
+                  >
+                    {categoryConfig.name}
+                  </Link>
+                ) : (
+                  <Link
+                    href="/shop"
+                    className="transition-colors hover:text-brand-black underline-offset-4 hover:underline"
+                  >
+                    {product.category || "Collection"}
+                  </Link>
+                )}{" "}
+                / {product.sku}
               </p>
               <h1 className="mt-4 max-w-xl font-editorial text-3xl sm:text-4xl lg:text-[2.75rem] xl:text-[3rem] leading-[1.05] tracking-[-0.02em] text-brand-black break-words">
                 {product.title}
