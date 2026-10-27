@@ -19,15 +19,15 @@ export function Footer() {
          ========================================================== */}
       <div className="block md:hidden w-full">
         {/* Brand Area */}
-        <div className="pt-10 pb-3 px-6 sm:px-8">
+        <div className="pt-7 pb-2 px-6 sm:px-8">
           <Link
             href="/"
             aria-label="WASTE® Homepage"
             className="inline-block transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
           >
-            <span className="font-anton text-[clamp(3.75rem,16vw,5.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
+            <span className="font-anton text-[clamp(3.25rem,14vw,4.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
               WASTE
-              <span className="text-[clamp(1.25rem,4.5vw,1.75rem)] font-sans font-normal align-super ml-1">
+              <span className="text-[clamp(1.1rem,4vw,1.5rem)] font-sans font-normal align-super ml-1">
                 ®
               </span>
             </span>
@@ -35,7 +35,7 @@ export function Footer() {
         </div>
 
         {/* Editorial Fashion Visual */}
-        <div className="relative w-full h-[360px] sm:h-[420px] overflow-hidden bg-[#F6F3EC]">
+        <div className="relative w-full h-[260px] sm:h-[300px] overflow-hidden bg-[#F6F3EC]">
           <img
             src={FOOTER_MOBILE_IMAGE_URL}
             alt="WASTE® contemporary fashion editorial model"
@@ -45,7 +45,7 @@ export function Footer() {
         </div>
 
         {/* ZARA-Inspired Vertical Navigation List */}
-        <div className="px-6 sm:px-8 pt-2 pb-8">
+        <div className="px-6 sm:px-8 pt-2 pb-6">
           <nav aria-label="Mobile Footer Navigation" className="w-full flex flex-col border-t border-[#E5E1D8]">
             <Link
               href="/shop"
@@ -140,70 +140,72 @@ export function Footer() {
       </div>
 
       {/* ==========================================================
-          DESKTOP FOOTER (≥ 768px): Exact Existing Editorial Layout (100% Preserved)
+          DESKTOP FOOTER (≥ 768px): Full-Bleed Right-Aligned Editorial Visual
          ========================================================== */}
-      <div className="hidden md:block mx-auto w-full max-w-[1920px] px-6 sm:px-10 md:px-12 lg:px-16 xl:px-20">
-        <div className="relative flex flex-col lg:flex-row lg:items-center justify-between min-h-[460px] sm:min-h-[520px] lg:min-h-[640px] xl:min-h-[720px] py-12 sm:py-16 lg:py-20">
-          {/* Left Column: Oversized Brand Wordmark + Primary Navigation */}
-          <div className="relative z-10 flex flex-col justify-center max-w-xl xl:max-w-2xl py-4 sm:py-6">
-            <Link
-              href="/"
-              aria-label="WASTE® Homepage"
-              className="inline-block transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
-            >
-              <span className="font-anton text-[clamp(4.25rem,11vw,10.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
-                WASTE
-                <span className="text-[clamp(1.5rem,3.2vw,3rem)] font-sans font-normal align-super ml-1">
-                  ®
-                </span>
-              </span>
-            </Link>
-
-            <nav
-              aria-label="Footer Primary Navigation"
-              className="mt-8 sm:mt-10 lg:mt-14 flex items-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-[13px] md:text-sm font-semibold tracking-[0.22em] uppercase text-[#111111]"
-            >
-              <Link
-                href="/shop"
-                className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
-              >
-                SHOP
-              </Link>
-              <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
-              <Link
-                href="/our-story"
-                className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
-              >
-                OUR STORY
-              </Link>
-              <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
-              <Link
-                href="/contact"
-                className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
-              >
-                CONTACT
-              </Link>
-            </nav>
-          </div>
-
-          {/* Right Column / Fashion Model Visual: Responsive Blended Backdrop */}
-          <div className="mt-8 lg:mt-0 lg:absolute lg:top-0 lg:right-0 lg:bottom-0 lg:w-[54%] xl:w-[52%] 2xl:w-[50%] pointer-events-none flex items-center justify-end overflow-hidden">
-            <div className="relative w-full h-[380px] sm:h-[460px] md:h-[520px] lg:h-full">
-              <img
-                src={FOOTER_DESKTOP_IMAGE_URL}
-                alt="WASTE® contemporary fashion editorial model"
-                className="w-full h-full object-cover object-[72%_center] lg:object-right select-none lg:[mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)] lg:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)] [mask-image:linear-gradient(to_bottom,transparent_0%,black_8%,black_92%,transparent_100%)] sm:[mask-image:none]"
-                loading="lazy"
-              />
-            </div>
+      <div className="hidden md:block relative w-full overflow-hidden">
+        {/* Right Fashion Model Visual: Bleeds flush to the right edge of the footer width-wise */}
+        <div className="absolute top-0 right-0 bottom-0 w-[56%] lg:w-[54%] xl:w-[52%] 2xl:w-[50%] pointer-events-none flex items-center justify-end overflow-hidden z-0">
+          <div className="relative w-full h-full">
+            <img
+              src={FOOTER_DESKTOP_IMAGE_URL}
+              alt="WASTE® contemporary fashion editorial model"
+              className="w-full h-full object-cover object-right select-none [mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)]"
+              loading="lazy"
+            />
           </div>
         </div>
+
+        {/* Content Container (Padded & Max-Width) */}
+        <div className="relative z-10 mx-auto w-full max-w-[1920px] px-6 sm:px-10 md:px-12 lg:px-16 xl:px-20">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between min-h-[320px] sm:min-h-[360px] lg:min-h-[400px] xl:min-h-[440px] py-8 sm:py-10 lg:py-12">
+            {/* Left Column: Oversized Brand Wordmark + Primary Navigation */}
+            <div className="relative z-10 flex flex-col justify-center max-w-xl xl:max-w-2xl py-2 sm:py-3">
+              <Link
+                href="/"
+                aria-label="WASTE® Homepage"
+                className="inline-block transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
+              >
+                <span className="font-anton text-[clamp(3.5rem,8.5vw,7.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
+                  WASTE
+                  <span className="text-[clamp(1.25rem,2.5vw,2.25rem)] font-sans font-normal align-super ml-1">
+                    ®
+                  </span>
+                </span>
+              </Link>
+
+              <nav
+                aria-label="Footer Primary Navigation"
+                className="mt-6 sm:mt-7 lg:mt-9 flex items-center gap-4 sm:gap-6 md:gap-8 text-xs sm:text-[13px] md:text-sm font-semibold tracking-[0.22em] uppercase text-[#111111]"
+              >
+                <Link
+                  href="/shop"
+                  className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
+                >
+                  SHOP
+                </Link>
+                <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
+                <Link
+                  href="/our-story"
+                  className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
+                >
+                  OUR STORY
+                </Link>
+                <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
+                <Link
+                  href="/contact"
+                  className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
+                >
+                  CONTACT
+                </Link>
+              </nav>
+            </div>
+          </div>
 
         {/* Thin Horizontal Divider */}
         <div className="w-full border-t border-[#E0DCD3]" />
 
         {/* Bottom Footer Bar: Copyright, Legal Links, Social Icons */}
-        <div className="py-6 sm:py-7 flex flex-col md:flex-row items-center justify-between gap-5 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] uppercase text-[#6B6862]">
+        <div className="py-4 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-5 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] uppercase text-[#6B6862]">
           {/* Left: Copyright */}
           <div className="text-center md:text-left">
             <p>© {currentYear} WASTE®. ALL RIGHTS RESERVED.</p>
@@ -275,6 +277,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </div>
+  </footer>
   );
 }

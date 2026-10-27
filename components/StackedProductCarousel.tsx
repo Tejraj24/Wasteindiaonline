@@ -124,8 +124,8 @@ export function StackedProductCarousel({
     [total]
   );
 
-  // Automatic rotation: 5000ms interval with pause on hover/focus/interaction/visibility
-  const AUTOPLAY_INTERVAL = 5000;
+  // Automatic rotation: 3000ms interval with pause on hover/focus/interaction/visibility
+  const AUTOPLAY_INTERVAL = 3000;
 
   useEffect(() => {
     // Respect prefers-reduced-motion or static single piece collections

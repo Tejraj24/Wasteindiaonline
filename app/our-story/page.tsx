@@ -134,8 +134,40 @@ export default async function OurStoryPage() {
       >
         <div className="mx-auto max-w-[1600px]">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 xl:gap-20 items-center">
-            {/* Left Column: Editorial Brand Manifesto */}
-            <div className="lg:col-span-6 space-y-6 sm:space-y-8 order-2 lg:order-1">
+            {/* Left Column: Story Artwork with Luxury Editorial Framing */}
+            <div className="lg:col-span-6 order-1">
+              <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] w-full bg-[#F4F2EB] border border-[#111111]/15 p-6 sm:p-10 flex items-center justify-center overflow-hidden shadow-sm group">
+                {/* Archive Stamp */}
+                <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-white/90 backdrop-blur-sm border border-[#111111]/15 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-[#111111]">
+                  WASTE ® — ARCHIVE
+                </div>
+
+                {/* Floating Handwritten Script Overlay */}
+                <div className="absolute top-6 right-4 sm:right-6 z-20 pointer-events-none">
+                  <span className="font-reenie text-2xl sm:text-4xl text-[#111111] -rotate-6 block select-none drop-shadow-sm font-medium">
+                    Same Chaos Different Form.
+                  </span>
+                </div>
+
+                {/* Center Artwork Image */}
+                <img
+                  src={ASSETS.storyArtwork}
+                  alt="WASTE® Story Artwork — Same Chaos Different Form"
+                  className="w-full h-full object-contain filter contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out z-10"
+                  loading="lazy"
+                />
+
+                {/* Bottom Floating Handwritten Caption */}
+                <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-20 pointer-events-none">
+                  <p className="font-reenie text-xl sm:text-2xl text-[#706E68] rotate-2 select-none">
+                    &ldquo;For the ones who feel different.&rdquo;
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column: Editorial Brand Manifesto */}
+            <div className="lg:col-span-6 space-y-6 sm:space-y-8 order-2">
               <div className="inline-flex items-center gap-2.5 text-[11px] font-mono uppercase tracking-[0.28em] text-[#B89A62]">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#B89A62]" aria-hidden="true" />
                 <span>01 / THE MANIFESTO</span>
@@ -173,38 +205,6 @@ export default async function OurStoryPage() {
                   EXPLORE THE PIECES
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                 </Link>
-              </div>
-            </div>
-
-            {/* Right Column: Story Artwork with Luxury Editorial Framing */}
-            <div className="lg:col-span-6 order-1 lg:order-2">
-              <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] w-full bg-[#F4F2EB] border border-[#111111]/15 p-6 sm:p-10 flex items-center justify-center overflow-hidden shadow-sm group">
-                {/* Archive Stamp */}
-                <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-white/90 backdrop-blur-sm border border-[#111111]/15 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-[#111111]">
-                  WASTE ® — ARCHIVE
-                </div>
-
-                {/* Floating Handwritten Script Overlay */}
-                <div className="absolute top-6 right-4 sm:right-6 z-20 pointer-events-none">
-                  <span className="font-reenie text-2xl sm:text-4xl text-[#111111] -rotate-6 block select-none drop-shadow-sm font-medium">
-                    Same Chaos Different Form.
-                  </span>
-                </div>
-
-                {/* Center Artwork Image */}
-                <img
-                  src={ASSETS.storyArtwork}
-                  alt="WASTE® Story Artwork — Same Chaos Different Form"
-                  className="w-full h-full object-contain filter contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out z-10"
-                  loading="lazy"
-                />
-
-                {/* Bottom Floating Handwritten Caption */}
-                <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 z-20 pointer-events-none">
-                  <p className="font-reenie text-xl sm:text-2xl text-[#706E68] rotate-2 select-none">
-                    &ldquo;For the ones who feel different.&rdquo;
-                  </p>
-                </div>
               </div>
             </div>
           </div>
