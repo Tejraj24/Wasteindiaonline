@@ -6,16 +6,16 @@ import { BRAND_CONFIG } from "@/lib/config/brand";
 import { Scale, CheckCircle2, AlertCircle, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | WASTE® — Contemporary Indian Streetwear",
+  title: "Terms & Conditions | WASTE — Contemporary Indian Streetwear",
   description:
-    "Official Terms and Conditions of WASTE®. Review our store terms, preorder allocations, intellectual property rights, and customer purchase conditions.",
+    "Official Terms and Conditions of WASTE. Review our store terms, preorder allocations, intellectual property rights, and customer purchase conditions.",
   alternates: {
     canonical: "https://www.wasteluxe.in/terms-and-conditions",
   },
   openGraph: {
-    title: "Terms & Conditions | WASTE®",
+    title: "Terms & Conditions | WASTE",
     description:
-      "Review the terms governing the use of the WASTE® website and the purchase of our limited streetwear collections.",
+      "Review the terms governing the use of the WASTE website and the purchase of our limited streetwear collections.",
     url: "https://www.wasteluxe.in/terms-and-conditions",
     type: "website",
   },
@@ -146,7 +146,7 @@ export default function TermsAndConditionsPage() {
                     before ordering or reserving.
                   </p>
                   <p>
-                    All pieces are subject to availability. Many WASTE® collections are released as numbered drops or limited-capacity
+                    All pieces are subject to availability. Many WASTE collections are released as numbered drops or limited-capacity
                     preorders. We reserve the right to limit quantities per client (typically 1 to 5 units per design) to ensure
                     fair access across our community.
                   </p>
@@ -169,7 +169,7 @@ export default function TermsAndConditionsPage() {
                   <p>
                     Domestic standard delivery is provided complimentarily across India. While we strive to ensure all pricing
                     information is accurate, typographical or catalog errors may occur. If a garment is listed at an incorrect price,
-                    WASTE® reserves the right to decline or cancel the affected order, providing immediate notice and a full refund.
+                    WASTE reserves the right to decline or cancel the affected order, providing immediate notice and a full refund.
                   </p>
                 </div>
               </article>
@@ -234,7 +234,7 @@ export default function TermsAndConditionsPage() {
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
-                    The WASTE® name, brand logo, the tagline <em>&ldquo;Made in India. Built for the world.&rdquo;</em>,
+                    The WASTE name, brand logo, the tagline <em>&ldquo;Made in India. Built for the world.&rdquo;</em>,
                     artwork, graphics, garment patterns, editorial photography, typography, video footage, website layouts,
                     and software code are the exclusive intellectual property of Suryansh Meena and {BRAND_CONFIG.brandName}.
                   </p>
@@ -310,7 +310,7 @@ export default function TermsAndConditionsPage() {
                   </p>
                   <div className="border border-brand-border bg-brand-surface p-5 space-y-2">
                     <p className="text-xs uppercase tracking-wider text-brand-black font-semibold">
-                      WASTE® Legal &amp; Executive Office
+                      WASTE Legal &amp; Executive Office
                     </p>
                     <p className="text-xs text-brand-muted">
                       Founder: {BRAND_CONFIG.founder.name}

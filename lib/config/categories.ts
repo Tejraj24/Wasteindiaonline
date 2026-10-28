@@ -1,5 +1,5 @@
 /**
- * Official Category Configuration for WASTE®
+ * Official Category Configuration for WASTE
  * Single source of truth for SEO landing pages, metadata, and product scope.
  */
 
@@ -17,12 +17,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
   "t-shirts": {
     slug: "t-shirts",
     name: "T-Shirts & Tops",
-    title: "Oversized Graphic T-Shirts | WASTE®",
+    title: "Oversized Graphic T-Shirts | WASTE",
     h1: "T-Shirts & Tops",
     metaDescription:
-      "Discover oversized graphic T-shirts and distinctive tops from WASTE®. Explore expressive artwork, relaxed silhouettes and contemporary Indian streetwear.",
+      "Discover oversized graphic T-shirts and distinctive tops from WASTE. Explore expressive artwork, relaxed silhouettes and contemporary Indian streetwear.",
     intro:
-      "Explore the WASTE® T-Shirts & Tops collection, featuring graphic-led designs and relaxed silhouettes. Discover statement pieces made for individual expression and contemporary streetwear styling.",
+      "Explore the WASTE T-Shirts & Tops collection, featuring graphic-led designs and relaxed silhouettes. Discover statement pieces made for individual expression and contemporary streetwear styling.",
     productSlugs: [
       "art-of-rebellion-oversized-t-shirt",
       "waste-crimson-bloom-oversized-tee",
@@ -34,12 +34,12 @@ export const CATEGORY_CONFIGS: Record<string, CategoryConfig> = {
   "outerwear": {
     slug: "outerwear",
     name: "Outerwear & Layers",
-    title: "Streetwear Outerwear & Layers | WASTE®",
+    title: "Streetwear Outerwear & Layers | WASTE",
     h1: "Outerwear & Layers",
     metaDescription:
-      "Explore statement outerwear and layering pieces from WASTE®, including distinctive jacket and sweatshirt designs for contemporary streetwear looks.",
+      "Explore statement outerwear and layering pieces from WASTE, including distinctive jacket and sweatshirt designs for contemporary streetwear looks.",
     intro:
-      "Discover the WASTE® Outerwear & Layers collection, bringing together statement jacket and sweatshirt styles for contemporary streetwear looks.",
+      "Discover the WASTE Outerwear & Layers collection, bringing together statement jacket and sweatshirt styles for contemporary streetwear looks.",
     productSlugs: [
       "leopard-fur-jacket-waste-originals",
       "sunflower-hour-art-unisex-oversized-sweatshirt",

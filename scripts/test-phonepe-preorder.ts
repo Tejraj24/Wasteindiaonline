@@ -8,7 +8,7 @@ import { generateMerchantOrderId } from "../lib/services/order.service";
 
 async function runTests() {
   console.log("=================================================");
-  console.log("  WASTE® PhonePe PG V2 & Preorder Test Suite     ");
+  console.log("  WASTE PhonePe PG V2 & Preorder Test Suite     ");
   console.log("=================================================\n");
 
   let passed = 0;

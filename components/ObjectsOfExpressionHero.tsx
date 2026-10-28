@@ -126,7 +126,7 @@ export function ObjectsOfExpressionHero({ className = "" }: ObjectsOfExpressionH
 
               {/* Vertical Fine Label */}
               <div className="hidden 2xl:block absolute -left-7 top-1/2 -translate-y-1/2 [writing-mode:vertical-rl] rotate-180 text-[8px] font-mono tracking-[0.3em] uppercase text-brand-muted/60 select-none">
-                WASTE® EDITION — 2024
+                WASTE EDITION — 2024
               </div>
 
             </div>

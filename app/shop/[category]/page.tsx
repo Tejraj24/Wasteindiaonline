@@ -32,7 +32,7 @@ export async function generateMetadata({
       title: config.title,
       description: config.metaDescription,
       url,
-      siteName: "WASTE®",
+      siteName: "WASTE INDIA",
       type: "website",
       locale: "en_IN",
     },
@@ -89,8 +89,8 @@ export default async function CategoryPage({
     url: `https://www.wasteluxe.in/shop/${config.slug}`,
     isPartOf: {
       "@type": "WebSite",
-      "name": "WASTE®",
-      "url": "https://www.wasteluxe.in",
+      "name": "WASTE INDIA",
+      "url": "https://www.wasteluxe.in/",
     },
   };
 

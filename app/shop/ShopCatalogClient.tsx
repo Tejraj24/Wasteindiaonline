@@ -373,10 +373,10 @@ export function ShopCatalogClient({
         <div className="mb-10 mt-2 sm:mt-4 flex items-end justify-between gap-4 border-b border-brand-border pb-5 sm:mb-12">
           <div>
             <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
-              WASTE® / Archive
+              WASTE / Archive
             </p>
             <h1 className="mt-4 font-editorial text-[clamp(2.25rem,7vw,4rem)] leading-none tracking-[-0.04em] text-brand-black">
-              WASTE® <span className="font-editorial italic text-brand-gold">Streetwear</span> Collection
+              WASTE <span className="font-editorial italic text-brand-gold">Streetwear</span> Collection
             </h1>
           </div>
           <span className="text-[10px] uppercase tracking-[0.2em] text-brand-muted">

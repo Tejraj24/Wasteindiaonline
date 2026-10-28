@@ -5,8 +5,16 @@ import { BRAND_CONFIG } from "@/lib/config/brand";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.wasteluxe.in"),
-  title: "WASTE® — Contemporary Indian Streetwear",
+  title: "WASTE INDIA — Contemporary Indian Streetwear",
   description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
+  openGraph: {
+    siteName: "WASTE INDIA",
+    title: "WASTE INDIA — Contemporary Indian Streetwear",
+    description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
+    url: "https://www.wasteluxe.in/",
+    locale: "en_IN",
+    type: "website",
+  },
 };
 
 export const viewport: Viewport = {
@@ -17,8 +25,9 @@ export const viewport: Viewport = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "WASTE®",
-  url: "https://www.wasteluxe.in",
+  name: "WASTE INDIA",
+  alternateName: ["WASTE", "WASTE®"],
+  url: "https://www.wasteluxe.in/",
   logo: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791873242/waste_yl29iy.jpg",
   email: BRAND_CONFIG.contact.officialBusinessEmail,
   founder: {
@@ -42,9 +51,9 @@ const organizationSchema = {
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "WASTE®",
-  alternateName: ["WASTE", "WASTE India"],
-  url: "https://www.wasteluxe.in",
+  name: "WASTE INDIA",
+  alternateName: ["WASTE", "WASTE®"],
+  url: "https://www.wasteluxe.in/",
 };
 
 export default function RootLayout({

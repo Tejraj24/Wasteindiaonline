@@ -6,16 +6,16 @@ import { BRAND_CONFIG } from "@/lib/config/brand";
 import { Truck, PackageCheck, Clock, MapPin, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy | WASTE® — Contemporary Indian Streetwear",
+  title: "Shipping & Delivery Policy | WASTE — Contemporary Indian Streetwear",
   description:
-    "Official Shipping Policy for WASTE®. Complimentary domestic delivery across India, courier dispatch timelines, tracking procedures, and delivery care.",
+    "Official Shipping Policy for WASTE. Complimentary domestic delivery across India, courier dispatch timelines, tracking procedures, and delivery care.",
   alternates: {
     canonical: "https://www.wasteluxe.in/shipping-policy",
   },
   openGraph: {
-    title: "Shipping & Delivery Policy | WASTE®",
+    title: "Shipping & Delivery Policy | WASTE",
     description:
-      "Complimentary domestic delivery across India. Review dispatch timelines, tracking, and delivery expectations for WASTE® collections.",
+      "Complimentary domestic delivery across India. Review dispatch timelines, tracking, and delivery expectations for WASTE collections.",
     url: "https://www.wasteluxe.in/shipping-policy",
     type: "website",
   },
@@ -62,7 +62,7 @@ export default function ShippingPolicyPage() {
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm leading-relaxed text-brand-muted">
-                  WASTE® provides complimentary standard domestic shipping on all orders and preorders across India.
+                  WASTE provides complimentary standard domestic shipping on all orders and preorders across India.
                   Every piece is inspected, folded, and packaged in premium protective packaging before dispatch
                   through verified logistics partners.
                 </p>
@@ -241,7 +241,7 @@ export default function ShippingPolicyPage() {
                   <p>
                     You can also track your orders and view order history at any time by logging into your{" "}
                     <Link href="/account" className="text-brand-black underline font-medium">
-                      WASTE® Account
+                      WASTE Account
                     </Link>
                     .
                   </p>
@@ -282,7 +282,7 @@ export default function ShippingPolicyPage() {
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
-                    Every WASTE® garment is shipped in secure packaging. If you notice that your outer package is visibly
+                    Every WASTE garment is shipped in secure packaging. If you notice that your outer package is visibly
                     torn, opened, or tampered with at the time of delivery:
                   </p>
                   <ul className="list-disc pl-5 space-y-1.5">

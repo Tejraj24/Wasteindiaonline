@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Cart | WASTE®",
+  title: "Cart | WASTE",
   robots: {
     index: false,
     follow: false,

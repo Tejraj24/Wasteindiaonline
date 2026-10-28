@@ -6,7 +6,7 @@ import { ShopCatalogClient } from "./ShopCatalogClient";
 export const revalidate = 0; // Always fetch fresh database catalog
 
 export const metadata: Metadata = {
-  title: "Shop Collection | WASTE®",
+  title: "Shop Collection | WASTE",
   description: "Explore the latest curated collections, garments, and silhouettes by WASTE.",
   alternates: {
     canonical: "https://www.wasteluxe.in/shop",

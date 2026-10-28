@@ -283,7 +283,7 @@ export function CategoryCatalogClient({
             <div className="flex flex-col gap-4 border-b border-brand-border pb-8 sm:flex-row sm:items-end sm:justify-between">
               <div className="max-w-2xl">
                 <p className="text-[10px] uppercase tracking-[0.3em] text-brand-muted">
-                  WASTE® / Collection
+                  WASTE / Collection
                 </p>
                 <h1 className="mt-3 font-editorial text-[clamp(2.25rem,6vw,3.75rem)] leading-[1.05] tracking-[-0.04em] text-brand-black">
                   {category.h1}

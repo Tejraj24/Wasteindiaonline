@@ -142,7 +142,7 @@ export function EditorialCollectionSection({ className = "" }: EditorialCollecti
 
               {/* Vertical Fine Label */}
               <div className="hidden 2xl:block absolute -left-7 top-1/2 -translate-y-1/2 [writing-mode:vertical-rl] rotate-180 text-[8px] font-mono tracking-[0.3em] uppercase text-brand-muted/60 select-none">
-                WASTE® ARCHIVE — CHAPTER 02
+                WASTE ARCHIVE — CHAPTER 02
               </div>
 
             </div>
@@ -162,7 +162,7 @@ export function EditorialCollectionSection({ className = "" }: EditorialCollecti
         {/* Mobile Header Metadata */}
         <div className="flex items-center justify-between text-[10px] font-mono tracking-[0.24em] uppercase text-brand-muted pb-3 border-b border-[#E8E4DA]/80">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-brand-black">WASTE® — DROP 02</span>
+            <span className="font-semibold text-brand-black">WASTE — DROP 02</span>
             <span className="w-6 h-[1px] bg-[#E8E4DA]" aria-hidden="true" />
             <span className="text-[#48533F]">NEW DROP</span>
           </div>

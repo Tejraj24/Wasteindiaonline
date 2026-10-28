@@ -7,14 +7,14 @@ import { getProducts } from "@/lib/services/product.service";
 export const revalidate = 0;
 
 export const metadata: Metadata = {
-  title: "Our Story — WASTE® | More Than Clothing",
+  title: "Our Story — WASTE | More Than Clothing",
   description:
     "WASTE is a streetwear label born from real people, raw emotions and the beauty in everyday chaos. Rooted in Jaipur, India. Built for the ones who feel.",
   alternates: {
     canonical: "https://www.wasteluxe.in/our-story",
   },
   openGraph: {
-    title: "Our Story — WASTE® | More Than Clothing",
+    title: "Our Story — WASTE | More Than Clothing",
     description:
       "WASTE is a streetwear label born from real people, raw emotions and the beauty in everyday chaos. Rooted in Jaipur, India.",
     type: "website",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
         url: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1792962520/OUT-STORY_HEOR_twahsu.jpg",
         width: 1200,
         height: 800,
-        alt: "WASTE® — More Than Clothing",
+        alt: "WASTE — More Than Clothing",
       },
     ],
   },
@@ -62,7 +62,7 @@ export default async function OurStoryPage() {
         <div className="absolute inset-0 w-full h-full">
           <img
             src={ASSETS.heroCampaign}
-            alt="WASTE® Streetwear Campaign in Jaipur — More Than Clothing"
+            alt="WASTE Streetwear Campaign in Jaipur — More Than Clothing"
             className="w-full h-full object-cover object-center"
             loading="eager"
             decoding="async"
@@ -126,7 +126,7 @@ export default async function OurStoryPage() {
       {/* =========================================================================
           EDITORIAL STORY — SECTION 01: THE MANIFESTO & ARTWORK
           Editorial 2-column layout pairing brand manifesto with the signature
-          WASTE® artwork, framed with handwritten annotations.
+          WASTE artwork, framed with handwritten annotations.
           ========================================================================= */}
       <section
         id="manifesto"
@@ -139,7 +139,7 @@ export default async function OurStoryPage() {
               <div className="relative aspect-[4/5] sm:aspect-square lg:aspect-[4/5] w-full bg-[#F4F2EB] border border-[#111111]/15 p-6 sm:p-10 flex items-center justify-center overflow-hidden shadow-sm group">
                 {/* Archive Stamp */}
                 <div className="absolute top-4 left-4 z-20 px-3 py-1 bg-white/90 backdrop-blur-sm border border-[#111111]/15 font-mono text-[9px] sm:text-[10px] uppercase tracking-[0.28em] text-[#111111]">
-                  WASTE ® — ARCHIVE
+                  WASTE — ARCHIVE
                 </div>
 
                 {/* Floating Handwritten Script Overlay */}
@@ -152,7 +152,7 @@ export default async function OurStoryPage() {
                 {/* Center Artwork Image */}
                 <img
                   src={ASSETS.storyArtwork}
-                  alt="WASTE® Story Artwork — Same Chaos Different Form"
+                  alt="WASTE Story Artwork — Same Chaos Different Form"
                   className="w-full h-full object-contain filter contrast-105 group-hover:scale-105 transition-transform duration-700 ease-out z-10"
                   loading="lazy"
                 />
@@ -185,7 +185,7 @@ export default async function OurStoryPage() {
 
               <div className="space-y-4 text-sm sm:text-base text-[#111111]/80 font-light leading-relaxed max-w-xl">
                 <p>
-                  WASTE® was born out of a refusal to follow the generic cycle.
+                  WASTE was born out of a refusal to follow the generic cycle.
                   Streetwear is not just cloth stitched together—it is personal
                   architecture, emotional resonance, and a quiet rebellion against mass
                   uniformity.
@@ -214,7 +214,7 @@ export default async function OurStoryPage() {
       {/* =========================================================================
           EDITORIAL STORY — SECTION 02: THE PEOPLE & COMMUNITY
           Golden hour community portrait paired with the manifesto for the
-          thinkers, misfits, and dreamers wearing WASTE®.
+          thinkers, misfits, and dreamers wearing WASTE.
           ========================================================================= */}
       <section className="w-full bg-[#F4F2EB] border-b border-[#111111]/10 px-6 py-20 sm:px-10 sm:py-28 lg:py-36">
         <div className="mx-auto max-w-[1600px]">
@@ -265,7 +265,7 @@ export default async function OurStoryPage() {
                 {/* Community Photograph */}
                 <img
                   src={ASSETS.communityPortrait}
-                  alt="WASTE® Community and Culture"
+                  alt="WASTE Community and Culture"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
@@ -288,7 +288,7 @@ export default async function OurStoryPage() {
       {/* =========================================================================
           EDITORIAL STORY — SECTION 03: THE SILHOUETTE & THE CODE
           Showcasing image 03 alongside the 4 creative pillars and the central
-          WASTE® archive manifesto quote.
+          WASTE archive manifesto quote.
           ========================================================================= */}
       <section className="w-full bg-[#FAF8F5] border-b border-[#111111]/10 px-6 py-20 sm:px-10 sm:py-28 lg:py-36">
         <div className="mx-auto max-w-[1600px] space-y-16 lg:space-y-20">
@@ -311,7 +311,7 @@ export default async function OurStoryPage() {
                 {/* The Image */}
                 <img
                   src={ASSETS.craftSilhouette}
-                  alt="WASTE® Silhouette 03 — Form & Architecture"
+                  alt="WASTE Silhouette 03 — Form & Architecture"
                   className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                   loading="lazy"
                 />
@@ -412,7 +412,7 @@ export default async function OurStoryPage() {
               &ldquo;Clothes are just a medium. The real story is the people who wear them.&rdquo;
             </blockquote>
             <p className="font-mono text-xs uppercase tracking-[0.28em] text-[#706E68]">
-              — WASTE® ATELIER · JAIPUR, INDIA
+              — WASTE ATELIER · JAIPUR, INDIA
             </p>
           </div>
         </div>
@@ -510,7 +510,7 @@ export default async function OurStoryPage() {
 
                   <div className="text-right">
                     <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[#B89A62]">
-                      WASTE® ATELIER
+                      WASTE ATELIER
                     </p>
                     <p className="font-mono text-[10px] text-[#706E68]">
                       Jaipur, Rajasthan

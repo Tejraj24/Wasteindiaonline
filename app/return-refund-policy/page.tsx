@@ -6,16 +6,16 @@ import { BRAND_CONFIG } from "@/lib/config/brand";
 import { RotateCcw, ShieldAlert, CheckCircle2, HelpCircle, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Return, Exchange & Refund Policy | WASTE® — Contemporary Indian Streetwear",
+  title: "Return, Exchange & Refund Policy | WASTE — Contemporary Indian Streetwear",
   description:
-    "Official Return, Exchange & Refund Policy for WASTE®. Transparent terms on defective pieces, size exchanges, reverse pickups, and refund processing.",
+    "Official Return, Exchange & Refund Policy for WASTE. Transparent terms on defective pieces, size exchanges, reverse pickups, and refund processing.",
   alternates: {
     canonical: "https://www.wasteluxe.in/return-refund-policy",
   },
   openGraph: {
-    title: "Return, Exchange & Refund Policy | WASTE®",
+    title: "Return, Exchange & Refund Policy | WASTE",
     description:
-      "Review the customer care policy for WASTE®: transparent guidelines on size exchanges, transit damages, order cancellations, and refund timelines.",
+      "Review the customer care policy for WASTE: transparent guidelines on size exchanges, transit damages, order cancellations, and refund timelines.",
     url: "https://www.wasteluxe.in/return-refund-policy",
     type: "website",
   },
@@ -62,7 +62,7 @@ export default function ReturnRefundPolicyPage() {
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm leading-relaxed text-brand-muted">
-                  WASTE® stands firmly behind the craftsmanship, cuts, and materials of our contemporary streetwear pieces.
+                  WASTE stands firmly behind the craftsmanship, cuts, and materials of our contemporary streetwear pieces.
                   If an item reaches you damaged, defective, or in the wrong size, our team is committed to making it right
                   through prompt exchanges or full refunds.
                 </p>
@@ -128,7 +128,7 @@ export default function ReturnRefundPolicyPage() {
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
-                    Every WASTE® garment undergoes strict quality inspection prior to packaging. In the rare event you receive
+                    Every WASTE garment undergoes strict quality inspection prior to packaging. In the rare event you receive
                     a piece that has:
                   </p>
                   <ul className="list-disc pl-5 space-y-1.5">
@@ -137,7 +137,7 @@ export default function ReturnRefundPolicyPage() {
                     <li>An incorrect garment, color, or size differing from what was ordered.</li>
                   </ul>
                   <p>
-                    <strong className="text-brand-black font-medium">Full Protection:</strong> WASTE® will arrange a complimentary
+                    <strong className="text-brand-black font-medium">Full Protection:</strong> WASTE will arrange a complimentary
                     reverse pickup and provide either a brand-new replacement piece (subject to drop availability) or a 100% full refund
                     to your original payment source, including all associated costs.
                   </p>
@@ -161,7 +161,7 @@ export default function ReturnRefundPolicyPage() {
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
-                    We want you to feel confident and comfortable in every WASTE® silhouette. If the piece you ordered does not
+                    We want you to feel confident and comfortable in every WASTE silhouette. If the piece you ordered does not
                     fit as desired, we offer size exchanges subject to stock or preorder allocation availability in the requested size.
                   </p>
                   <p>
@@ -229,7 +229,7 @@ export default function ReturnRefundPolicyPage() {
                   Step-by-Step Return &amp; Exchange Procedure
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
-                  <p>Initiating a return or exchange with WASTE® is simple and transparent:</p>
+                  <p>Initiating a return or exchange with WASTE is simple and transparent:</p>
                   <ol className="list-decimal pl-5 space-y-3">
                     <li>
                       <strong className="text-brand-black font-medium">Step 1 — Submit Your Request:</strong> Contact our team
@@ -334,7 +334,7 @@ export default function ReturnRefundPolicyPage() {
                   </p>
                   <div className="border border-brand-border bg-brand-surface p-5 space-y-2">
                     <p className="text-xs uppercase tracking-wider text-brand-black font-semibold">
-                      WASTE® Client Care &amp; Support
+                      WASTE Client Care &amp; Support
                     </p>
                     <p className="text-xs text-brand-muted">
                       Founder / Studio Lead: {BRAND_CONFIG.founder.name}

@@ -22,14 +22,11 @@ export function Footer() {
         <div className="pt-7 pb-2 px-6 sm:px-8">
           <Link
             href="/"
-            aria-label="WASTE® Homepage"
+            aria-label="WASTE Homepage"
             className="inline-block transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
           >
             <span className="font-anton text-[clamp(3.25rem,14vw,4.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
               WASTE
-              <span className="text-[clamp(1.1rem,4vw,1.5rem)] font-sans font-normal align-super ml-1">
-                ®
-              </span>
             </span>
           </Link>
         </div>
@@ -38,7 +35,7 @@ export function Footer() {
         <div className="relative w-full h-[260px] sm:h-[300px] overflow-hidden bg-[#F6F3EC]">
           <img
             src={FOOTER_MOBILE_IMAGE_URL}
-            alt="WASTE® contemporary fashion editorial model"
+            alt="WASTE contemporary fashion editorial model"
             className="w-full h-full object-cover object-[center_top] select-none [mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)] [-webkit-mask-image:linear-gradient(to_bottom,black_75%,transparent_100%)]"
             loading="lazy"
           />
@@ -52,6 +49,13 @@ export function Footer() {
               className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
             >
               <span>SHOP</span>
+              <span className="text-[#88857E] text-xs font-light">→</span>
+            </Link>
+            <Link
+              href="/blog"
+              className="py-4 border-b border-[#E5E1D8] text-[11px] font-semibold tracking-[0.22em] uppercase text-[#111111] hover:opacity-50 transition-opacity flex items-center justify-between"
+            >
+              <span>JOURNAL</span>
               <span className="text-[#88857E] text-xs font-light">→</span>
             </Link>
             <Link
@@ -160,7 +164,7 @@ export function Footer() {
 
           {/* Copyright */}
           <p className="text-[10px] tracking-[0.16em] uppercase text-[#6B6862]">
-            © {currentYear} WASTE®. ALL RIGHTS RESERVED.
+            © {currentYear} WASTE. ALL RIGHTS RESERVED.
           </p>
         </div>
       </div>
@@ -174,7 +178,7 @@ export function Footer() {
           <div className="relative w-full h-full">
             <img
               src={FOOTER_DESKTOP_IMAGE_URL}
-              alt="WASTE® contemporary fashion editorial model"
+              alt="WASTE contemporary fashion editorial model"
               className="w-full h-full object-cover object-right select-none [mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_16%,black_100%)]"
               loading="lazy"
             />
@@ -188,14 +192,11 @@ export function Footer() {
             <div className="relative z-10 flex flex-col justify-center max-w-xl xl:max-w-2xl py-2 sm:py-3">
               <Link
                 href="/"
-                aria-label="WASTE® Homepage"
+                aria-label="WASTE Homepage"
                 className="inline-block transition-opacity hover:opacity-85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black"
               >
                 <span className="font-anton text-[clamp(3.5rem,8.5vw,7.5rem)] leading-[0.82] tracking-[-0.03em] uppercase text-[#111111] block">
                   WASTE
-                  <span className="text-[clamp(1.25rem,2.5vw,2.25rem)] font-sans font-normal align-super ml-1">
-                    ®
-                  </span>
                 </span>
               </Link>
 
@@ -208,6 +209,13 @@ export function Footer() {
                   className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
                 >
                   SHOP
+                </Link>
+                <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
+                <Link
+                  href="/blog"
+                  className="hover:opacity-50 transition-opacity focus-visible:outline-none focus-visible:underline underline-offset-4"
+                >
+                  JOURNAL
                 </Link>
                 <span aria-hidden="true" className="h-3.5 w-px bg-black/25" />
                 <Link
@@ -234,7 +242,7 @@ export function Footer() {
         <div className="py-4 sm:py-5 flex flex-col md:flex-row items-center justify-between gap-5 text-[10px] sm:text-[11px] font-medium tracking-[0.16em] uppercase text-[#6B6862]">
           {/* Left: Copyright */}
           <div className="text-center md:text-left">
-            <p>© {currentYear} WASTE®. ALL RIGHTS RESERVED.</p>
+            <p>© {currentYear} WASTE. ALL RIGHTS RESERVED.</p>
           </div>
 
           {/* Right: Legal Links & Verified Social Icons */}

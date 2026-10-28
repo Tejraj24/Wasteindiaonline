@@ -6,14 +6,14 @@ import { ContactForm } from "@/components/contact/ContactForm";
 import { BRAND_CONFIG } from "@/lib/config/brand";
 
 export const metadata: Metadata = {
-  title: "Contact Us | WASTE®",
+  title: "Contact Us | WASTE",
   description:
     "Official communication channels for WASTE. Business enquiries, founder contact, and verified social channels.",
   alternates: {
     canonical: "https://www.wasteluxe.in/contact",
   },
   openGraph: {
-    title: "Contact Us | WASTE®",
+    title: "Contact Us | WASTE",
     description: "Official business and founder enquiries for WASTE.",
   },
 };

@@ -22,7 +22,7 @@ function formatPrice(price: number) {
 }
 
 function cleanProductMetaDescription(description?: string, title?: string): string {
-  const fallback = `${title || "Piece"} — Contemporary Indian streetwear crafted by WASTE®. Distinctive silhouette and premium heavyweight fabric.`;
+  const fallback = `${title || "Piece"} — Contemporary Indian streetwear crafted by WASTE. Distinctive silhouette and premium heavyweight fabric.`;
   if (!description || typeof description !== "string") return fallback;
 
   // Split into paragraphs, clean whitespace and markdown/bullet artifacts
@@ -79,7 +79,7 @@ export async function generateMetadata({
   const product = await getProductBySlug(params.slug);
   if (!product || product.status !== "ACTIVE") {
     return {
-      title: "Product Not Found | WASTE®",
+      title: "Product Not Found | WASTE",
       robots: {
         index: false,
         follow: false,
@@ -92,20 +92,20 @@ export async function generateMetadata({
   const imageList = product.images[0] ? [product.images[0]] : [];
 
   return {
-    title: `${product.title} | WASTE®`,
+    title: `${product.title} | WASTE`,
     description: cleanDescription,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: `${product.title} | WASTE®`,
+      title: `${product.title} | WASTE`,
       description: cleanDescription,
       url: canonicalUrl,
       images: imageList,
     },
     twitter: {
       card: "summary_large_image",
-      title: `${product.title} | WASTE®`,
+      title: `${product.title} | WASTE`,
       description: cleanDescription,
       images: imageList,
     },
@@ -246,7 +246,7 @@ export default async function ProductPage({
     sku: product.sku || undefined,
     brand: {
       "@type": "Brand",
-      name: "WASTE®",
+      name: "WASTE",
     },
     offers: {
       "@type": "Offer",
@@ -408,7 +408,7 @@ export default async function ProductPage({
                   closer shape.
                 </InformationAccordion>
                 <InformationAccordion title="Product details">
-                  Crafted with considered materials and finished with the WASTE®
+                  Crafted with considered materials and finished with the WASTE
                   point of view. See the product description above for the specific
                   construction and material notes.
                 </InformationAccordion>

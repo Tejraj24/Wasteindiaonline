@@ -6,16 +6,16 @@ import { BRAND_CONFIG } from "@/lib/config/brand";
 import { ShieldCheck, Lock, Eye, FileText, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | WASTE® — Contemporary Indian Streetwear",
+  title: "Privacy Policy | WASTE — Contemporary Indian Streetwear",
   description:
-    "Official Privacy Policy for WASTE®. Read how we collect, protect, process, and respect customer information, order transactions, and account security across India.",
+    "Official Privacy Policy for WASTE. Read how we collect, protect, process, and respect customer information, order transactions, and account security across India.",
   alternates: {
     canonical: "https://www.wasteluxe.in/privacy-policy",
   },
   openGraph: {
-    title: "Privacy Policy | WASTE®",
+    title: "Privacy Policy | WASTE",
     description:
-      "Learn how WASTE® safeguards your personal information, authentication credentials, and preorder transactions.",
+      "Learn how WASTE safeguards your personal information, authentication credentials, and preorder transactions.",
     url: "https://www.wasteluxe.in/privacy-policy",
     type: "website",
   },
@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
                   </span>
                 </div>
                 <p className="text-xs sm:text-sm leading-relaxed text-brand-muted">
-                  WASTE® values your trust and individuality. We collect only the data necessary to fulfill
+                  WASTE values your trust and individuality. We collect only the data necessary to fulfill
                   your contemporary streetwear orders, authenticate your account, deliver reliable customer service,
                   and ensure seamless checkout. We never sell, rent, or trade your personal information.
                 </p>
@@ -190,7 +190,7 @@ export default function PrivacyPolicyPage() {
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
                     <strong className="text-brand-black font-medium">We do NOT store or process your banking credentials:</strong>{" "}
-                    WASTE® does not collect, record, or retain sensitive payment instrument data—including debit/credit card numbers,
+                    WASTE does not collect, record, or retain sensitive payment instrument data—including debit/credit card numbers,
                     CVV codes, expiry dates, net banking passwords, or UPI PINs—on our servers or databases.
                   </p>
                   <p>
@@ -258,7 +258,7 @@ export default function PrivacyPolicyPage() {
                 </h2>
                 <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-brand-muted sm:leading-7">
                   <p>
-                    WASTE® respects customer privacy and does not engage in aggressive cross-site tracking or selling behavioral profiles:
+                    WASTE respects customer privacy and does not engage in aggressive cross-site tracking or selling behavioral profiles:
                   </p>
                   <ul className="list-disc pl-5 space-y-2">
                     <li>
@@ -288,7 +288,7 @@ export default function PrivacyPolicyPage() {
                     services. We also retain transaction records as necessary to comply with applicable tax, commercial accounting,
                     and statutory obligations under Indian law.
                   </p>
-                  <p>As a client of WASTE®, you hold the right to:</p>
+                  <p>As a client of WASTE, you hold the right to:</p>
                   <ul className="list-disc pl-5 space-y-2">
                     <li>Review the personal information stored in your account profile and update saved delivery addresses at any time.</li>
                     <li>Request a copy of your stored order records and account data.</li>
@@ -322,7 +322,7 @@ export default function PrivacyPolicyPage() {
                   </p>
                   <div className="border border-brand-border bg-brand-surface p-5 space-y-2">
                     <p className="text-xs uppercase tracking-wider text-brand-black font-semibold">
-                      WASTE® Privacy &amp; Compliance Desk
+                      WASTE Privacy &amp; Compliance Desk
                     </p>
                     <p className="text-xs text-brand-muted">
                       Founder / Executive Office: {BRAND_CONFIG.founder.name}

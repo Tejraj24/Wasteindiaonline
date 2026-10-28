@@ -14,8 +14,17 @@ import { getHomepageContent } from "@/lib/services/content.service";
 export const revalidate = 0; // Dynamic homepage with live database featured items
 
 export const metadata: Metadata = {
+  title: "WASTE INDIA — Contemporary Indian Streetwear",
   alternates: {
-    canonical: "https://www.wasteluxe.in",
+    canonical: "https://www.wasteluxe.in/",
+  },
+  openGraph: {
+    siteName: "WASTE INDIA",
+    title: "WASTE INDIA — Contemporary Indian Streetwear",
+    description: "Indian contemporary streetwear brand founded in 2024. Distinctive designs, strong silhouettes, and modern Indian culture. Made in India. Built for the world.",
+    url: "https://www.wasteluxe.in/",
+    locale: "en_IN",
+    type: "website",
   },
 };
 
@@ -62,7 +71,7 @@ export default async function Home() {
       <EditorialCollectionSection />
       {/* Editorial Brand Narrative — Contemporary Indian Streetwear */}
       <section
-        aria-label="About WASTE®"
+        aria-label="About WASTE"
         className="w-full border-t border-brand-border bg-brand-bg px-6 py-14 sm:py-16 md:px-12 md:py-20"
       >
         <div className="mx-auto max-w-[1400px]">
@@ -72,12 +81,12 @@ export default async function Home() {
                 Modern Indian Culture &bull; Est. 2024
               </span>
               <h1 className="font-editorial text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] leading-[0.95] tracking-[-0.03em] uppercase text-brand-black">
-                WASTE® &mdash; <span className="font-editorial italic text-brand-gold">Contemporary</span> Indian Streetwear
+                WASTE &mdash; <span className="font-editorial italic text-brand-gold">Contemporary</span> Indian Streetwear
               </h1>
             </div>
             <div className="max-w-md space-y-4">
               <p className="text-xs sm:text-sm leading-relaxed text-brand-muted">
-                Born in India and created for a generation that refuses to fit into a box. WASTE® crafts heavyweight garments, distinctive silhouettes, and raw aesthetics inspired by modern Indian streetwear culture.
+                Born in India and created for a generation that refuses to fit into a box. WASTE crafts heavyweight garments, distinctive silhouettes, and raw aesthetics inspired by modern Indian streetwear culture.
               </p>
               <div>
                 <Link
