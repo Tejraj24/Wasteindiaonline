@@ -22,11 +22,12 @@ function formatPrice(price: number) {
 }
 
 function cleanProductMetaDescription(description?: string, title?: string): string {
+  const sanitized = description ? description.replace(/WASTE\s*\u00AE/g, "WASTE") : description;
   const fallback = `${title || "Piece"} — Contemporary Indian streetwear crafted by WASTE. Distinctive silhouette and premium heavyweight fabric.`;
-  if (!description || typeof description !== "string") return fallback;
+  if (!sanitized || typeof sanitized !== "string") return fallback;
 
   // Split into paragraphs, clean whitespace and markdown/bullet artifacts
-  const paragraphs = description
+  const paragraphs = sanitized
     .split(/\r?\n\s*\r?\n/)
     .map((p) =>
       p

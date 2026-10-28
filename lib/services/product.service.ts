@@ -29,6 +29,11 @@ export interface StorefrontProduct {
   createdAt: Date;
 }
 
+function cleanBrandText(text?: string | null): string {
+  if (!text) return "";
+  return text.replace(/WASTE\s*\u00AE/g, "WASTE");
+}
+
 export function formatStorefrontProduct(product: {
   id: string;
   slug: string;
@@ -79,16 +84,16 @@ export function formatStorefrontProduct(product: {
   return {
     id: product.id,
     slug: product.slug || product.id,
-    name: product.name,
-    title: product.name,
-    description: product.description,
-    shortDescription: product.shortDescription,
+    name: cleanBrandText(product.name),
+    title: cleanBrandText(product.name),
+    description: cleanBrandText(product.description),
+    shortDescription: product.shortDescription ? cleanBrandText(product.shortDescription) : null,
     price: product.price,
     compareAtPrice: product.compareAtPrice,
     category: categoryName,
     categoryId: product.categoryId,
     categorySlug: product.category?.slug || null,
-    brand: product.brand,
+    brand: cleanBrandText(product.brand) || "WASTE",
     status: product.status,
     inventory: product.inventory,
     soldOut,
