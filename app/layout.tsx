@@ -26,7 +26,7 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "WASTE INDIA",
-  alternateName: ["WASTE", "WASTE®"],
+  alternateName: ["WASTE"],
   url: "https://www.wasteluxe.in/",
   logo: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791873242/waste_yl29iy.jpg",
   email: BRAND_CONFIG.contact.officialBusinessEmail,
@@ -52,7 +52,7 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "WASTE INDIA",
-  alternateName: ["WASTE", "WASTE®"],
+  alternateName: ["WASTE"],
   url: "https://www.wasteluxe.in/",
 };
 
