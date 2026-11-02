@@ -1,22 +1,174 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
 }
 
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  createdAt DateTime   @default(now())
+  id        String    @id @default(cuid())
+  email     String    @unique
+  role      Role      @default(CUSTOMER)
+  name      String?
+  phone     String?
+  address   String?
+  city      String?
+  state     String?
+  country   String?   @default("India")
+  pincode   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 
   wishlists Wishlist[]
+  orders    Order[]
+  cart      Cart?
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  image       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+
+  products    Product[]
+}
+
+model Product {
+  id               String         @id @default(cuid())
+  name             String
+  slug             String         @unique
+  description      String
+  shortDescription String?
+  price            Float
+  compareAtPrice   Float?
+  categoryId       String?
+  category         Category?      @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  brand            String         @default("WASTE.")
+  status           String         @default("ACTIVE") // ACTIVE, DRAFT, ARCHIVED
+  inventory        Int            @default(10)
+  featured         Boolean        @default(false)
+  tags             String[]       @default([])
+  isPreorder       Boolean        @default(false)
+  releaseDate      DateTime?
+  expectedShipmentText String?
+  preorderCapacity Int?
+  preorderAllocated Int           @default(0)
+  preorderSizes    Json?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @default(now()) @updatedAt
+
+  images           ProductImage[]
+  orderItems       OrderItem[]
+  cartItems        CartItem[]
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  imageUrl  String
+  altText   String?
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id               String               @id @default(cuid())
+  userId           String?
+  orderNumber      String               @unique
+  merchantOrderId  String?              @unique
+  phonePeOrderId   String?
+  isPreorder       Boolean              @default(false)
+  releaseDate      DateTime?
+  expiresAt        DateTime?
+  capacityReserved Boolean              @default(false)
+  customerName     String?
+  customerEmail    String?
+  customerPhone    String?
+  shippingAddress  Json?
+  subtotal         Float
+  shipping         Float                @default(0)
+  tax              Float                @default(0)
+  total            Float
+  paymentStatus    String               @default("PENDING") // PENDING, PAID, FAILED, REFUNDED
+  orderStatus      String               @default("PENDING") // PENDING, CONFIRMED, PACKED, SHIPPED, DELIVERED, CANCELLED
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @default(now()) @updatedAt
+
+  user             User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items            OrderItem[]
+  payments         PaymentTransaction[]
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  productId   String?
+  title       String
+  size        String?
+  quantity    Int
+  price       Float
+  image       String?
+  isPreorder  Boolean  @default(false)
+  releaseDate DateTime?
+
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product     Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+}
+
+model PaymentTransaction {
+  id                String   @id @default(cuid())
+  orderId           String
+  merchantOrderId   String
+  phonePeOrderId    String?
+  amount            Float
+  state             String   // PENDING, COMPLETED, FAILED
+  paymentInstrument Json?
+  rawResponse       Json?
+  createdAt         DateTime @default(now())
+
+  order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @default(now()) @updatedAt
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+}
+
+model CartItem {
+  id             String   @id @default(cuid())
+  cartId         String
+  productId      String
+  title          String
+  price          Float
+  compareAtPrice Float?
+  image          String
+  size           String   @default("M")
+  sku            String?
+  quantity       Int      @default(1)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+
+  cart           Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product        Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([cartId, productId, size])
 }
 
 model Wishlist {
@@ -30,7 +182,29 @@ model Wishlist {
   category  String?
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, productId])
+}
+
+model StoreSettings {
+  id           String   @id @default("default")
+  storeName    String   @default("WASTE.")
+  logo         String?
+  supportEmail String   @default("concierge@wasteindiaonline.com")
+  phone        String   @default("+91 98765 43210")
+  address      String   @default("Studio Waste, New Delhi, India")
+  currency     String   @default("INR")
+  instagram    String?  @default("https://instagram.com")
+  twitter      String?
+  announcement String?  @default("Complimentary carbon-neutral domestic delivery across India.")
+  updatedAt    DateTime @default(now()) @updatedAt
+}
+
+model SiteContent {
+  id                String   @id @default("homepage")
+  heroSlides        Json?
+  featuredOverrides Json?
+  carouselImages    Json?
+  updatedAt         DateTime @default(now()) @updatedAt
 }

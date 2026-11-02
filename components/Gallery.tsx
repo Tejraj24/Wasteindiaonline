@@ -4,15 +4,18 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { Observer } from "gsap/Observer";
 
-const galleryItems = [
-  { id: 1, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924253/WhatsApp_Image_TOP_toocro.jpg", title: "Archive 01" },
-  { id: 2, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924402/WhatsApp_Image_2026-10-01_at_12.17.13_PM_ihlf30.jpg", title: "Archive 02" },
-  { id: 3, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924498/WhatsApp_Image_2026-10-01_at_11.16.47_PM_ex9pkk.jpg", title: "Archive 03" },
-  { id: 4, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924568/WhatsApp_Image_2026-10-01_at_11.16.42_PM_q23odi.jpg", title: "Archive 04" },
-  { id: 5, image: "https://res.cloudinary.com/dom7a6zlx/image/upload/v1790924473/WhatsApp_Image_2026-10-01_at_11.18.01_PM_wlstuq.jpg", title: "Archive 05" },
-];
+import { DEFAULT_CAROUSEL_ITEMS, CarouselSlideContent } from "@/lib/services/content.service";
 
-export function Gallery() {
+interface GalleryProps {
+  items?: CarouselSlideContent[];
+  title?: string;
+}
+
+export function Gallery({
+  items = DEFAULT_CAROUSEL_ITEMS,
+  title = "Luxe Art Work",
+}: GalleryProps) {
+  const activeItems = items && items.length > 0 ? items : DEFAULT_CAROUSEL_ITEMS;
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -22,34 +25,52 @@ export function Gallery() {
     gsap.registerPlugin(Observer);
 
     const track = trackRef.current;
-    const items = itemsRef.current.filter(Boolean);
-    const itemWidth = items[0]?.offsetWidth || 300;
-    const gap = 20; // 5rem in Tailwind usually 20px if custom, let's say 24px
-    
-    // We duplicate items for infinite wrap visual
-    // Actually GSAP utils.wrap handles the translation value.
-    // For a true infinite wrap, we need enough duplicated items or we wrap the position.
-    
-    // Simplification for draggable momentum with auto scroll
+
     let currentX = 0;
     let targetX = 0;
     let isDragging = false;
-    let velocity = -1.0; // Auto scroll speed
-    
-    // The max distance we can scroll before wrapping (half the track if we duplicate)
-    // To make it simple, let's just make it a bounds-based drag or a pseudo-wrap
-    
+    let isInitialized = false;
+    const velocity = -1.0; // Auto scroll speed (continuous luxury editorial crawl)
+
+    const getSetWidth = () => {
+      const first = itemsRef.current[0];
+      const duplicate = itemsRef.current[activeItems.length];
+      if (first && duplicate && duplicate.offsetLeft > first.offsetLeft) {
+        return duplicate.offsetLeft - first.offsetLeft;
+      }
+      if (track.scrollWidth > 0) {
+        return track.scrollWidth / 4;
+      }
+      return 0;
+    };
+
     const update = () => {
+      const setWidth = getSetWidth();
+
+      // Initialize position to Set 1 buffer so drag and scroll work in both directions
+      if (!isInitialized && setWidth > 0) {
+        currentX = -setWidth;
+        targetX = -setWidth;
+        gsap.set(track, { x: currentX });
+        isInitialized = true;
+      }
+
       if (!isDragging) {
         targetX += velocity;
       }
-      
-      // Wrap logic (simplified bounds)
-      // Assuming track is much wider than screen
-      const maxScroll = -(track.scrollWidth - window.innerWidth);
-      if (targetX > 0) targetX = 0; // Don't wrap positive for now
-      if (targetX < maxScroll) targetX = maxScroll; // Don't wrap beyond max
-      
+
+      // Infinite loop wrap-around: seamlessly cycle without ever halting at the end
+      if (setWidth > 0) {
+        while (targetX <= -2 * setWidth) {
+          targetX += setWidth;
+          currentX += setWidth;
+        }
+        while (targetX >= -setWidth) {
+          targetX -= setWidth;
+          currentX -= setWidth;
+        }
+      }
+
       currentX += (targetX - currentX) * 0.1;
       gsap.set(track, { x: currentX });
     };
@@ -61,14 +82,16 @@ export function Gallery() {
       type: "pointer,touch",
       onPress: () => {
         isDragging = true;
-        gsap.to(items, { scale: 0.95, duration: 0.3, ease: "power2.out" });
+        const validItems = itemsRef.current.filter(Boolean);
+        gsap.to(validItems, { scale: 0.96, duration: 0.25, ease: "power2.out" });
       },
       onDrag: (e) => {
         targetX += e.deltaX;
       },
       onRelease: () => {
         isDragging = false;
-        gsap.to(items, { scale: 1, duration: 0.3, ease: "power2.out" });
+        const validItems = itemsRef.current.filter(Boolean);
+        gsap.to(validItems, { scale: 1, duration: 0.25, ease: "power2.out" });
       },
     });
 
@@ -76,37 +99,58 @@ export function Gallery() {
       gsap.ticker.remove(update);
       obs.kill();
     };
-  }, []);
+  }, [activeItems]);
+
+  // Duplicate items 4 times to create an infinite, seamless loop ribbon
+  const repeatedItems = [
+    ...activeItems,
+    ...activeItems,
+    ...activeItems,
+    ...activeItems,
+  ];
 
   return (
     <section 
       ref={containerRef} 
-      className="py-24 bg-brand-dark text-brand-light overflow-hidden cursor-grab active:cursor-grabbing"
+      className="py-24 bg-brand-bg text-brand-black border-t border-brand-border overflow-hidden cursor-grab active:cursor-grabbing select-none"
       data-cursor="DRAG"
     >
-      <div className="px-4 md:px-8 mb-12 flex justify-between items-end">
-        <h2 className="text-3xl md:text-5xl font-bold uppercase tracking-tighter">
-          ( ARCHIVE )
+      <div className="px-4 md:px-8 mb-12 flex justify-center items-center text-center">
+        <h2 className="font-helvetica text-[clamp(1.5rem,3.8vw,2.75rem)] font-normal uppercase tracking-[0.15em] text-brand-black">
+          {title}
         </h2>
       </div>
 
       {/* Track */}
       <div 
         ref={trackRef} 
-        className="flex gap-6 px-4 md:px-8 w-max"
+        className="flex gap-6 px-4 md:px-8 w-max will-change-transform"
       >
-        {[...galleryItems, ...galleryItems].map((item, idx) => (
+        {repeatedItems.map((item, idx) => (
           <div
             key={`${item.id}-${idx}`}
             ref={(el) => { itemsRef.current[idx] = el; }}
-            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-neutral-800 flex-shrink-0 overflow-hidden transform-gpu"
+            className="relative w-[70vw] md:w-[35vw] aspect-[4/3] bg-transparent flex-shrink-0 overflow-hidden transform-gpu select-none"
           >
-            <img
-              src={item.image}
-              alt={item.title}
-              className="absolute inset-0 w-full h-full object-cover opacity-80"
-              draggable={false}
-            />
+            {item.mobileImage && item.mobileImage !== item.image ? (
+              <picture className="absolute inset-0 w-full h-full pointer-events-none">
+                <source media="(max-width: 767px)" srcSet={item.mobileImage} />
+                <source media="(min-width: 768px)" srcSet={item.image} />
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="absolute inset-0 w-full h-full object-cover opacity-95 transition-transform duration-500 hover:scale-105 pointer-events-none select-none"
+                  draggable={false}
+                />
+              </picture>
+            ) : (
+              <img
+                src={item.image}
+                alt={item.title}
+                className="absolute inset-0 w-full h-full object-cover opacity-95 transition-transform duration-500 hover:scale-105 pointer-events-none select-none"
+                draggable={false}
+              />
+            )}
           </div>
         ))}
       </div>

@@ -73,10 +73,10 @@ export function CustomCursor() {
         isVisible ? "opacity-100 scale-100" : "opacity-0 scale-75"
       }`}
     >
-      <div className="bg-brand-blue text-white px-3 py-1.5 rounded-full shadow-lg flex items-center justify-center">
+      <div className="bg-brand-black text-white px-3.5 py-1.5 rounded-full shadow-xl border border-white/20 flex items-center justify-center">
         <span
           ref={textRef}
-          className="text-[11px] font-bold tracking-widest uppercase whitespace-nowrap"
+          className="text-[10px] font-bold tracking-[0.2em] uppercase whitespace-nowrap"
         >
           {cursorText}
         </span>

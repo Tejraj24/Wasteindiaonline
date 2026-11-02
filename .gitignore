@@ -1,8 +1,7 @@
 ﻿node_modules
 .next
-.env.local
 .env
-
+.env.local
 
 firebase-service-account.json
 tsconfig.tsbuildinfo

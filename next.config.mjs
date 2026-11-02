@@ -1,6 +1,26 @@
-/** @type {import('next').NextConfig} */
+const FIREBASE_UPSTREAM_DOMAIN = 'wasteindia.firebaseapp.com';
+
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: '/about',
+        destination: '/our-story',
+        permanent: true,
+      },
+    ];
+  },
+  async rewrites() {
+    return {
+      beforeFiles: [
+        {
+          source: '/__/auth/:path*',
+          destination: `https://${FIREBASE_UPSTREAM_DOMAIN}/__/auth/:path*`,
+        },
+      ],
+    };
+  },
   images: {
     remotePatterns: [
       {
@@ -18,6 +38,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ik.imagekit.io',
       }
     ],
   },

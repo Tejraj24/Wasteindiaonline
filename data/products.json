@@ -19,8 +19,8 @@
     "price": 1400,
     "compareAtPrice": 1700,
     "images": [
-      "https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?auto=format&fit=crop&w=900&q=80"
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791933538/Waste_Black_Hoodie3_wxexba.png",
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791933543/Waste_Black_Hoodie4_kstrvf.png"
     ],
     "soldOut": false,
     "sku": "SN-CRW-002",
@@ -75,8 +75,8 @@
     "price": 750,
     "compareAtPrice": 900,
     "images": [
-      "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=900&q=80"
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791935751/Waste_Black_Art_Tee6_gbwlst.png",
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791935738/Waste_Black_Art_Tee5_uixmnj.png"
     ],
     "soldOut": false,
     "sku": "SN-TEE-006",
@@ -89,8 +89,8 @@
     "price": 700,
     "compareAtPrice": null,
     "images": [
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1576566588028-4147f3842f27?auto=format&fit=crop&w=900&q=80"
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791934533/White_Art_of_Her5_o0r0zg.png",
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791934534/White_Art_of_Her6_fuunrf.png"
     ],
     "soldOut": false,
     "sku": "SN-TEE-007",
@@ -103,8 +103,8 @@
     "price": 700,
     "compareAtPrice": null,
     "images": [
-      "https://images.unsplash.com/photo-1527719327859-c6ce80353573?auto=format&fit=crop&w=900&q=80",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=900&q=80"
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791936267/Waste_White_Tshirt5_xfhozt.png",
+      "https://res.cloudinary.com/dom7a6zlx/image/upload/v1791941164/Waste_White_Tshirt2_1_2_yk3bos.png"
     ],
     "soldOut": false,
     "sku": "SN-TEE-008",

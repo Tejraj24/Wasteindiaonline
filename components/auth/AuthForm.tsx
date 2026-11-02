@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useEffect, useState } from "react";
 import { useAuth } from "./AuthProvider";
+import { UserRole } from "@/lib/auth/roles";
+import { BackButton } from "@/components/navigation/BackButton";
 
 type AuthMode = "login" | "signup";
 
@@ -15,28 +17,107 @@ function firebaseErrorMessage(error: unknown) {
     }
     if (code.includes("email-already-in-use")) return "An account already exists for this email.";
     if (code.includes("weak-password")) return "Choose a stronger password.";
-    if (code.includes("popup-closed-by-user")) return "Google sign-in was cancelled.";
+    if (
+      code.includes("popup-closed-by-user") ||
+      code.includes("cancelled-popup-request") ||
+      code.includes("user-cancelled") ||
+      code.includes("redirect-cancelled-by-user")
+    ) {
+      return "Google sign-in was cancelled.";
+    }
     if (code.includes("popup-blocked")) return "Your browser blocked the Google sign-in window.";
+    if (code.includes("unauthorized-domain")) {
+      return "This domain is not authorized for Google Sign-In in Firebase Console.";
+    }
+    if (
+      code.includes("provider-already-linked") ||
+      code.includes("account-exists-with-different-credential") ||
+      code.includes("credential-already-in-use")
+    ) {
+      return "An account already exists with a different sign-in method or provider identity.";
+    }
   }
   return error instanceof Error ? error.message : "Something went wrong. Please try again.";
 }
 
-export function AuthForm({ mode }: { mode: AuthMode }) {
+function resolveRedirectPath(role: UserRole, redirectParam: string | null): string {
+  if (role === "ADMIN") {
+    if (redirectParam && redirectParam.startsWith("/admin")) {
+      return redirectParam;
+    }
+    return "/admin";
+  }
+
+  // CUSTOMER
+  if (
+    redirectParam &&
+    !redirectParam.startsWith("/admin") &&
+    !redirectParam.startsWith("/login") &&
+    !redirectParam.startsWith("/signup")
+  ) {
+    return redirectParam;
+  }
+  return "/";
+}
+
+export function AuthForm({
+  mode,
+  isDarkTheme,
+}: {
+  mode: AuthMode;
+  isDarkTheme?: boolean;
+}) {
+  const isDark = isDarkTheme ?? (mode === "signup");
   const router = useRouter();
-  const { login, signUp, signInWithGoogle, isConfigured } = useAuth();
+  const searchParams = useSearchParams();
+  const redirectParam = searchParams.get("redirect") || searchParams.get("next");
+  const { user, role, loading, login, signUp, signInWithGoogle, isConfigured, authError, clearAuthError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Surface auth errors returned from redirect resolution (e.g. mobile return or popup cancellation)
+  useEffect(() => {
+    if (authError) {
+      setError(firebaseErrorMessage({ code: authError }));
+      clearAuthError();
+    }
+  }, [authError, clearAuthError]);
+
+  // If user is already authenticated when visiting /login or /signup
+  useEffect(() => {
+    if (!loading && user) {
+      let targetDestination = redirectParam;
+      if (!targetDestination && typeof window !== "undefined") {
+        try {
+          targetDestination = sessionStorage.getItem("waste_auth_redirect_target");
+          sessionStorage.removeItem("waste_auth_redirect_target");
+        } catch {}
+      }
+      const destination = resolveRedirectPath(role, targetDestination);
+      console.log("[Auth Diagnostic] AuthForm navigating authenticated user:", {
+        destination,
+        role,
+        uid: user.uid,
+      });
+      router.replace(destination);
+    }
+  }, [loading, user, role, redirectParam, router]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
     setIsSubmitting(true);
     try {
-      if (mode === "login") await login(email, password);
-      else await signUp(email, password);
-      router.replace("/account");
+      let result;
+      if (mode === "login") {
+        result = await login(email, password);
+      } else {
+        result = await signUp(email, password);
+      }
+      const destination = resolveRedirectPath(result.role, redirectParam);
+      router.replace(destination);
     } catch (authError) {
       setError(firebaseErrorMessage(authError));
     } finally {
@@ -48,8 +129,9 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
     setError("");
     setIsSubmitting(true);
     try {
-      await signInWithGoogle();
-      router.replace("/account");
+      const result = await signInWithGoogle(redirectParam);
+      const destination = resolveRedirectPath(result.role, redirectParam);
+      router.replace(destination);
     } catch (authError) {
       setError(firebaseErrorMessage(authError));
     } finally {
@@ -58,36 +140,88 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
   }
 
   return (
-    <div className="w-full max-w-md">
-      <p className="text-[10px] uppercase tracking-[0.3em] text-white/45">WASTE. / Account</p>
-      <h1 className="mt-5 font-editorial text-[clamp(4rem,14vw,7rem)] leading-[0.78] tracking-[-0.06em]">
+    <div className="w-full">
+      {/* Navigation / Category Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <BackButton
+          fallbackHref="/"
+          label="Home"
+          variant="default"
+          className={
+            isDark
+              ? "text-white hover:text-white/80"
+              : "text-white md:text-black hover:text-white/80 md:hover:text-black/80"
+          }
+        />
+        <p
+          className={`text-[10px] uppercase tracking-[0.28em] font-semibold font-medium ${
+            isDark ? "text-white" : "text-white md:text-black"
+          }`}
+        >
+          WASTE. / Account
+        </p>
+      </div>
+
+      {/* Heading with constrained width for intentional line breaks */}
+      <h1
+        className={`mt-4 font-editorial text-[clamp(2.5rem,5.5vw,3.75rem)] leading-[0.9] tracking-[-0.04em] max-w-[280px] ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
         {mode === "login" ? "Welcome back" : "Join WASTE."}
       </h1>
-      <p className="mt-8 max-w-sm text-sm leading-6 text-white/55">
-        {mode === "login" ? "Continue to your WASTE. account." : "Create an account for a more considered way to shop."}
+
+      <p
+        className={`mt-3.5 max-w-sm text-xs sm:text-sm leading-relaxed font-semibold ${
+          isDark ? "text-white/90" : "text-white md:text-black"
+        }`}
+      >
+        {mode === "login"
+          ? "Continue to your WASTE. account."
+          : "Create an account for a more considered way to shop."}
       </p>
 
       {!isConfigured && (
-        <p className="mt-8 border border-amber-400/40 bg-amber-400/10 p-4 text-xs leading-5 text-amber-200" role="alert">
+        <p
+          className="mt-6 border border-amber-300 bg-amber-50/90 p-4 text-xs leading-5 text-amber-900 rounded-[3px]"
+          role="alert"
+        >
           Authentication is not configured yet. Add the Firebase environment variables before using this form.
         </p>
       )}
 
-      <form onSubmit={submit} className="mt-10 space-y-5">
+      {/* Form Fields */}
+      <form onSubmit={submit} className="mt-8 space-y-5">
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">Email</span>
+          <span
+            className={`text-[10px] uppercase tracking-[0.22em] font-semibold font-medium ${
+              isDark ? "text-white" : "text-white md:text-black"
+            }`}
+          >
+            Email
+          </span>
           <input
             required
             type="email"
             autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white"
-            placeholder="you@example.com"
+            className={`mt-1 h-12 w-full border-b bg-transparent px-0 py-2.5 text-sm font-semibold outline-none transition-colors duration-200 placeholder:font-semibold ${
+              isDark
+                ? "border-white/40 text-white placeholder:text-white/60 hover:border-white/70 focus:border-white"
+                : "border-[#C8C4BA] text-white md:text-black placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            }`}
+            placeholder="your@example.com"
           />
         </label>
         <label className="block">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-white/50">Password</span>
+          <span
+            className={`text-[10px] uppercase tracking-[0.22em] font-semibold font-medium ${
+              isDark ? "text-white" : "text-white md:text-black"
+            }`}
+          >
+            Password
+          </span>
           <input
             required
             minLength={6}
@@ -95,31 +229,76 @@ export function AuthForm({ mode }: { mode: AuthMode }) {
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             value={password}
             onChange={(event) => setPassword(event.target.value)}
-            className="mt-2 min-h-12 w-full border-b border-white/25 bg-transparent px-0 text-sm text-white outline-none transition placeholder:text-white/30 focus:border-white"
+            className={`mt-1 h-12 w-full border-b bg-transparent px-0 py-2.5 text-sm outline-none transition-colors duration-200 ${
+              isDark
+                ? "border-white/40 text-white placeholder:text-white/60 hover:border-white/70 focus:border-white"
+                : "border-[#C8C4BA] text-white md:text-black placeholder:text-white md:placeholder:text-black hover:border-brand-black/60 focus:border-brand-black"
+            }`}
             placeholder="••••••••"
           />
         </label>
-        {error && <p className="text-sm text-red-300" role="alert">{error}</p>}
-        <button disabled={isSubmitting || !isConfigured} className="w-full bg-white py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-black transition hover:bg-brand-blue hover:text-white disabled:cursor-not-allowed disabled:bg-white/15 disabled:text-white/40">
+
+        {error && (
+          <p className="text-xs text-red-600 bg-red-50/90 border-l-2 border-red-600 px-3 py-2 leading-relaxed rounded-[2px]" role="alert">
+            {error}
+          </p>
+        )}
+
+        <button
+          disabled={isSubmitting || !isConfigured}
+          className={`w-full h-12 rounded-[4px] bg-brand-black py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition-all duration-200 hover:bg-brand-black/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:border disabled:border-brand-border disabled:bg-brand-surfaceSubtle disabled:text-white font-semibold flex items-center justify-center shadow-sm border ${
+            isDark ? "border-white/40 hover:border-white" : "border-white/20 md:border-transparent"
+          }`}
+        >
           {isSubmitting ? "Please wait" : mode === "login" ? "Log in" : "Create account"}
         </button>
       </form>
 
-      <div className="my-7 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] text-white/30">
-        <span className="h-px flex-1 bg-white/15" />
+      {/* Divider */}
+      <div
+        className={`my-6 flex items-center gap-4 text-[10px] uppercase tracking-[0.2em] font-semibold ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
+        <span className={`h-px flex-1 ${isDark ? "bg-white/30" : "bg-[#E4E1DA]"}`} />
         <span>Or</span>
-        <span className="h-px flex-1 bg-white/15" />
+        <span className={`h-px flex-1 ${isDark ? "bg-white/30" : "bg-[#E4E1DA]"}`} />
       </div>
 
-      <button type="button" onClick={googleSignIn} disabled={isSubmitting || !isConfigured} className="w-full border border-white/25 py-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-white transition hover:border-white disabled:cursor-not-allowed disabled:opacity-40">
+      {/* Outlined Google Sign-In with matching height and geometry */}
+      <button
+        type="button"
+        onClick={googleSignIn}
+        disabled={isSubmitting || !isConfigured}
+        className="w-full h-12 rounded-[4px] border border-[#D0CCC3] bg-white/95 py-0 px-4 text-[10px] font-semibold uppercase tracking-[0.25em] text-brand-black shadow-sm transition-all duration-200 hover:border-brand-black hover:bg-white active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-40 flex items-center justify-center"
+      >
         Continue with Google
       </button>
 
-      <div className="mt-8 flex flex-wrap gap-x-5 gap-y-3 text-[10px] uppercase tracking-[0.16em] text-white/50">
-        <Link href={mode === "login" ? "/signup" : "/login"} className="transition hover:text-white">
+      {/* Footer Links */}
+      <div
+        className={`mt-8 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 text-[10px] uppercase tracking-[0.18em] font-semibold font-medium ${
+          isDark ? "text-white" : "text-white md:text-black"
+        }`}
+      >
+        <Link
+          href={mode === "login" ? "/signup" : "/login"}
+          className={`transition-colors ${
+            isDark ? "hover:text-white/80" : "hover:text-white/80 md:hover:text-black"
+          }`}
+        >
           {mode === "login" ? "Create account" : "Already a member"}
         </Link>
-        {mode === "login" && <Link href="/forgot-password" className="transition hover:text-white">Forgot password</Link>}
+        {mode === "login" && (
+          <Link
+            href="/forgot-password"
+            className={`transition-colors ${
+              isDark ? "hover:text-white/80" : "hover:text-white/80 md:hover:text-black"
+            }`}
+          >
+            Forgot password
+          </Link>
+        )}
       </div>
     </div>
   );
